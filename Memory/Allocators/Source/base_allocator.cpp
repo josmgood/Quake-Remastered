@@ -1,22 +1,22 @@
 #include "..\Include\base_allocator.h"
 
 Block::Block(void* mem, size_t len)
-	: memory(mem), length(len)
+	: address(mem), size(len)
 {
 }
 
 Block::Block(void)
-	: memory(nullptr), length(0)
+	: address(nullptr), size(0)
 {
 }
 
 void Block::free(void)
 {
-	memory = nullptr;
-	length = 0;
+	address = nullptr;
+	size = 0;
 }
 
 Block::operator bool(void) const
 {
-	return(memory != nullptr && length != 0);
+	return(address != nullptr && size > 0);
 }
