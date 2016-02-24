@@ -98,6 +98,11 @@ namespace traits
 		*/
 		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
 	public:
+		/*
+		The outcome of the search.
+
+		/v - YES : NO
+		*/
 		static constexpr TYPE_CHECK value = test<T>(nullptr);
 	};
 
@@ -587,7 +592,7 @@ namespace traits
 	*/
 	template<typename Allocator>
 	struct _reallocate_
-		<Allocator, typename std :enable_if<has_reallocate<Allocator>::value>::type>
+		<Allocator, typename std::enable_if<has_reallocate<Allocator>::value>::type>
 	{
 		static bool execute(Allocator& allocator, Block& block, size_t newSize)
 		{
@@ -767,7 +772,10 @@ namespace traits
 	*/
 	template<typename Allocator>
 	struct _expand_
-		<Allocator, std::enable_if<!has_expand<Allocator>::value>::type>
+		<Allocator, typename std::enable_if<!has_expand<Allocator>::value>::type>
 	{	
+		static void execute(Allocator& allocator, size_t amount)
+		{
+		}
 	};
 }
