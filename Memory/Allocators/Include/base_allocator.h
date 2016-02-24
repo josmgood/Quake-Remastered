@@ -6,31 +6,117 @@
 /*Custom Libraries*/
 #include "..\..\..\Core\common.h"
 
+/*
+*======================================================================
+* 
+* MEMORY BLOCK
+*
+* Fundamental data structure in an allocator.
+*
+* void* memory -		memory held within the block
+* size_t size -			size of the block
+* size_t alignment -	alignment to fit perfectly in an allocator
+*
+*======================================================================
+*/
 struct Block
 {
-	Block				(void* mem, size_t len);
+	Block				(void* mem, size_t size);
 	Block				(void);
 	void free			(void);
 
 	operator bool(void) const;
 
-	void*	memory;
-	size_t	length;
+	void*		address;
+	size_t		size;
+	size_t		alignment;
 };
 
+#define DEAD_BLOCK Block()
+
 /*
-==================================
-
-BASE ALLOCATOR
-
-==================================
+*========================================================================
+*
+* BASE ALLOCATOR
+*
+* Allocator interface. Key component for allocator composition.
+*
+*========================================================================
 */
-
 class BaseAllocator
 {
 public:
-	virtual Block allocate				(size_t size) = 0;
-	virtual void deallocate				(Block& block) = 0;
-	virtual void deallocateAll			(void) = 0;
-	virtual bool owns					(Block block) = 0;
+	virtual ~BaseAllocator		(void) {}
+	virtual void reset			(void) = 0;
+	virtual void destory		(void) = 0;
 };
+
+/*
+*===========================================================================================
+*
+* ALLOC NAMESPACE
+*
+* Contains allocator components for robust allocator composition.
+* Motivation - Not every allocator requires every type of method.
+*
+*===========================================================================================
+*/
+namespace alloc
+{
+	class GetAllocateVoid
+	{
+	public:
+		virtual Block allocate(void) = 0;
+	};
+	class GetAllocateSize
+	{
+	public:
+		virtual Block allocate(size_t size) = 0;
+	};
+	class GetAllocateAll
+	{
+	public:
+		virtual bool allocateAll(size_t size) = 0;
+	};
+
+	class GetDeallocate
+	{
+	public:
+		virtual void deallocate(Block& block) = 0;
+	};
+
+	class GetDeallocateAll
+	{
+	public:
+		virtual bool deallocateAll(void) = 0;
+	};
+
+	class GetReallocate
+	{
+	public:
+		virtual bool reallocate(Block& block, size_t newSize) = 0;
+	};
+
+	class GetRealloateAll
+	{
+	public:
+		virtual bool reallocateAll(size_t newSize) = 0;
+	};
+
+	class GetOwns
+	{
+	public:
+		virtual bool owns(Block block) = 0;
+	};
+
+	class GetExpand
+	{
+	public:
+		virtual void expand				(size_t amount) = 0;
+
+		void setExpansionAllowance		(bool expand) { _allowExpansion = expand; }
+		bool isAllowingExpansion		(void) const { return _allowExpansion; }
+	protected:
+		bool _allowExpansion;
+	};
+}
