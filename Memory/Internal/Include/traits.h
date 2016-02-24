@@ -297,6 +297,45 @@ namespace traits
 
 	//===========================================================================================================================
 
+	/*Checks a class for the expand(size_t) method.*/
+	template<typename T>
+	class has_expand
+	{
+	private:
+		/*
+		Checks for the expand(size_t) method.
+		Helper struct that actually finds the method.
+		
+		/tparam - reference to the expand(size_t) method
+		*/
+		template<typename U, void(U::*)(size_t)> struct TCheck;
+
+		/*
+		Tests for expand(size_t) method's existence.
+		
+		/tparam -	reference to the expand(size_t) method
+		/r -		the method exists in the class
+		*/
+		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::owns>*) { return TYPE_CHECK::YES; }
+
+		/*
+		If expand(size_t) was not found...
+		
+		/tparam -	reference to the expand(size_t) method
+		/r -		the method was not found in the class
+		*/
+		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+	public:
+		/*
+		The outcome of the search.
+		
+		/r - YES : NO
+		*/
+		static constexpr TYPE_CHECK value = test<T>(nullptr);
+	};
+
+	//===========================================================================================================================
+
 	/*template<typename AllocatorOne, typename AllocatorTwo>
 	struct have_same_base : std::false_type{};
 
@@ -306,7 +345,8 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the allocator's allocate(size_t) method.
+	Determines the appropriate implementation of the allocator's allocate(size_t) method
+	relative to the method's existence.
 	
 	If the allocate(size_t) method is found...
 		-> use the allocators' implementation
@@ -340,7 +380,8 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the allocator's allocateAll(size_t) method.
+	Determines the appropriate implementation of the allocator's allocateAll(size_t) method
+	relative to the method's existence.
 	
 	If the allocateAll(size_t) method is found...
 		-> use the allocator's implementation
@@ -372,6 +413,16 @@ namespace traits
 
 	//===========================================================================================================================
 
+	/*
+	Determines the apprpriate implementation of the allocator's deallocate(Block&) method
+	relative to the method's existence
+	
+	If the deallocate(Block&) method is found...
+		-> use the allocator's implementation
+	else...
+		-> do nothing
+	*/
+
 	template<typename Allocator, typename Enabled = void>
 	struct _deallocate_;
 
@@ -396,6 +447,16 @@ namespace traits
 	};
 
 	//===========================================================================================================================
+
+	/*
+	Determines the appropriate implementation of the allocator's deallocateAll() method
+	relative to the method's existence.
+	
+	If the deallocateAll() method is found....
+		-> use the allocator's implementation
+	else...
+		-> do nothing
+	*/
 
 	template<typename Allocator, typename Enabled = void>
 	struct _deallocateAll_
@@ -422,6 +483,16 @@ namespace traits
 
 	//===========================================================================================================================
 
+	/*
+	Determines the appropriate implementation of the allocator's reallocate(Block&, size_t) method
+	relative to the method's existence.
+	
+	If the reallocate(Block&, size_t) method is found...
+		-> use the allocator's implementation
+	else...
+		-> do nothing
+	*/
+
 	template<typename Allocator, typename Enabled = void>
 	struct _reallocate_;
 
@@ -446,6 +517,16 @@ namespace traits
 	};
 
 	//===========================================================================================================================
+
+	/*
+	Determines the appropriate implementation of the allocator's reallocateAll(size_t) method
+	relative to the method's existence.
+	
+	If the reallocateAll(size_t) method is found...
+		-> use the allocator's implementation
+	else
+		-> do nothing
+	*/
 
 	template<typename Allocator, typename Enabled = void>
 	struct _reallocateAll_;
@@ -472,6 +553,15 @@ namespace traits
 
 	//===========================================================================================================================
 
+	/*
+	Determines the appropriate implementation of the allocator's owns(Block) method
+	relative to the method's existence.
+	
+	If the owns(Block) method is found...
+		-> use the allocator's implementation
+	else
+		-> do nothing
+	*/
 	template<typename Allocator, typename Enabled = void>
 	struct _owns_;
 
@@ -479,7 +569,7 @@ namespace traits
 	struct _owns_
 		<Allocator, typename std::enable_if<has_owns<Allocator>::value>::type>
 	{
-		struct bool execute(Allocator& allocator, Block block)
+		static bool execute(Allocator& allocator, Block block)
 		{
 			return(allocator.owns(block));
 		}
@@ -489,9 +579,55 @@ namespace traits
 	struct _owns_
 		<Allocator, typename std::enable_if<!has_owns<Allocator>::value>::type>
 	{
-		struct bool execute(Allocator& allocator, Block block)
+		static bool execute(Allocator& allocator, Block block)
 		{
 			return(false);
 		}
+	};
+
+	//===========================================================================================================================
+
+	/*Determines the appropriate implementation of the allocators expand(size_t) method
+	relative to the method's existence.
+	
+	If the expand(size_t) method is found...
+		-> use the allocator's implementation
+	else...
+		-> do nothing
+	*/
+
+	/*
+	_expand_ meta-function prototype
+	
+	/tparam - allocator being tested
+	/tparam - does the method exist
+	*/
+	template<typename Allocator, typename Enabled = void>
+	struct _expand_;
+
+	/*
+	If the class tests positive for expand(size_t), its implementation is used.
+
+	/tparam - allocator being tested
+	*/
+	template<typename Allocator>
+	struct _expand_
+		<Allocator, typename std::enable_if<has_expand<Allocator>::value>::type>
+	{
+		static void execute(Allocator& allocator, size_t amount)
+		{
+			allocator.(amount);
+		}
+	};
+
+	/*
+	If the class tests positive for NOT having expand(size_t), do nothing
+	
+	/tparam - allocator being tested
+	*/
+	template<typename Allocator>
+	struct _expand_
+		<Allocator, std::enable_if<!has_expand<Allocator>::value>::type>
+	{	
 	};
 }
