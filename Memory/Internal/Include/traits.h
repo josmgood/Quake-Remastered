@@ -41,7 +41,7 @@ namespace traits
 
 		/tparam - reference to the allocate(size_t) method
 		*/
-		template<typename U, Block&(U::*)(size_t)> struct TCheck;
+		template<typename U, Block(U::*)(size_t)> struct TCheck;
 
 		/*
 		Tests the allocate(size_t) method's existence.
@@ -374,7 +374,7 @@ namespace traits
 	struct _allocate_
 		<Allocator, typename std::enable_if<has_allocate<Allocator>::value>::type>
 	{
-		static Block& execute(Allocator& allocator, size_t size)
+		static Block execute(Allocator& allocator, size_t size)
 		{
 			return(allocator.allocate(size));
 		}
@@ -390,7 +390,7 @@ namespace traits
 	struct _allocate_
 		<Allocator, typename std::enable_if<!has_allocate<Allocator>::value>::type>
 	{
-		static Block& execute(Allocator& allocator, size_t size)
+		static Block execute(Allocator& allocator, size_t size)
 		{
 			return(nullptr);
 		}
@@ -461,7 +461,7 @@ namespace traits
 	///	If the deallocate(Block&) method is found...
 	///		-> use the allocator's implementation; return success of method
 	///	else...
-	///		-> return false
+	///		-> do nothing
 	//////////////////////////////////////////////////////////////////////////////////////////
 	*/
 
@@ -478,31 +478,28 @@ namespace traits
 	If the class tests positive for deallocate(Block&), its implementation is used.
 	
 	/tparam -	allocator being tested
-	/r -		the success of the allocator's implementation
 	*/
 	template<typename Allocator>
 	struct _deallocate_
 		<Allocator, typename std::enable_if<has_deallocate<Allocator>::value>::type>
 	{
-		static bool execute(Allocator& allocator, Block& block)
+		static void execute(Allocator& allocator, Block& block)
 		{
-			return(allocator.deallocate(block));
+			allocate.deallocate(block);
 		}
 	};
 
 	/*
-	If the class tests positive for NOT having deallocate(Block&), return false
+	If the class tests positive for NOT having deallocate(Block&), do nothing
 	
 	/tparam -	allocator being tested
-	/r -		false
 	*/
 	template<typename Allocator>
 	struct _deallocate_
 		<Allocator, typename std::enable_if<!has_deallocate<Allocator>::value>::type>
 	{
-		static bool execute(Allocator& allocator, Block& block)
+		static void execute(Allocator& allocator, Block& block)
 		{
-			return(false);
 		}
 	};
 
@@ -761,7 +758,7 @@ namespace traits
 	{
 		static void execute(Allocator& allocator, size_t amount)
 		{
-			allocator.(amount);
+			allocator.expand(amount);
 		}
 	};
 
