@@ -14,7 +14,7 @@
 * TRAITS NAMESPACE
 *
 * Contains meta-functions that aid memory management.
-* Not all allocators have the same methods and need to be handled on case-to-case basis.
+* Not all allocators have the same methods and need to be handled on a case-to-case basis.
 *
 * ===========================================================================================
 */
@@ -345,15 +345,23 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the appropriate implementation of the allocator's allocate(size_t) method
-	relative to the method's existence.
-	
-	If the allocate(size_t) method is found...
-		-> use the allocators' implementation
-	else...
-		-> return a nullptr
+	////////////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocator's allocate(size_t) method
+	///	relative to the method's existence.
+	///
+	///	If the allocate(size_t) method is found...
+	///		-> use the allocators' implementation; return allocated block
+	///	else...
+	///		-> return a nullptr
+	////////////////////////////////////////////////////////////////////////////////////////
 	*/
 
+	/*
+	If the class tests positive for allocate(size_t), its implementation is used.
+	
+	/tparam -	allocator being tested
+	/r -		the allocated block
+	/*/
 	template<typename Allocator, typename Enabled = void>
 	struct _allocate_;
 
@@ -367,6 +375,12 @@ namespace traits
 		}
 	};
 
+	/*
+	The class tests positive for NOT having allocate(size_t)
+	
+	/tparam -	allocator being tested
+	/r -		nullptr
+	*/
 	template<typename Allocator>
 	struct _allocate_
 		<Allocator, typename std::enable_if<!has_allocate<Allocator>::value>::type>
@@ -380,52 +394,87 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the appropriate implementation of the allocator's allocateAll(size_t) method
-	relative to the method's existence.
-	
-	If the allocateAll(size_t) method is found...
-		-> use the allocator's implementation
-	else...
-		-> do nothing
+	///////////////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocator's allocateAll(size_t) method
+	///	relative to the method's existence.
+	///
+	///	If the allocateAll(size_t) method is found...
+	///		-> use the allocator's implementation; return success of method
+	///	else...
+	///		-> return false
+	///////////////////////////////////////////////////////////////////////////////////////////
 	*/
 
+	/*
+	_allocateAll_ meta-function prototype
+	
+	/tparam - allocator being tested
+	/tparam - does the method exist
+	*/
 	template<typename Allocator, typename Enabled = void>
 	struct _allocateAll_;
 
+	/*
+	If the class tests positive for allocateAll(size_t), its implementation is used.
+	
+	/tparam -	allocator being tested
+	/r -		the success of the allocator's implementation
+	*/
 	template<typename Allocator>
 	struct _allocateAll_
 		<Allocator, typename std::enable_if<has_allocate_all<Allocator>::value>::type>
 	{
-	static void execute(Allocator& allocator, size_t size)
+	static bool execute(Allocator& allocator, size_t size)
 		{
 			allocator.allocateAll(size);
 		}
 	};
 
+	/*
+	If the class tests positive for NOT having allocateAll(size_t), return false.
+	
+	/tparam -	allocator being tested
+	/r -		false
+	*/
 	template<typename Allocator>
 	struct _allocateAll_
 		< Allocator, typename std::enable_if<!has_allocate_all<Allocator>::value>::type>
 	{
-		static void execute(Allocator& allocator, size_t size)
+		static bool execute(Allocator& allocator, size_t size)
 		{
+			return(false);
 		}
 	};
 
 	//===========================================================================================================================
 
 	/*
-	Determines the apprpriate implementation of the allocator's deallocate(Block&) method
-	relative to the method's existence
-	
-	If the deallocate(Block&) method is found...
-		-> use the allocator's implementation
-	else...
-		-> do nothing
+	//////////////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocator's deallocate(Block&) method
+	///	relative to the method's existence
+	///
+	///	If the deallocate(Block&) method is found...
+	///		-> use the allocator's implementation; return success of method
+	///	else...
+	///		-> return false
+	//////////////////////////////////////////////////////////////////////////////////////////
 	*/
 
+	/*
+	_deallocate_ meta-function prototype
+	
+	/tparam - allocator being tested
+	/tparam - does the method exist
+	*/
 	template<typename Allocator, typename Enabled = void>
 	struct _deallocate_;
 
+	/*
+	If the class tests positive for deallocate(Block&), its implementation is used.
+	
+	/tparam -	allocator being tested
+	/r -		the success of the allocator's implementation
+	*/
 	template<typename Allocator>
 	struct _deallocate_
 		<Allocator, typename std::enable_if<has_deallocate<Allocator>::value>::type>
@@ -436,6 +485,12 @@ namespace traits
 		}
 	};
 
+	/*
+	If the class tests positive for NOT having deallocate(Block&), return false
+	
+	/tparam -	allocator being tested
+	/r -		false
+	*/
 	template<typename Allocator>
 	struct _deallocate_
 		<Allocator, typename std::enable_if<!has_deallocate<Allocator>::value>::type>
@@ -449,18 +504,32 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the appropriate implementation of the allocator's deallocateAll() method
-	relative to the method's existence.
-	
-	If the deallocateAll() method is found....
-		-> use the allocator's implementation
-	else...
-		-> do nothing
+	///////////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocator's deallocateAll() method
+	///	relative to the method's existence.
+	///
+	///	If the deallocateAll() method is found....
+	///		-> use the allocator's implementation; return success of method
+	///	else...
+	///		-> return false
+	///////////////////////////////////////////////////////////////////////////////////////
 	*/
 
+	/*
+	_deallocateAll_ meta-function prototype
+	
+	/tparam - allocator being tested
+	/tparam - does the method exist
+	*/
 	template<typename Allocator, typename Enabled = void>
-	struct _deallocateAll_
+	struct _deallocateAll_;
 
+	/*
+	If the class tests positive for deallocateAll(), its implementation is used.
+	
+	/tparam -	allocator being tested
+	/r -		the success of the allocator's implementation
+	*/
 	template<typename Allocator>
 	struct _deallocateAll_
 		<Allocator, typename std::enable_if<has_deallocate_all<Allocator>::value>::type>
@@ -471,6 +540,12 @@ namespace traits
 		}
 	};
 
+	/*
+	If the class tests positive for NOT having deallocateAll(), return false.
+	
+	/tparam -		allocator being tested
+	/r -			false
+	*/
 	template<typename Allocator>
 	struct _deallocateAll_
 		<Allocator, typename std::enable_if<!has_deallocate_all<Allocator>::value>::type>
@@ -484,18 +559,32 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the appropriate implementation of the allocator's reallocate(Block&, size_t) method
-	relative to the method's existence.
-	
-	If the reallocate(Block&, size_t) method is found...
-		-> use the allocator's implementation
-	else...
-		-> do nothing
+	//////////////////////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocator's reallocate(Block&, size_t) method
+	///	relative to the method's existence.
+	///
+	///	If the reallocate(Block&, size_t) method is found...
+	///		-> use the allocator's implementation; return success of method
+	///	else...
+	///		-> return false
+	//////////////////////////////////////////////////////////////////////////////////////////////////
 	*/
 
+	/*
+	_reallocate_ meta-function prototype
+	
+	/tparam - allocator being tested
+	/tparam - does the method exist
+	*/
 	template<typename Allocator, typename Enabled = void>
 	struct _reallocate_;
 
+	/*
+	If the class tests positive for reallocate(Block&, size_t), its implementation is used.
+	
+	/tparam -	allocator being tested
+	/r -		the success of the allocator's implementation
+	*/
 	template<typename Allocator>
 	struct _reallocate_
 		<Allocator, typename std :enable_if<has_reallocate<Allocator>::value>::type>
@@ -506,6 +595,12 @@ namespace traits
 		}
 	};
 
+	/*
+	If the class tests positive for NOT having reallocate(Block&, size_t), return false
+	
+	/tparam -	allocator being tested
+	/r -		false
+	*/
 	template<typename Allocator>
 	struct _reallocate_
 		<Allocator, typename std::enable_if<!has_reallocate<Allocator>::value>::type>
@@ -519,17 +614,32 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the appropriate implementation of the allocator's reallocateAll(size_t) method
-	relative to the method's existence.
-	
-	If the reallocateAll(size_t) method is found...
-		-> use the allocator's implementation
-	else
-		-> do nothing
+	/////////////////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocator's reallocateAll(size_t) method
+	///	relative to the method's existence.
+	///
+	///	If the reallocateAll(size_t) method is found...
+	///		-> use the allocator's implementation; return success of the method
+	///	else...
+	///		-> return false
+	/////////////////////////////////////////////////////////////////////////////////////////////
 	*/
 
+	/*
+	_reallocateAll_ meta-function prototype
+	
+	/tparam - allocator being tested
+	/tparam - does the method exist
+	*/
 	template<typename Allocator, typename Enabled = void>
 	struct _reallocateAll_;
+
+	/*
+	If the class tests positive for reallocateAll(size_t), its implementation is used.
+
+	/tparam -	allocator being tested
+	/r -		the success of the allocator's implementation
+	*/
 
 	template<typename Allocator>
 	struct _reallocateAll_
@@ -541,6 +651,12 @@ namespace traits
 		}
 	};
 
+	/*
+	If the class tests positive for NOT having reallocateAll(size_t), return false.
+	
+	/tparam -	allocator being tested
+	/r -		false
+	*/
 	template<typename Allocator>
 	struct _reallocateAll_
 		<Allocator, typename std::enable_if<!has_reallocate_all<Allocator>::value>::type>
@@ -554,17 +670,32 @@ namespace traits
 	//===========================================================================================================================
 
 	/*
-	Determines the appropriate implementation of the allocator's owns(Block) method
-	relative to the method's existence.
+	///////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocator's owns(Block) method
+	///	relative to the method's existence.
+	///
+	///	If the owns(Block) method is found...
+	///		-> use the allocator's implementation; return success of method
+	///	else...
+	///		-> return false
+	///////////////////////////////////////////////////////////////////////////////////
+	*/
+
+	/*
+	_owns_ meta-function prototype
 	
-	If the owns(Block) method is found...
-		-> use the allocator's implementation
-	else
-		-> do nothing
+	/tparam - allocator being tested
+	/tparam - does the method exist
 	*/
 	template<typename Allocator, typename Enabled = void>
 	struct _owns_;
 
+	/*
+	If the class tests position for owns(Block), its implementation is used.
+	
+	/tparam -	allocator being used
+	/r -		the success of the allocator's implementation
+	*/
 	template<typename Allocator>
 	struct _owns_
 		<Allocator, typename std::enable_if<has_owns<Allocator>::value>::type>
@@ -575,6 +706,12 @@ namespace traits
 		}
 	};
 
+	/*
+	If the class tests position for NOT having owns(Block), return false.
+	
+	/tparam -	allocator being tested
+	/r -		false
+	*/
 	template<typename Allocator>
 	struct _owns_
 		<Allocator, typename std::enable_if<!has_owns<Allocator>::value>::type>
@@ -587,13 +724,16 @@ namespace traits
 
 	//===========================================================================================================================
 
-	/*Determines the appropriate implementation of the allocators expand(size_t) method
-	relative to the method's existence.
-	
-	If the expand(size_t) method is found...
-		-> use the allocator's implementation
-	else...
-		-> do nothing
+	/*
+	/////////////////////////////////////////////////////////////////////////////////////
+	///	Determines the appropriate implementation of the allocators expand(size_t) method
+	///	relative to the method's existence.
+	///
+	///	If the expand(size_t) method is found...
+	///		-> use the allocator's implementation; return success of method
+	///	else...
+	///		-> return false
+	/////////////////////////////////////////////////////////////////////////////////////
 	*/
 
 	/*
@@ -621,7 +761,7 @@ namespace traits
 	};
 
 	/*
-	If the class tests positive for NOT having expand(size_t), do nothing
+	If the class tests positive for NOT having expand(size_t), do nothing.
 	
 	/tparam - allocator being tested
 	*/
