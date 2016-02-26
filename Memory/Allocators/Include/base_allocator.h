@@ -6,6 +6,9 @@
 /*Custom Libraries*/
 #include "..\..\..\Core\common.h"
 
+#define ALLOCATED	true
+#define FREE		false
+
 /*
 *======================================================================
 * 
