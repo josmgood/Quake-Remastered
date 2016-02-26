@@ -142,7 +142,7 @@ public:
 	/*
 	 Destroy()
 	 
-	 Dealocates all memory and unlinks the chunk list.
+	 Deallocates all memory and unlinks the chunk list.
 	 Internally uses reset() after deallocation.
 	 */
 	virtual void destroy				(void) override;
@@ -153,6 +153,11 @@ public:
 	 /r - total capacity size
 	 */
 	size_t getChunkCapacity				(void) const;
+
+	/*
+	 GetNumAllocatedChunks()
+	 
+	 /r - total amount of chunks allocated (<= _capacity)*/
 	size_t getNumAllocatedChunks		(void) const;
 private:
 	/*
@@ -215,13 +220,13 @@ private:
 	_Chunk*							_front;
 	/*Back of the memory pool. Makes for easy allocation of new chunks.*/
 	_Chunk*							_back;
-	/*Position where free blocks at beginnning end. Initialised after first deallocation*/
+	/*Position where free blocks at beginning end. Initialised after first deallocation*/
 	_Chunk*							_free;
 	/*Overall size of the pool. Can be expanded.*/
 	size_t							_capacity;
 	/*The current amount of chunks allocated.*/
 	size_t							_numAllocatedChunks;
-	/*Deafult return type for failed chunk searches.*/
+	/*Default return type for failed chunk searches.*/
 	const _ChunkPacket				DEAD_CHUNK_PACKET;
 };
 
