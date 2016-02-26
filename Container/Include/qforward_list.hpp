@@ -10,12 +10,12 @@ template<typename T>
 class QForwardList
 {
 public:
-	struct _Node
+	struct Node
 	{
-		_Node(void);
-		_Node(const T& data);
+		Node(void);
+		Node(const T& data);
 
-		_Node*	next;
+		Node*	next;
 		T		data;
 	};
 	QForwardList				(size_t capacity);
@@ -27,10 +27,10 @@ public:
 	void popFront				(void);
 	void popBack				(void);
 
-	void insert					(const T& data, _Node* next);
-	void append					(const T& data, _Node* prev);
+	void insert					(const T& data, Node* next);
+	void append					(const T& data, Node* prev);
 	bool find					(const T& data);
-	void erase					(_Node* node);
+	void erase					(Node* node);
 	void reserve				(size_t amount);
 	void clear					(void);
 	bool isEmpty				(void) const;
@@ -38,17 +38,17 @@ public:
 	const T& getFront			(void) const;
 	const T& getBack			(void) const;
 private:
-	_Node* _create				(const T& data);
-	Block _getBlock				(_Node* node);
-	_Node* _getNext				(_Node* node);
-	void _setNext				(_Node* curr, _Node* _next);
+	Node* _create				(const T& data);
+	Block _getBlock				(Node* node);
+	Node* _getNext				(Node* node);
+	void _setNext				(Node* curr, Node* _next);
 	void _incrementSize			(void);
 	void _decrementSize			(void);
 
-	_Node*								_front;
-	_Node*								_back;
+	Node*								_front;
+	Node*								_back;
 	size_t								_size;
-	PoolAllocator<sizeof(_Node)>		_pool;
+	PoolAllocator<sizeof(Node)>		_pool;
 };
 
 #include "..\Source\qforward_list.inl"
