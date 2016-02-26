@@ -1,7 +1,7 @@
 #include "..\Include\base_allocator.h"
 
-Block::Block(void* mem, size_t len)
-	: address(mem), size(len)
+Block::Block(void* addr, size_t len)
+	: address(addr), size(len)
 {
 }
 

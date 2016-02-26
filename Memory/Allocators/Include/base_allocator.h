@@ -21,7 +21,7 @@
 */
 struct Block
 {
-	Block				(void* mem, size_t size);
+	Block				(void* addr, size_t size);
 	Block				(void);
 	void free			(void);
 
@@ -29,7 +29,6 @@ struct Block
 
 	void*		address;
 	size_t		size;
-	size_t		alignment;
 };
 
 #define DEAD_BLOCK Block()
@@ -48,7 +47,7 @@ class BaseAllocator
 public:
 	virtual ~BaseAllocator		(void) {}
 	virtual void reset			(void) = 0;
-	virtual void destory		(void) = 0;
+	virtual void destroy		(void) = 0;
 };
 
 /*
