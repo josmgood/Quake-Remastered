@@ -78,12 +78,13 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -92,6 +93,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -99,7 +101,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;glew32.lib;SOIL.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -118,8 +120,14 @@
     <None Include="memory\allocators\source\fallback_allocator.inl" />
     <None Include="memory\allocators\source\pool_allocator.inl" />
     <None Include="memory\allocators\source\segregator.inl" />
+    <None Include="Memory\Internal\Source\stack.inl" />
+    <None Include="Memory\Utility\Source\smart_ptr.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Container\Include\base.h" />
+    <ClInclude Include="Container\Include\qforward_list.hpp" />
+    <ClInclude Include="Container\Include\qhash_string.h" />
+    <ClInclude Include="Container\Include\qstring.h" />
     <ClInclude Include="core\common.h" />
     <ClInclude Include="core\container\include\list.h" />
     <ClInclude Include="core\container\include\qhash_string.h" />
@@ -135,10 +143,15 @@
     <ClInclude Include="memory\allocators\include\fallback_allocator.h" />
     <ClInclude Include="memory\allocators\include\freelist_allocator.h" />
     <ClInclude Include="memory\allocators\include\linear_allocator.h" />
-    <ClInclude Include="memory\allocators\include\pool_allocator.h" />
+    <ClInclude Include="Memory\Allocators\Include\pool_allocator.hpp" />
     <ClInclude Include="memory\allocators\include\segregator.h" />
     <ClInclude Include="memory\allocators\include\zone_allocator.h" />
+    <ClInclude Include="Memory\Internal\Include\auxiliary.h" />
     <ClInclude Include="memory\internal\include\reallocator.h" />
+    <ClInclude Include="Memory\Internal\Include\stack.hpp" />
+    <ClInclude Include="Memory\Internal\Include\traits.h" />
+    <ClInclude Include="Memory\Utility\Include\smart_ptr.hpp" />
+    <ClInclude Include="Memory\Utility\Include\utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
