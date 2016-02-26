@@ -19,6 +19,7 @@ typedef unsigned int					UINT32;
 typedef float							float32;
 typedef double							float64;
 
+typedef int8_t							int8;
 typedef int								int32;
 typedef long long						int64;
 typedef unsigned int					uint32;
