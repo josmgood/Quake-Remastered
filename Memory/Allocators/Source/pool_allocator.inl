@@ -1,83 +1,104 @@
 #include "..\Include\pool_allocator.hpp"
 
 template<size_t chunkSize>
-PoolAllocator<chunkSize>::PoolAllocator(size_t chunkCapacity)
-	: _pool(), _front(nullptr), _chunkCapacity(chunkCapacity),
-	_numAllocatedChunks()
+PoolAllocator<chunkSize>::_Chunk::_Chunk(void)
+	: block(new internal::Byte[chunkSize]), next(nullptr), state(_Chunk::STATE::FREE)
 {
-	setExpansionAllowance(true);
-	_pool = new internal::Byte*[chunkCapacity];
-	for (size_t i = 0; i < chunkCapacity; i++)
-	{
-		_pool[i] = new internal::Byte[FULL_CHUNK];
+}
+
+template<size_t chunkSize>
+bool PoolAllocator<chunkSize>::_ChunkPacket::operator!=(const _ChunkPacket& other)
+{
+	return(this->curr != other.curr
+		&& this->prev != other.prev);
+}
+
+template<size_t chunkSize>
+PoolAllocator<chunkSize>::_ChunkPacket::_ChunkPacket(_Chunk* cu, _Chunk* pr)
+	: curr(cu), prev(pr)
+{
+}
+
+template<size_t chunkSize>
+PoolAllocator<chunkSize>::PoolAllocator(size_t capacity, bool allowExpansion)
+	: _front(nullptr), _back(nullptr), _free(nullptr), _capacity(capacity), _numAllocatedChunks(),
+	DEAD_CHUNK_PACKET(nullptr, nullptr)
+{
+	setExpansionAllowance(allowExpansion);
+
+	size_t backPos = capacity - 1;
+	_front = _back = new _Chunk;
+	_Chunk* chunk = _front;
+	for (size_t i = 0; i < capacity; i++)
+	{	
+		_setNext(chunk, new _Chunk);
+		chunk = _getNext(chunk);
+		if (i == backPos)
+		{
+			_back = chunk;
+		}
 	}
-	_front = _pool[0];
 }
 
 template<size_t chunkSize>
 PoolAllocator<chunkSize>::~PoolAllocator(void)
 {
-	destory();
+	destroy();
 }
 
 template<size_t chunkSize>
 Block PoolAllocator<chunkSize>::allocate(void)
 {
-	size_t capacity =	_chunkCapacity;
-	size_t numChunks =	_numAllocatedChunks;
-	size_t size =		FULL_CHUNK;
-	//std::cout << "Num Chunks: " << numChunks << std::endl;
-	if (numChunks++ >= capacity && isAllowingExpansion())
+	size_t allocatedSize = _numAllocatedChunks;
+	size_t capacity = _capacity;
+	if (allocatedSize++ > capacity && isAllowingExpansion())
 	{
-		expand(_chunkCapacity / 2);
+		size_t expanSize = (capacity > 1) ? capacity / 2 : 1;
+		expand(expanSize);
 	}
-	else if(numChunks++ > capacity && !isAllowingExpansion())
+	bool hasFreeChunks = (capacity - allocatedSize > 0);
+	if (hasFreeChunks)
 	{
-		return(DEAD_BLOCK);
+		_ChunkPacket packet = _findFree();
+		if (packet != DEAD_CHUNK_PACKET)
+		{
+			Block block(reinterpret_cast<void*>(packet.curr->block), chunkSize);
+			packet.curr->state = _Chunk::STATE::ALLOCATED;
+			_setNext(_back, packet.curr);
+			_setNext(packet.prev, _getNext(packet.curr));
+			if (_isFree(packet.prev))
+			{
+				_free = packet.prev;
+			}
+			_back = _getNext(_back);
+			_numAllocatedChunks++;
+			return(block);
+		}
 	}
-	Block block(reinterpret_cast<void*>(_front), size);
-	//std::cout << _numAllocatedChunks << std::endl;
-	_numAllocatedChunks++;
-	//_front = _pool[0];
-	_front = _pool[_numAllocatedChunks];
-	return block;
-
-	/*//size_t cap = _chunkCapacity;
-	//size_t numChunks = _numAllocatedChunks;
-	//bool allowExpan = _allowExpansion;
-	//if (numChunks++ > cap && allowExpan)
-	//{
-	//	expand(cap / 2);
-	//}
-	//else if(numChunks++ > cap && !allowExpan)
-	//{
-	//	return(DEAD_BLOCK);
-	//}
-	//internal::Byte* addr = _front;
-	////_getNext(_front);
-	//_front += FULL_CHUNK;//= _getNext(_front);
-	//Block block(reinterpret_cast<void*>(addr + FULL_CHUNK), FULL_CHUNK);
-	//_numAllocatedChunks++;
-	//return(block);*/
+	return(DEAD_BLOCK);
 }
 
 template<size_t chunkSize>
 void PoolAllocator<chunkSize>::deallocate(Block& block)
 {
-	//internal::Byte* freeBlock = ((internal::Byte*)block.address) - CHUNK_HEADER_SIZE;
-	block.free();
-	_numAllocatedChunks--;
-	_front = _pool[0];
-	//_setNext(freeBlock, _front);
+	_ChunkPacket packet = _findChunk(block);
+	if (packet != DEAD_CHUNK_PACKET)
+	{
+		block.free();
+		packet.curr->state = _Chunk::STATE::FREE;
+		_setNext(packet.prev, _getNext(packet.curr));
+		_setNext(packet.curr, _front);
+		_front = packet.curr;
+		_numAllocatedChunks--;
+	}
 }
 
 template<size_t chunkSize>
 bool PoolAllocator<chunkSize>::owns(Block block)
 {
-	size_t counter = 0;
-	for (internal::Byte* itr = _pool[0]; counter < _numAllocatedChunks; itr++, counter++)
+	for (_Chunk* itr = _front; itr; itr = _getNext(itr))
 	{
-		if (itr == block.address)
+		if ((void*)itr->block == block.address)
 		{
 			return(true);
 		}
@@ -88,47 +109,42 @@ bool PoolAllocator<chunkSize>::owns(Block block)
 template<size_t chunkSize>
 void PoolAllocator<chunkSize>::expand(size_t amount)
 {
-	size_t newCapacity = _chunkCapacity + amount;
-	size_t oldCapacity = _chunkCapacity;
-	internal::Byte** newPool = new internal::Byte*[newCapacity];
-	for (size_t i = 0; i < newCapacity; i++)
+	for (size_t i = 0; i < amount; i++)
 	{
-		newPool[i] = new internal::Byte[FULL_CHUNK];
+		_allocateNewChunk();
 	}
-	for (size_t i = 0; i < oldCapacity; i++)
-	{
-		newPool[i] = _pool[i];
-	}
-	_chunkCapacity = newCapacity;
-	_front = (newPool[0] + (_numAllocatedChunks * FULL_CHUNK));
-	_pool = newPool;
 }
 
 template<size_t chunkSize>
 void PoolAllocator<chunkSize>::reset(void)
 {
-	_pool = nullptr;
 	_front = nullptr;
-	_chunkCapacity = 0;
+	_capacity = 0;
 	_numAllocatedChunks = 0;
-	_allowExpansion = true;
 }
 
 template<size_t chunkSize>
-void PoolAllocator<chunkSize>::destory(void)
+void PoolAllocator<chunkSize>::destroy(void)
 {
-	for (size_t i = 0; i < _chunkCapacity; i++)
+	size_t capacity = _capacity;
+	_Chunk* itr = _getNext(_front);
+	for (size_t i = 0; i < capacity; i++)
 	{
-		free(_pool[i]);
+		_Chunk* tmp = itr;
+		if (_getNext(itr))
+		{
+			itr = _getNext(itr);
+		}
+		delete[] tmp->block;
+		delete tmp;
 	}
-	free(_pool);
 	reset();
 }
 
 template<size_t chunkSize>
 size_t PoolAllocator<chunkSize>::getChunkCapacity(void) const
 {
-	return(_chunkCapacity);
+	return(_capacity);
 }
 
 template<size_t chunkSize>
@@ -137,24 +153,66 @@ size_t PoolAllocator<chunkSize>::getNumAllocatedChunks(void) const
 	return(_numAllocatedChunks);
 }
 
-//template<size_t chunkSize>
-//internal::Byte* PoolAllocator<chunkSize>::_getNext(internal::Byte* block)
-//{
-//	internal::Byte** chunkHeader = (internal::Byte**)block;
-//	std::cout << "Block: " << block << std::endl;
-//	std::cout << "Next Block: " << chunkHeader[0] << std::endl;
-//	return chunkHeader[0];
-//}
-//
 template<size_t chunkSize>
-void PoolAllocator<chunkSize>::_setNext(internal::Byte* block, internal::Byte* next)
+typename PoolAllocator<chunkSize>::_Chunk* 
+PoolAllocator<chunkSize>::_getNext(_Chunk* chunk) const
 {
-	internal::Byte** chunkHeader = (internal::Byte**)block;
-	chunkHeader[0] = next;
+	return(chunk->next);
 }
 
 template<size_t chunkSize>
-internal::Byte* PoolAllocator<chunkSize>::_search(void)
+void PoolAllocator<chunkSize>::_setNext(_Chunk* chunk, _Chunk* _next)
 {
+	chunk->next = _next;
+}
 
+template<size_t chunkSize>
+typename PoolAllocator<chunkSize>::_ChunkPacket
+PoolAllocator<chunkSize>::_findFree(void)
+{
+	for (_Chunk* pItr = _front, *cItr = _front;
+		pItr && cItr; 
+		pItr = _getNext(pItr), cItr = _getNext(cItr))
+	{
+		if (_isFree(cItr))
+		{
+			return(_ChunkPacket(cItr, pItr));
+		}
+		cItr = _getNext(cItr);
+	}
+	return(DEAD_CHUNK_PACKET);
+}
+
+template<size_t chunkSize>
+typename PoolAllocator<chunkSize>::_ChunkPacket
+PoolAllocator<chunkSize>::_findChunk(Block& block)
+{
+	for (_Chunk* pItr = _front, *cItr = _front;
+		pItr && cItr;
+		pItr = _getNext(pItr), cItr = _getNext(cItr))
+	{
+		if ((void*)cItr->block == block.address)
+		{
+			return(_ChunkPacket(cItr, pItr));
+		}
+		cItr = _getNext(cItr);
+	}
+	return(DEAD_CHUNK_PACKET);
+}
+
+template<size_t chunkSize>
+bool PoolAllocator<chunkSize>::_isFree(_Chunk* chunk)
+{
+	return(chunk->state == _Chunk::STATE::FREE);
+}
+
+template<size_t chunkSize>
+typename PoolAllocator<chunkSize>::_Chunk*
+PoolAllocator<chunkSize>::_allocateNewChunk(void)
+{
+	_Chunk* newChunk = new _Chunk;
+	_setNext(newChunk, _front);
+	_front = newChunk;
+	_capacity++;
+	return(newChunk);
 }
