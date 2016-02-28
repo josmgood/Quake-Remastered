@@ -6,8 +6,8 @@
 /*Custom Libraries*/
 #include "..\..\..\Core\common.h"
 
-#define ALLOCATED	true
-#define FREE		false
+#define ALLOCATED	1
+#define FREE		0
 
 /*
 *======================================================================
@@ -24,17 +24,18 @@
 */
 struct Block
 {
-	Block				(void* addr, size_t size);
-	Block				(void);
-	void free			(void);
+	Block(void* addr, size_t size);
+	Block();
+	void free();
 
-	operator bool(void) const;
+	operator bool() const;
 
 	void*		address;
 	size_t		size;
 };
 
-#define DEAD_BLOCK Block()
+#define DEAD_BLOCK		Block()
+#define DEAD_BLOCKS		nullptr
 
 /*
 *========================================================================
@@ -48,9 +49,30 @@ struct Block
 class BaseAllocator
 {
 public:
-	virtual ~BaseAllocator		(void) {}
-	virtual void reset			(void) = 0;
-	virtual void destroy		(void) = 0;
+	inline BaseAllocator(size_t capacity);
+	virtual inline ~BaseAllocator() {}
+	virtual inline bool owns(Block block) = 0;
+	virtual inline void reset();
+	virtual inline void destroy() = 0;
+	
+	inline size_t getCapacity() const;
+	inline size_t getAllocatedSize() const;
+	inline size_t getNumAllocations() const;
+protected:
+	inline void _setCapacity(size_t capac);
+	inline void _addCapacity(size_t amount);
+
+	inline void _setAllocationSize(size_t size);
+	inline void _addAllocationSize(size_t amount);
+	inline void _subAllocationSize(size_t amount);
+
+	inline void _setNumAllocations(size_t num);
+	inline void _incrementNumAllocations();
+	inline void _decrementNumAllocations();
+
+	size_t _capacity;
+	size_t _allocatedSize;
+	size_t _numAllocations;
 };
 
 /*
@@ -65,59 +87,49 @@ public:
 */
 namespace alloc
 {
-	class GetAllocateVoid
+	class GetAllocate
 	{
 	public:
-		virtual Block allocate(void) = 0;
+		virtual inline Block* allocate(size_t size = 1) = 0;
 	};
-	class GetAllocateSize
-	{
-	public:
-		virtual Block allocate(size_t size) = 0;
-	};
+
 	class GetAllocateAll
 	{
 	public:
-		virtual bool allocateAll(size_t size) = 0;
+		virtual inline bool allocateAll(size_t size) = 0;
 	};
 
 	class GetDeallocate
 	{
 	public:
-		virtual void deallocate(Block& block) = 0;
+		virtual inline void deallocate(Block* blocks, size_t amount = 1) = 0;
 	};
 
 	class GetDeallocateAll
 	{
 	public:
-		virtual bool deallocateAll(void) = 0;
+		virtual inline bool deallocateAll(void) = 0;
 	};
 
 	class GetReallocate
 	{
 	public:
-		virtual bool reallocate(Block& block, size_t newSize) = 0;
+		virtual inline bool reallocate(Block& block, size_t newSize) = 0;
 	};
 
 	class GetRealloateAll
 	{
 	public:
-		virtual bool reallocateAll(size_t newSize) = 0;
-	};
-
-	class GetOwns
-	{
-	public:
-		virtual bool owns(Block block) = 0;
+		virtual inline bool reallocateAll(size_t newSize) = 0;
 	};
 
 	class GetExpand
 	{
 	public:
-		virtual void expand				(size_t amount) = 0;
+		virtual inline void expand(size_t amount) = 0;
 
-		void setExpansionAllowance		(bool expand) { _allowExpansion = expand; }
-		bool isAllowingExpansion		(void) const { return _allowExpansion; }
+		void inline setExpansionAllowance(bool expand) { _allowExpansion = expand; }
+		bool inline isAllowingExpansion(void) const { return _allowExpansion; }
 	protected:
 		bool _allowExpansion;
 	};
