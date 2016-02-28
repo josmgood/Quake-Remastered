@@ -41,4 +41,9 @@ namespace internal
 	{
 		return(value && (value & (value - 1)) == 0);
 	}
+
+	inline constexpr bool addressMatch(void* one, void* two)
+	{
+		return(one == two);
+	}
 }
