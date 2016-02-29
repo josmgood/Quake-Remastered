@@ -1,17 +1,15 @@
 #include "..\Include\pool_allocator.hpp"
 
 template<typename Type>
-PoolAllocator<Type>::PoolAllocator(size_t numBlocks, bool allowExpansion)
-	: BaseAllocator(sizeof(Type) * numBlocks), _blockSize(sizeof(Type)), 
-	_numBlocks(numBlocks), _blocks(), _flags(numBlocks)
+PoolAllocator<Type>::PoolAllocator(size_t capacity = DEFAULT_ALLOCATOR_CAPACITY, bool canExpand = true)
+	: _capacity(capacity), _canExpand(canExpand), _numAllocations(), _blockSize(sizeof(Type)), _blocks(), _flags(capacity)
 {
-	setExpansionAllowance(allowExpansion);
-	size_t blockSize = _blockSize;
-	_blocks = new Block[numBlocks];
-	for (size_t i = 0; i < numBlocks; i++)
+	size_t maxBlocks = _capacity;
+	_blocks = new Block[maxBlocks];
+	for (size_t i = 0; i < maxBlocks; i++)
 	{
-		void* addrs = new internal::Byte[blockSize];
-		_blocks[i] = Block(addrs, blockSize);
+		Address address = new internal::Byte[_blockSize];
+		_blocks[i] = Block(address, _blockSize);
 	}
 }
 
@@ -24,20 +22,20 @@ PoolAllocator<Type>::~PoolAllocator()
 template<typename Type>
 Block* PoolAllocator<Type>::allocate(size_t amount)
 {
-	size_t capacity = _capacity;
-	size_t allocedSize = _allocatedSize;
-	size_t reqSize = amount * _blockSize;
-	size_t numBlocks = _numBlocks;
-	bool hasEnoughSpace = (allocedSize + reqSize <= capacity);
-	if (!hasEnoughSpace)
+	size_t newAllocSize = _numAllocations + amount;
+	bool hasEnoughSpace = (newAllocSize <= _capacity);
+	if (!hasEnoughSpace && _canExpand)
 	{
-		size_t expandSize = (numBlocks == 1) ? 1 : numBlocks / 2;
+		size_t expandSize = (_numAllocations == 1) ? 1 : _numAllocations / 2;
 		expand(expandSize);
 	}
+	else if (!hasEnoughSpace && !_canExpand)
+	{
+		return(DEAD_BLOCKS);
+	}
 	Block* allocated = new Block[amount];
-	size_t max = _numBlocks;
+	size_t max = _capacity;
 	size_t allocsNeeded = amount;
-	size_t blockSize = _blockSize;
 	for (size_t i = 0, j = 0; i < max && j != allocsNeeded; i++)
 	{
 		if (_isFree(_flags[i]))
@@ -46,13 +44,12 @@ Block* PoolAllocator<Type>::allocate(size_t amount)
 			_flags[i] = ALLOCATED;
 			j++;
 		}
-		if (i == max - 1 && j < allocsNeeded)
+		if (i == max && j < allocsNeeded)
 		{
 			return(DEAD_BLOCKS);
 		}
 	}
 	_incrementNumAllocations();
-	_addAllocationSize(amount * blockSize);
 	return(allocated);
 }
 
@@ -61,19 +58,17 @@ void PoolAllocator<Type>::deallocate(Block* toDealloc, size_t amount)
 {
 	size_t max = _capacity;
 	size_t deallocsNeeded = amount;
-	size_t blockSize = _blockSize;
-	for (size_t i = 0, j = 0; i < max && j != deallocsNeeded; i++)
+	for (size_t i = 0, j = 0; ji < max && j != deallocsNeeded; i++)
 	{
 		if (_isAllocated(_flags[i]))
 		{
-			void* address = _addressAt(i);
-			void* blockAddr = toDealloc[j].address;
-			if (internal::addressMatch(blockAddr, address))
+			Address address = _getAddressAt(i);
+			Address blockAddress = toDealloc[j].address;
+			if (internal::addressMatch(addressMatch(address, blockAddress)))
 			{
 				_flags[i] = FREE;
 				toDealloc[j].free();
 				_decrementNumAllocations();
-				_subAllocationSize(blockSize);
 				j++;
 			}
 		}
@@ -83,61 +78,49 @@ void PoolAllocator<Type>::deallocate(Block* toDealloc, size_t amount)
 template<typename Type>
 void PoolAllocator<Type>::expand(size_t amount)
 {
-	size_t blockSize = _blockSize;
-	size_t newCapacity = _capacity + (amount * blockSize);
-	size_t newNumBlocks = _numBlocks + amount;
 	size_t oldCapacity = _capacity;
-	size_t oldNumBlocks = _numBlocks;
-	Block* newBlocks = new Block[newNumBlocks];
-	internal::BoolSet newFlags(newNumBlocks);
-	for (size_t i = 0, j = 0; i < newNumBlocks; i++)
+	size_t newCapacity = oldCapacity + amount;
+	Block* newBlocks = new Block[newCapacity];
+	internal::BoolSet newFlags(newCapacity);
+	for (size_t i = 0, j = 0; i < newCapacity; i++)
 	{
-		if (j < oldNumBlocks)
+		if (j < oldCapacity)
 		{
 			if (_isAllocated(_flags[j]))
 			{
-				newBlocks[i] = _blocks[j];
+				newBlocks[j] = _blocks[j];
 				newFlags[j] = ALLOCATED;
 			}
 			j++;
 		}
 		else
 		{
-			void* address = new internal::Byte[blockSize];
-			newBlocks[i] = Block(address, blockSize);
+			Address address = new internal::Byte[_blockSize];
+			newBlocks[i] = Block(address, _blockSize);
 		}
 	}
 	_setCapacity(newCapacity);
-	_setNumBlocks(newNumBlocks);
 	_setBlocks(newBlocks);
 	_setFlags(newFlags);
 }
 
 template<typename Type>
-bool PoolAllocator<Type>::owns(Block block)
+bool PoolAllocator<Type>::owns(Block block) const
 {
 	size_t capacity = _capacity;
 	for (size_t i = 0; i < capacity; i++)
 	{
 		if (_isAllocated(_flags[i]))
 		{
-			void* address = _blocks[i].address;
-			void* blockAddress = block.address;
-			if (internal::addressMatch(blockAddress, address))
+			Address address = _getAddressAt(i);
+			Address blockAddress = block.address;
+			if (internal::addressMatch(address, blockAddress))
 			{
 				return(true);
 			}
 		}
 	}
 	return(false);
-}
-
-template<typename Type>
-void PoolAllocator<Type>::reset()
-{
-	BaseAllocator::reset();
-	_blocks = nullptr;
-	_flags.reset();
 }
 
 template<typename Type>
@@ -149,7 +132,28 @@ void PoolAllocator<Type>::destroy()
 		delete[] _blocks[i].address;
 	}
 	delete[] _blocks;
-	reset();
+	_canExpand = true;
+	_setCapacity(0);
+	_setNumAllocations(0);
+	_flags.clear();
+}
+
+template<typename Type>
+bool PoolAllocator<Type>::canExpand() const
+{
+	return(_canExpand);
+}
+
+template<typename Type>
+size_t PoolAllocator<Type>::getCapacity() const
+{
+	return(_capacity);
+}
+
+template<typename Type>
+size_t PoolAllocator<Type>::getNumAllocations() const
+{
+	return(_numAllocations);
 }
 
 template<typename Type>
@@ -159,34 +163,51 @@ size_t PoolAllocator<Type>::getBlockSize() const
 }
 
 template<typename Type>
-size_t PoolAllocator<Type>::getNumBlocks() const
-{
-	return(_numBlocks);
-}
-
-template<typename Type>
-bool PoolAllocator<Type>::_isFree(bool flag)
+bool PoolAllocator<Type>::_isFree(bool flag) const
 {
 	return(flag == FREE);
 }
 
 template<typename Type>
-bool PoolAllocator<Type>::_isAllocated(bool flag)
+bool PoolAllocator<Type>::_isAllocated(bool flag) const
 {
 	return(flag == ALLOCATED);
 }
 
 template<typename Type>
-void* PoolAllocator<Type>::_addressAt(size_t index)
+Address PoolAllocator<Type>::_getAddressAt(size_t index) const
 {
-	return((!_blocks[index]) 
-		? nullptr : _blocks[index].address);
+	return((_blocks[index]) ? _blocks[index].address : nullptr);
 }
 
 template<typename Type>
-void PoolAllocator<Type>::_setNumBlocks(size_t num)
+void PoolAllocator<Type>::_addCapacity(size_t amount)
 {
-	_numBlocks = num;
+	_capacity += amount;
+}
+
+template<typename Type>
+void PoolAllocator<Type>::_setCapacity(size_t capacity)
+{
+	_capacity = capacity;
+}
+
+template<typename Type>
+void PoolAllocator<Type>::_incrementNumAllocations()
+{
+	_numAllocations++;
+}
+
+template<typename Type>
+void PoolAllocator<Type>::_decrementNumAllocations()
+{
+	_numAllocations--;
+}
+
+template<typename Type>
+void PoolAllocator<Type>::_setNumAllocations(size_t num)
+{
+	_numAllocations = num;
 }
 
 template<typename Type>
@@ -196,7 +217,7 @@ void PoolAllocator<Type>::_setBlocks(Block* blocks)
 }
 
 template<typename Type>
-void PoolAllocator<Type>::_setFlags(const internal::BoolSet& flgs)
+void PoolAllocator<Type>::_setFlags(const internal::BoolSet& flags)
 {
-	_flags = flgs;
+	_flags = flags;
 }
