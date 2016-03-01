@@ -6,10 +6,10 @@
 #include <iostream>
 
 /*Custom Library*/
-#include "..\..\common.h"
+#include "..\common.h"
 #include "window.h"
 
-#include "..\..\Container\Include\qstring.h"
+#include "..\..\..\Container\Include\qstring.h"
 
 namespace sys
 {

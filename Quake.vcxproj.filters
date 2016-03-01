@@ -15,110 +15,56 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="core\common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\container\source\qstring.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\game\source\game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="core\game\source\window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="math\mathlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memory\allocators\source\base_allocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memory\allocators\source\linear_allocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="memory\allocators\source\zone_allocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Math\Source\math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Source\common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Source\Game\game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Source\Game\window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\Source\Internal\boolset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="core\utility.inl">
+    <None Include="Container\Source\qarray.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="memory\allocators\source\fallback_allocator.inl">
+    <None Include="Container\Source\qstack.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="memory\allocators\source\pool_allocator.inl">
+    <None Include="Core\Include\utility.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="memory\allocators\source\segregator.inl">
+    <None Include="Memory\Source\Internal\smart_ptr.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Internal\Source\stack.inl">
+    <None Include="Memory\Source\Internal\stack.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Utility\Source\smart_ptr.inl">
+    <None Include="Memory\Source\Allocator\segregator.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Memory\Source\Allocator\pool_allocator.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Memory\Source\Allocator\fallback_allocator.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="core\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\utility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\container\include\list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="core\container\include\qhash_string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="core\container\include\qstring.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\container\include\slist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\exception\error.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\game\include\game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="core\game\include\window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="math\mathlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory\allocators\include\affix_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory\allocators\include\base_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory\allocators\include\fallback_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory\allocators\include\freelist_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory\allocators\include\linear_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory\allocators\include\segregator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="memory\allocators\include\zone_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="memory\internal\include\reallocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Allocators\Include\pool_allocator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Container\Include\qstring.h">
@@ -130,22 +76,79 @@
     <ClInclude Include="Container\Include\qhash_string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Internal\Include\stack.hpp">
+    <ClInclude Include="Container\Include\base.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Internal\Include\traits.h">
+    <ClInclude Include="Container\Include\qvector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Internal\Include\auxiliary.h">
+    <ClInclude Include="Container\Include\qarray.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Container\Include\base.h">
+    <ClInclude Include="Container\Include\qstack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Utility\Include\smart_ptr.hpp">
+    <ClInclude Include="Math\Include\vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Utility\Include\utility.h">
+    <ClInclude Include="Math\Include\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Include\utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Include\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Include\Game\window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Include\Game\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Include\Exception\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\affix_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\base_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\fallback_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\freelist_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\linear_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\pool_allocator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\segregator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\zone_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Internal\utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Internal\traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Internal\stack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Internal\smart_ptr.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Internal\auxiliary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Internal\boolset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

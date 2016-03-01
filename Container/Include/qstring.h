@@ -5,7 +5,7 @@
 #include <string.h>
 
 /*Custom Library*/
-#include "..\..\Memory\Allocators\Include\pool_allocator.hpp"
+#include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
 
 namespace aux
 {
@@ -22,12 +22,12 @@ namespace aux
 class QString
 {
 public:
-	QString(void);
+	QString(void) {};
 	QString(const char* string);
 	QString(char* string);
 	QString(const QString& string);
 
-	~QString(void);
+	~QString(void) {};
 
 private:
 	enum SEARCH_CASE_SENSITIVITY
@@ -52,5 +52,5 @@ private:
 	/*String length*/
 	size_t								_length;
 	/*Memory pool*/
-	PoolAllocator<STRING_CHUNK_SIZE>	_pool;
+	PoolAllocator<char>	_pool;
 };

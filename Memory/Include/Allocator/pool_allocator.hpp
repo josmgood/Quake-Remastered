@@ -8,8 +8,8 @@
 /*Custom Library*/
 #include "base_allocator.h"
 
-#include "..\..\Internal\Include\auxiliary.h"
-#include "..\..\Internal\Include\boolset.h"
+#include "..\Internal\auxiliary.h"
+#include "..\Internal\boolset.h"
 
 //template<typename Type>
 //class PoolAllocator
@@ -87,4 +87,4 @@ private:
 	internal::BoolSet _flags;
 };
 
-#include "..\Source\pool_allocator.inl"
+#include "..\..\Source\Allocator\pool_allocator.inl"

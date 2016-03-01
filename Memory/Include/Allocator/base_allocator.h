@@ -4,7 +4,7 @@
 #include <type_traits>
 
 /*Custom Libraries*/
-#include "..\..\..\Core\common.h"
+#include "..\..\..\Core\Include\common.h"
 
 #define DEFAULT_ALLOCATOR_CAPACITY	512
 

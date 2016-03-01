@@ -1,20 +1,32 @@
 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+
 #include <iostream>
-#include <iterator>
 
-#include <bitset>
-#include <vector>
+#include "Container/Include/base.hpp"
+#include "Container/Include/qstack.hpp"
 
-#include "Container\Include\base.h"
-#include "Memory\Utility\Include\utility.h"
+#include "Math/Include/math.h"
+#include "Math/Include/vector.hpp"
 
-int main(void)
+int main()
 {
-	int* num = new int(100);
-	int* num2 = new int(10000);
-	int* num3 = new int(100000);
-	std::vector<int> nums;
-	nums.
+	glewExperimental = GL_TRUE;
+	glewInit();
+	glfwInit();
+
+	/*PoolAllocator<int> pool(100);
+	Block* blocks = pool.allocate(10);
+	int* nums = (int*)blocks->address;
+	for (size_t i = 0; i < 10; i++)
+	{
+		nums[i] = (int)i * glfwGetTime();
+		std::cout << (void*)nums[i] << std::endl;
+	}*/
+
 
 	std::cin.get();
 	return 0;

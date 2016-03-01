@@ -8,6 +8,9 @@
 /*Custom Library*/
 #include "..\..\Allocators\Include\base_allocator.h"
 
+#define YES		true
+#define NO		false
+
 /*
 * ===========================================================================================
 *
@@ -23,12 +26,6 @@ namespace traits
 {
 	//typedef std::true_type		Yes; ERRORENOUS IMPLEMENTATION
 	//typedef std::false_type		No; Implementation would find the function but not accurately according to method signature
-
-	enum TYPE_CHECK
-	{
-		NO = 0, /*Class has the method*/
-		YES = 1 /*Class does not have the method.*/
-	};
 
 	/*Check if a class has the allocate(size_t) method.*/
 	template<typename T>
@@ -49,7 +46,7 @@ namespace traits
 		/tparam -	reference to the allocate(size_t) method
 		/r -		the method exists in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::allocate>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::allocate>*) { return YES; }
 
 		/*
 		If allocate(size_t) was not found...
@@ -57,14 +54,14 @@ namespace traits
 		/tparam -	reference to the allocate(size_t) method
 		/r -		the method was not found in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return NO; }
 	public:
 		/*
 		The outcome of the search.
 
 		/v - YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================
@@ -88,7 +85,7 @@ namespace traits
 		/tparam -	reference to the allocateAll() method
 		/r -		the method was found in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::allocateAll>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::allocateAll>*) { return YES; }
 
 		/*
 		If allocateAll() was not found...
@@ -96,14 +93,14 @@ namespace traits
 		/tparam -	reference to the allocateAll() method
 		/r			the method was not found in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return No; }
 	public:
 		/*
 		The outcome of the search.
 
 		/v - YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================
@@ -127,7 +124,7 @@ namespace traits
 		/tparam -	reference to the deallocate(Block&) method
 		/r -		the method exists in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::deallocate>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::deallocate>*) { return YES; }
 		
 		/*
 		If deallocate(Block&) was not found...
@@ -135,14 +132,14 @@ namespace traits
 		/tparam -	reference to the deallocate(Block&) method
 		/r -		the method was not found in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return No; }
 	public:
 		/*
 		The outcome of the search.
 		
 		/v - YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================
@@ -165,7 +162,7 @@ namespace traits
 		/tparam -	reference to the deallocateAll() method
 		/r -		the method exists in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::deallocateAll>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::deallocateAll>*) { return YES; }
 		
 		/*
 		If deallocateAll() was not found...
@@ -173,14 +170,14 @@ namespace traits
 		/tparam -	reference to the deallocateAll() method
 		/r -		the method does not exist
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return No; }
 	public:
 		/*
 		The outcome of the search.
 		
 		/v YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================
@@ -204,7 +201,7 @@ namespace traits
 		/tparam -	reference to the reallocate(Block&, size_t) method.
 		/r -		the method exists in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::reallocate>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::reallocate>*) { return YES; }
 		
 		/*
 		If reallocate(Block&, size_t) was not found...
@@ -212,14 +209,14 @@ namespace traits
 		/tparam -	reference to the reallocate(Block&, size_t) method
 		/r -		the method does not exist in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return No; }
 	public:
 		/*
 		The outcome of the search.
 		
 		/v - YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================
@@ -243,7 +240,7 @@ namespace traits
 		/tparam -	reference to the reallocateAll(size_t) method
 		/r -		the method exists in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::reallocateAll>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::reallocateAll>*) { return YES; }
 		
 		/*
 		If reallocate(size_t) was not found...
@@ -251,14 +248,14 @@ namespace traits
 		/tparam -	reference to the reallocate(size_t) method
 		/r -		the method was not found in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return No; }
 	public:
 		/*
 		The outcome of the search.
 		
 		/v - YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================
@@ -282,7 +279,7 @@ namespace traits
 		/tparam -	reference to the owns(Block) method
 		/r -		the method exists in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::owns>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::owns>*) { return YES; }
 		
 		/*
 		If owns(Block) was not found...
@@ -290,14 +287,14 @@ namespace traits
 		/tparam -	reference to the owns(Block) method
 		/r -		the method was not found in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return No; }
 	public:
 		/*
 		The outcome of the search.
 		
 		/r - YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================
@@ -321,7 +318,7 @@ namespace traits
 		/tparam -	reference to the expand(size_t) method
 		/r -		the method exists in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(TCheck<U, &U::owns>*) { return TYPE_CHECK::YES; }
+		template<typename U> static constexpr bool test(TCheck<U, &U::owns>*) { return YES; }
 
 		/*
 		If expand(size_t) was not found...
@@ -329,14 +326,14 @@ namespace traits
 		/tparam -	reference to the expand(size_t) method
 		/r -		the method was not found in the class
 		*/
-		template<typename U> static constexpr TYPE_CHECK test(...) { return TYPE_CHECK::NO; }
+		template<typename U> static constexpr bool test(...) { return No; }
 	public:
 		/*
 		The outcome of the search.
 		
 		/r - YES : NO
 		*/
-		static constexpr TYPE_CHECK value = test<T>(nullptr);
+		static constexpr bool value = test<T>(nullptr);
 	};
 
 	//===========================================================================================================================

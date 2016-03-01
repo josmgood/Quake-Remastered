@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\..\Core\common.h"
+#include "..\..\Core\Include\common.h"
 
 namespace math
 {

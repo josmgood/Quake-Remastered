@@ -1,4 +1,4 @@
-#include "..\Include\game.h"
+#include "..\..\Include\Game\game.h"
 
 namespace sys
 {

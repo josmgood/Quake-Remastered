@@ -5,7 +5,7 @@ namespace internal
 	typedef unsigned char Byte;
 
 	template<typename SizeType = size_t>
-	inline constexpr SizeType align_8_byte(SizeType value)
+	inline constexpr SizeType byteAlign(SizeType value)
 	{
 		return((value + 7) & ~7);
 	}
