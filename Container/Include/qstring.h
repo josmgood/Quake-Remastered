@@ -52,5 +52,5 @@ private:
 	/*String length*/
 	size_t								_length;
 	/*Memory pool*/
-	PoolAllocator<char>	_pool;
+	//PoolAllocator<char>	_pool;
 };

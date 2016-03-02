@@ -133,22 +133,19 @@
     <ClInclude Include="Memory\Include\Allocator\zone_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Internal\utility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Memory\Include\Internal\traits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Memory\Include\Internal\stack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Internal\smart_ptr.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Memory\Include\Internal\auxiliary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Memory\Include\Internal\boolset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\slab_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

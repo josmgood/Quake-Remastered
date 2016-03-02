@@ -12,6 +12,8 @@
 #include "Math/Include/math.h"
 #include "Math/Include/vector.hpp"
 
+#include "Memory/Include/Internal/auxiliary.h"
+
 int main()
 {
 	glewExperimental = GL_TRUE;
@@ -27,6 +29,10 @@ int main()
 		std::cout << (void*)nums[i] << std::endl;
 	}*/
 
+	/*std::cout << mem::internal::alignToPowerofTwo(50) << std::endl;*/
+
+	mem::PoolAllocator<double> pool(sizeof(double) * 10);
+	pool.allocate(33);
 
 	std::cin.get();
 	return 0;
