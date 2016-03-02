@@ -14,8 +14,6 @@ TYPEDEFS
 */
 
 /*=========Redefintions========*/
-typedef unsigned int					UINT32;
-
 typedef float							float32;
 typedef double							float64;
 
@@ -35,9 +33,3 @@ typedef std::vector<std::string>		StringVec;
 
 #define WINDOW_WIDTH		800
 #define WINDOW_HEIGHT		600
-
-namespace com
-{	
-	std::string clipExtension		(const std::string& file);
-	bool checkParm					(const StringVec& args, const std::string& parm);
-}
