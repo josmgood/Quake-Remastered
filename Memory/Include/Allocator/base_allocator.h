@@ -20,33 +20,37 @@
 *
 * void* memory -		memory held within the block
 * size_t size -			size of the block
-* size_t alignment -	alignment to fit perfectly in an allocator
 *
 *======================================================================
 */
 
-typedef void* Address;
-
-struct Block
+namespace mem
 {
-	Block(Address addr, size_t size)
-		: address(addr), size(size) {}
-	Block()
-		: address(nullptr), size() {}
-	void free()
-	{
-		address = nullptr;
-		size = 0;
-	}
+	typedef void* Address;
 
-	operator bool() const
+	struct Block
 	{
-		return(address && size);
-	}
+		Block(Address base, size_t len)
+			: baseAddr(base), freeAddr(nullptr), length(len) {}
+		Block()
+			: baseAddr(nullptr), freeAddr(nullptr), length() {}
+		void free()
+		{
+			freeAddr = nullptr;
+			baseAddr = nullptr;
+			length = 0;
+		}
 
-	Address		address;
-	size_t		size;
-};
+		operator bool() const
+		{
+			return(baseAddr && length);
+		}
+
+		Address		freeAddr;
+		Address		baseAddr;
+		size_t		length;
+	};
+}
 
 #define DEAD_BLOCK		Block()
 #define DEAD_BLOCKS		nullptr
