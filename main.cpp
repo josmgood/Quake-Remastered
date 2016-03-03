@@ -10,7 +10,7 @@
 #include "Container/Include/qstack.hpp"
 
 #include "Math/Include/math.h"
-#include "Math/Include/vector.hpp"
+#include "Math/Include/Vector/vector2.hpp"
 
 #include "Memory/Include/Internal/auxiliary.h"
 

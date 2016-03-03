@@ -137,7 +137,7 @@
     <ClInclude Include="Core\Include\Game\window.h" />
     <ClInclude Include="Core\Include\utility.h" />
     <ClInclude Include="Math\Include\math.h" />
-    <ClInclude Include="Math\Include\vector.hpp" />
+    <ClInclude Include="Math\Include\Vector\vector2.hpp" />
     <ClInclude Include="Memory\Include\Allocator\affix_allocator.h" />
     <ClInclude Include="Memory\Include\Allocator\base_allocator.h" />
     <ClInclude Include="Memory\Include\Allocator\fallback_allocator.h" />
