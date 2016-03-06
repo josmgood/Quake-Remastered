@@ -95,4 +95,4 @@ namespace math
 	typedef Vector3<float64>	Vector3d;
 }
 
-#include "../Source/vector3.inl"
+#include "..\Source\vector3.inl"

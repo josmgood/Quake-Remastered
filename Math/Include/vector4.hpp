@@ -102,4 +102,4 @@ namespace math
 	typedef Vector4<float64>	Vector4d;
 }
 
-#include "../Source/vector4.inl"
+#include "..\Source\vector4.inl"
