@@ -1,18 +1,14 @@
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
+#include <GLM\glm.hpp>
 
 #include <iostream>
 
 #include "Container/Include/base.hpp"
 #include "Container/Include/qstack.hpp"
 
-#include "Math/Include/math.h"
-#include "Math/Include/vector.hpp"
-
-#include "Memory/Include/Internal/auxiliary.h"
+#include "Memory/Include/Allocator/pool_allocator.hpp"
 
 int main()
 {
@@ -31,8 +27,17 @@ int main()
 
 	/*std::cout << mem::internal::alignToPowerofTwo(50) << std::endl;*/
 
-	mem::PoolAllocator<double> pool(sizeof(double) * 10);
-	pool.allocate(33);
+	/*mem::PoolAllocator<double> pool(sizeof(double) * 10);
+	mem::Block block = pool.allocate(32);
+	pool.owns(block);*/
+
+	/*math::Vector3f fVec(100, 15, 400);
+	math::Vector3f fVec2(400, 100, 1);
+	float32 dot = fVec ^ fVec2;
+	std::cout << dot << std::endl;*/
+
+	mem::PoolAllocator<int> pool(sizeof(int) * 100);
+	pool.allocate(sizeof(int) * 10);
 
 	std::cin.get();
 	return 0;

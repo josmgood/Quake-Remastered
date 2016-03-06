@@ -63,13 +63,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Joshua\Documents\Libraries\OpenGL\OpenGL\glew-1.11.0\include;C:\Users\Joshua\Documents\Libraries\OpenGL\glm;C:\Users\Joshua\Documents\Libraries\OpenGL\Simple OpenGL Image Library\src;C:\Users\Joshua\Documents\Libraries\glfw-3.1.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Joshua\Documents\Libraries\OpenGL\OpenGL\glew-1.11.0\lib;C:\Users\Joshua\Documents\Libraries\OpenGL\Simple OpenGL Image Library\projects\VC9\Debug;C:\Users\Joshua\Documents\Libraries\glfw-3.1.2\build\src\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Josh\Dropbox\Libraries\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Josh\Dropbox\Libraries\Source\GL;C:\Users\Josh\Dropbox\Libraries\Source\GLFW;C:\Users\Josh\Dropbox\Libraries\Source\SOIL VS 2015\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Joshua\Documents\Libraries\OpenGL\OpenGL\glew-1.11.0\include;C:\Users\Joshua\Documents\Libraries\OpenGL\glm;C:\Users\Joshua\Documents\Libraries\OpenGL\Simple OpenGL Image Library\src;C:\Users\Joshua\Documents\Libraries\glfw-3.1.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Joshua\Documents\Libraries\OpenGL\OpenGL\glew-1.11.0\lib;C:\Users\Joshua\Documents\Libraries\OpenGL\Simple OpenGL Image Library\projects\VC9\Debug;C:\Users\Joshua\Documents\Libraries\glfw-3.1.2\build\src\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Josh\Dropbox\Libraries\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Josh\Dropbox\Libraries\Source\GL;C:\Users\Josh\Dropbox\Libraries\Source\GLFW;C:\Users\Josh\Dropbox\Libraries\Source\SOIL VS 2015\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,6 +116,9 @@
     <None Include="Container\Source\qarray.inl" />
     <None Include="Container\Source\qstack.inl" />
     <None Include="Core\Include\utility.inl" />
+    <None Include="Math\Source\vector2.inl" />
+    <None Include="Math\Source\vector3.inl" />
+    <None Include="Math\Source\vector4.inl" />
     <None Include="Memory\Source\Allocator\fallback_allocator.inl" />
     <None Include="Memory\Source\Allocator\pool_allocator.inl" />
     <None Include="Memory\Source\Allocator\segregator.inl" />
@@ -137,7 +140,11 @@
     <ClInclude Include="Core\Include\Game\window.h" />
     <ClInclude Include="Core\Include\utility.h" />
     <ClInclude Include="Math\Include\math.h" />
-    <ClInclude Include="Math\Include\vector.hpp" />
+    <ClInclude Include="Math\Include\vector3.h" />
+    <ClInclude Include="Math\Include\vector2.h" />
+    <ClInclude Include="Math\Include\vector2.hpp" />
+    <ClInclude Include="Math\Include\vector3.hpp" />
+    <ClInclude Include="Math\Include\vector4.hpp" />
     <ClInclude Include="Memory\Include\Allocator\affix_allocator.h" />
     <ClInclude Include="Memory\Include\Allocator\base_allocator.h" />
     <ClInclude Include="Memory\Include\Allocator\fallback_allocator.h" />

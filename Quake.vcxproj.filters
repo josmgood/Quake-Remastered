@@ -59,6 +59,15 @@
     <None Include="Memory\Source\Allocator\fallback_allocator.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="Math\Source\vector4.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Math\Source\vector2.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Math\Source\vector3.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\container\include\qhash_string.h">
@@ -86,9 +95,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Container\Include\qstack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Include\vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Math\Include\math.h">
@@ -146,6 +152,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Memory\Include\Allocator\slab_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Include\vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Include\vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Include\vector4.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Include\vector2.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Include\vector3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
