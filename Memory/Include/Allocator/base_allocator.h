@@ -31,9 +31,9 @@ namespace mem
 	struct Block
 	{
 		Block(Address base, size_t len)
-			: baseAddr(base), freeAddr(nullptr), length(len) {}
+			: baseAddr(base), freeAddr(nullptr), nextAddr(nullptr), length(len) {}
 		Block()
-			: baseAddr(nullptr), freeAddr(nullptr), length() {}
+			: baseAddr(nullptr), freeAddr(nullptr), nextAddr(nullptr), length() {}
 		void free()
 		{
 			freeAddr = nullptr;
@@ -45,9 +45,10 @@ namespace mem
 		{
 			return(baseAddr && length);
 		}
-
-		Address		freeAddr;
+		
 		Address		baseAddr;
+		Address		freeAddr;
+		Address		nextAddr;
 		size_t		length;
 	};
 }
