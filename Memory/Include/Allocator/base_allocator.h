@@ -24,34 +24,29 @@
 *======================================================================
 */
 
-namespace mem
+typedef void* Address;
+
+struct Block
 {
-	typedef void* Address;
-
-	struct Block
+	Block(Address base, size_t len)
+		: address(base), length(len) {}
+	Block()
+		: address(nullptr), length() {}
+	void free()
 	{
-		Block(Address base, size_t len)
-			: baseAddr(base), freeAddr(nullptr), nextAddr(nullptr), length(len) {}
-		Block()
-			: baseAddr(nullptr), freeAddr(nullptr), nextAddr(nullptr), length() {}
-		void free()
-		{
-			freeAddr = nullptr;
-			baseAddr = nullptr;
-			length = 0;
-		}
 
-		operator bool() const
-		{
-			return(baseAddr && length);
-		}
-		
-		Address		baseAddr;
-		Address		freeAddr;
-		Address		nextAddr;
-		size_t		length;
-	};
-}
+		address = nullptr;
+		length = 0;
+	}
+
+	operator bool() const
+	{
+		return(address && length);
+	}
+
+	Address		address;
+	size_t		length;
+};
 
 #define DEAD_BLOCK		Block()
 #define DEAD_BLOCKS		nullptr
