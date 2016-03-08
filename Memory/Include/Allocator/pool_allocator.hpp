@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "base_allocator.h"
-#include "freelist_allocator.h"
+#include "freelist_allocator.hpp"
 
 #include "..\Internal\auxiliary.h"
 #include "..\Internal\boolset.h"
