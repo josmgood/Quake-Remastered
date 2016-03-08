@@ -4,6 +4,8 @@
 #include <type_traits>
 
 /*Custom Libraries*/
+#include "..\Internal\boolset.h"
+
 #include "..\..\..\Core\Include\common.h"
 
 #define DEFAULT_ALLOCATOR_CAPACITY	512
@@ -50,3 +52,32 @@ struct Block
 
 #define DEAD_BLOCK		Block()
 #define DEAD_BLOCKS		nullptr
+
+//template<size_t maxSize>
+//struct AddressVolume
+//{
+//	AddressVolume()
+//		: flags(), current(), size(maxSize) {}
+//	void add(Address address)
+//	{
+//		if (!addresses[current])
+//		{
+//			for (size_t i = 0; i < size; i++)
+//			{
+//
+//			}
+//		}
+//		else
+//		{
+//			addresses[current] = address;
+//			current++;
+//		}
+//	}
+//	void remove(Address address);
+//	bool owns(Address address);
+//
+//	Address addresses[maxSize];
+//	internal::BoolSet flags;
+//	size_t current;
+//	size_t size;
+//};
