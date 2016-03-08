@@ -187,7 +187,3 @@
 //}
 
 #include "../../Include/Allocator/pool_allocator.hpp"
-
-//template<typename TBlock>
-//PoolAllocator<TBlock>::PoolAllocator(size_t capacity)
-//	: _freeList(), 
