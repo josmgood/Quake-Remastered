@@ -1,115 +1,113 @@
 #include "..\..\Include\Internal\boolset.h"
 
-namespace mem
+
+namespace internal
 {
-	namespace internal
+	BoolSet::BoolSet(size_t size, bool initial)
+		: _bools(new bool[size]), _size(size)
 	{
-		BoolSet::BoolSet(size_t size, bool initial)
-			: _bools(new bool[size]), _size(size)
+		for (size_t i = 0; i < size; i++)
 		{
-			for (size_t i = 0; i < size; i++)
+			_bools[i] = initial;
+		}
+	}
+
+	BoolSet::~BoolSet()
+	{
+		clear();
+	}
+
+	void BoolSet::reset()
+	{
+		size_t size = _size;
+		for (size_t i = 0; i < size; i++)
+		{
+			if (_bools[i])
 			{
-				_bools[i] = initial;
+				_bools[i] = false;
 			}
 		}
+	}
 
-		BoolSet::~BoolSet()
-		{
-			clear();
-		}
+	void BoolSet::clear()
+	{
+		_size = 0;
+		delete[] _bools;
+	}
 
-		void BoolSet::reset()
+	bool BoolSet::all() const
+	{
+		size_t size = _size;
+		for (size_t i = 0; i < size; i++)
 		{
-			size_t size = _size;
-			for (size_t i = 0; i < size; i++)
+			if (!_bools[i])
 			{
-				if (_bools[i])
-				{
-					_bools[i] = false;
-				}
+				return(false);
 			}
 		}
+		return(true);
+	}
 
-		void BoolSet::clear()
+	bool BoolSet::any() const
+	{
+		size_t size = _size;
+		for (size_t i = 0; i < size; i++)
 		{
-			_size = 0;
-			delete[] _bools;
-		}
-
-		bool BoolSet::all() const
-		{
-			size_t size = _size;
-			for (size_t i = 0; i < size; i++)
+			if (_bools[i])
 			{
-				if (!_bools[i])
-				{
-					return(false);
-				}
+				return(true);
 			}
-			return(true);
 		}
+		return(false);
+	}
 
-		bool BoolSet::any() const
+	bool BoolSet::none() const
+	{
+		size_t size = _size;
+		for (size_t i = 0; i < size; i++)
 		{
-			size_t size = _size;
-			for (size_t i = 0; i < size; i++)
+			if (_bools[i])
 			{
-				if (_bools[i])
-				{
-					return(true);
-				}
+				return(false);
 			}
-			return(false);
 		}
+		return(true);
+	}
 
-		bool BoolSet::none() const
+	bool& BoolSet::operator[](size_t index) const
+	{
+		return(_bools[index]);
+	}
+
+	void BoolSet::resize(size_t amount)
+	{
+		size_t oldSize = _size;
+		size_t newSize = amount + oldSize;
+		bool* newBools = new bool[newSize];
+		for (size_t i = 0; i < oldSize; i++)
 		{
-			size_t size = _size;
-			for (size_t i = 0; i < size; i++)
+			newBools[i] = _bools[i];
+		}
+		_bools = newBools;
+		_size = newSize;
+	}
+
+	size_t BoolSet::count() const
+	{
+		size_t count = 0;
+		size_t size = _size;
+		for (size_t i = 0; i < size; i++)
+		{
+			if (_bools[i])
 			{
-				if (_bools[i])
-				{
-					return(false);
-				}
+				count++;
 			}
-			return(true);
 		}
+		return(count);
+	}
 
-		bool& BoolSet::operator[](size_t index) const
-		{
-			return(_bools[index]);
-		}
-
-		void BoolSet::resize(size_t amount)
-		{
-			size_t oldSize = _size;
-			size_t newSize = amount + oldSize;
-			bool* newBools = new bool[newSize];
-			for (size_t i = 0; i < oldSize; i++)
-			{
-				newBools[i] = _bools[i];
-			}
-			_bools = newBools;
-			_size = newSize;
-		}
-
-		size_t BoolSet::count() const
-		{
-			size_t count = 0;
-			size_t size = _size;
-			for (size_t i = 0; i < size; i++)
-			{
-				if (_bools[i])
-				{
-					count++;
-				}
-			}
-			return(count);
-		}
-
-		size_t BoolSet::getSize() const
-		{
-			return(_size);
-		}
+	size_t BoolSet::getSize() const
+	{
+		return(_size);
 	}
 }
