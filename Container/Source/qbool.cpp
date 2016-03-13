@@ -45,11 +45,6 @@ void QBool::operator=(bool b)
 	_bool = b;
 }
 
-//bool QBool::operator==(const QBool& qbool) const
-//{
-//	return(_bool == qbool._bool);
-//}
-
 bool QBool::operator!=(const QBool& qbool) const
 {
 	return(_bool != qbool._bool);
