@@ -7,11 +7,13 @@
 #include "..\Internal\boolset.h"
 
 #include "..\..\..\Core\Include\common.h"
+#include "..\..\..\Container\Include\qbool.h"
 
 #define DEFAULT_ALLOCATOR_CAPACITY	512
 
 #define ALLOCATED	1
 #define FREE		0
+#define UNALLOCATED	0
 
 /*
 *======================================================================
@@ -26,32 +28,29 @@
 *======================================================================
 */
 
-typedef void* Address;
-
 struct Block
 {
-	Block(Address base, size_t len)
-		: address(base), length(len) {}
+	Block(void* mem, size_t len)
+		: memory(mem), length(len) {}
 	Block()
-		: address(nullptr), length() {}
+		: memory(nullptr), length() {}
+
 	void free()
 	{
-
-		address = nullptr;
+		memory = nullptr;
 		length = 0;
 	}
 
 	operator bool() const
 	{
-		return(address && length);
+		return(memory && length);
 	}
 
-	Address		address;
+	void*		memory;
 	size_t		length;
 };
 
-#define DEAD_BLOCK		Block()
-#define DEAD_BLOCKS		nullptr
+#define UNALLOCATED_BLOCK		Block()
 
 //template<size_t maxSize>
 //struct AddressVolume
@@ -74,10 +73,10 @@ struct Block
 //		}
 //	}
 //	void remove(Address address);
-//	bool owns(Address address);
+//	QBool owns(Address address);
 //
 //	Address addresses[maxSize];
-//	internal::BoolSet flags;
+//	internal::QBoolSet flags;
 //	size_t current;
 //	size_t size;
 //};
