@@ -59,4 +59,13 @@ namespace internal
 	{
 		return(one == two);
 	}
+
+	template<typename Ptr>
+	inline void copy(Ptr base, size_t buffer, Ptr dest)
+	{
+		for (size_t i = 0; i < buffer; i++)
+		{
+			dest[i] = base[i];
+		}
+	}
 }
