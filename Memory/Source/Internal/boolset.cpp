@@ -1,19 +1,25 @@
-#include "..\..\Include\Internal\boolset.h"
+#include "..\..\Include\Internal\BoolSet.h"
 
 
 namespace internal
 {
-	BoolSet::BoolSet(size_t size, bool initial)
-		: _bools(new bool[size]), _size(size)
+	BoolSet::BoolSet()
+	{
+	}
+
+	BoolSet::BoolSet(size_t size, QBool initial)
+		: _bools(new QBool[size]), _size(size)
 	{
 		for (size_t i = 0; i < size; i++)
 		{
 			_bools[i] = initial;
 		}
+		std::cout << this << std::endl;
 	}
 
 	BoolSet::~BoolSet()
 	{
+		std::cout << this << std::endl;
 		clear();
 	}
 
@@ -35,55 +41,55 @@ namespace internal
 		delete[] _bools;
 	}
 
-	bool BoolSet::all() const
+	QBool BoolSet::all() const
 	{
 		size_t size = _size;
 		for (size_t i = 0; i < size; i++)
 		{
 			if (!_bools[i])
 			{
-				return(false);
+				return false;
 			}
 		}
-		return(true);
+		return true;
 	}
 
-	bool BoolSet::any() const
+	QBool BoolSet::any() const
 	{
 		size_t size = _size;
 		for (size_t i = 0; i < size; i++)
 		{
 			if (_bools[i])
 			{
-				return(true);
+				return true;
 			}
 		}
-		return(false);
+		return false;
 	}
 
-	bool BoolSet::none() const
+	QBool BoolSet::none() const
 	{
 		size_t size = _size;
 		for (size_t i = 0; i < size; i++)
 		{
 			if (_bools[i])
 			{
-				return(false);
+				return false;
 			}
 		}
-		return(true);
+		return true;
 	}
 
-	bool& BoolSet::operator[](size_t index) const
+	QBool& BoolSet::operator[](size_t index) const
 	{
-		return(_bools[index]);
+		return _bools[index];
 	}
 
 	void BoolSet::resize(size_t amount)
 	{
 		size_t oldSize = _size;
 		size_t newSize = amount + oldSize;
-		bool* newBools = new bool[newSize];
+		QBool* newBools = new QBool[newSize];
 		for (size_t i = 0; i < oldSize; i++)
 		{
 			newBools[i] = _bools[i];
@@ -103,11 +109,11 @@ namespace internal
 				count++;
 			}
 		}
-		return(count);
+		return count;
 	}
 
 	size_t BoolSet::getSize() const
 	{
-		return(_size);
+		return _size;
 	}
 }
