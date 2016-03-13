@@ -2,6 +2,8 @@
 
 #include "base_allocator.h"
 
+#include "..\..\..\Container\Include\qbool.h"
+
 class MAllocator
 {
 public:
