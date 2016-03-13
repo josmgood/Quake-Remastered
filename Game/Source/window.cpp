@@ -1,4 +1,4 @@
-#include "..\..\Include\Game\window.h"
+#include "..\Include\window.h"
 
 /*
 ==================================

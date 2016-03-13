@@ -1,4 +1,4 @@
-#include "..\..\Include\Game\game.h"
+#include "..\Include\game.h"
 
 namespace sys
 {
@@ -17,18 +17,6 @@ namespace sys
 		}
 		return vec;
 	}
-}
-
-/*
-==================================
-
-CVAR
-
-==================================
-*/
-Cvar::Cvar(Game* gme)
-	: game(gme)
-{
 }
 
 /*

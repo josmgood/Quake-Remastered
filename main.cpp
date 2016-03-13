@@ -7,9 +7,16 @@
 
 #include "Container/Include/base.hpp"
 #include "Container/Include/qstack.hpp"
+#include "Container/Include/qarray.hpp"
+#include "Container/Include/qforward_list.hpp"
+#include "Container/Include/qstring.hpp"
 
 #include "Math/Include/math.h"
-#include "Math/Include/vector.hpp"
+#include "Math/Include/vector2.hpp"
+
+#include "Memory/Include/Allocator/pool_allocator.hpp"
+
+#include "Auxiliary/Include/string_aux.h"
 
 int main()
 {
@@ -17,29 +24,11 @@ int main()
 	glewInit();
 	glfwInit();
 
-	/*PoolAllocator<int> pool(100);
-	Block* blocks = pool.allocate(10);
-	int* nums = (int*)blocks->address;
-	for (size_t i = 0; i < 10; i++)
-	{
-		nums[i] = (int)i * glfwGetTime();
-		std::cout << (void*)nums[i] << std::endl;
-	}*/
-
-	/*std::cout << mem::internal::alignToPowerofTwo(50) << std::endl;*/
-
-	/*mem::PoolAllocator<double> pool(sizeof(double) * 10);
-	mem::Block block = pool.allocate(32);
-	pool.owns(block);*/
-
-	/*math::Vector3f fVec(100, 15, 400);
-	math::Vector3f fVec2(400, 100, 1);
-	float32 dot = fVec ^ fVec2;
-	std::cout << dot << std::endl;*/
-
-	mem::PoolAllocator<int> pool(sizeof(int) * 100);
-	pool.allocate(sizeof(int) * 10);
-
+	char* str = "hello";
+	char* dest = new char[qStrLen(str)];
+	qStrCpy(str, dest, 3);
+	qStrPrint(dest);
+	
 	std::cin.get();
 	return 0;
 }

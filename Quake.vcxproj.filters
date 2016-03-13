@@ -21,16 +21,25 @@
     <ClCompile Include="Math\Source\math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Source\common.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Source\Game\game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Source\Game\window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Memory\Source\Internal\boolset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Container\Source\qbool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\Source\Allocator\mallocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\Source\Allocator\null_allocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Source\window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Source\game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Auxiliary\Source\string_aux.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,9 +48,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="Container\Source\qstack.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="Core\Include\utility.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="Memory\Source\Internal\smart_ptr.inl">
@@ -68,15 +74,27 @@
     <None Include="Math\Source\vector3.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="Memory\Source\Allocator\freelist.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Memory\Source\Allocator\lax_freelist.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Memory\Source\Internal\batch_queue.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Container\Source\base.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="Container\Source\qstring.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\container\include\qhash_string.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="memory\internal\include\reallocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Include\qstring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Container\Include\qforward_list.hpp">
@@ -100,21 +118,6 @@
     <ClInclude Include="Math\Include\math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Include\utility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Include\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Include\Game\window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Include\Game\game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Include\Exception\error.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Memory\Include\Allocator\affix_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -124,9 +127,6 @@
     <ClInclude Include="Memory\Include\Allocator\fallback_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\freelist_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Memory\Include\Allocator\linear_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -134,9 +134,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Memory\Include\Allocator\segregator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\zone_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Memory\Include\Internal\traits.h">
@@ -152,6 +149,51 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Memory\Include\Allocator\slab_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Include\vector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\Include\qbool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\freelist.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\lax_freelist.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\mallocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Allocator\null_allocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO\Include\file.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\Include\qarraylist.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\Include\qstring.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Include\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Include\window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Auxiliary\Include\string_aux.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Include\Internal\batch_queue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

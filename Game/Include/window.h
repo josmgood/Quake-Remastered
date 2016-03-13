@@ -9,7 +9,7 @@
 #include <string>
 
 /*Custom Library*/
-#include "..\common.h"
+#include "..\..\common.h"
 
 /*
 ==================================
