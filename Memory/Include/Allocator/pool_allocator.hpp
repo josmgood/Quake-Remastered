@@ -79,7 +79,6 @@ public:
 private:
 	QBool _isFree(size_t index) const;
 	QBool _isAllocated(size_t index) const;
-	QBool _isUnallocated(size_t index) const;
 
 	Block& _findBlock(QBool flag = false);
 

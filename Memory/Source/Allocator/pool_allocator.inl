@@ -111,6 +111,7 @@ PoolAllocator<TBlock>::PoolAllocator(size_t capacity, QBool expandStatus)
 	: _capacity(internal::alignToPowerOfTwo(capacity)),
 	_memoryUsed(),
 	_freeList(_capacity, internal::alignToPowerOfTwo(sizeof(TBlock))),
+	_flags(),
 	_canExpand(expandStatus)
 {
 	_trueSize = sizeof(TBlock);
@@ -120,6 +121,7 @@ PoolAllocator<TBlock>::PoolAllocator(size_t capacity, QBool expandStatus)
 	_memory = new internal::Byte[_numBlocks];
 	_blocks = new Block[_numBlocks];
 	_flags = internal::BoolSet(_numBlocks);
+	std::cout << _flags[0] << std::endl;
 
 	//for (size_t i = 0; i < _numBlocks; i++)
 	//{
@@ -209,21 +211,13 @@ void PoolAllocator<TBlock>::setExpandProtocol(QBool protocol)
 template<typename TBlock>
 QBool PoolAllocator<TBlock>::_isFree(size_t index) const
 {
-	return _flags[index] == FREE && 
-		_blocks[index] != UNALLOCATED_BLOCK;
+	return _flags[index] == FREE;
 }
 
 template<typename TBlock>
 QBool PoolAllocator<TBlock>::_isAllocated(size_t index) const
 {
-	return _flags[index] == ALLOCATED && 
-		_blocks[index] != UNALLOCATED_BLOCK;
-}
-
-template<typename TBlock>
-QBool PoolAllocator<TBlock>::_isUnallocated(size_t index) const
-{
-	return _blocks[index] == UNALLOCATED_BLOCK;
+	return _flags[index] == ALLOCATED;
 }
 
 template<typename TBlock>
@@ -233,16 +227,16 @@ Block& PoolAllocator<TBlock>::_findBlock(QBool flag)
 	{
 		for (size_t i = 0; i < _numBlocks; i++)
 		{
-			if (_isUnallocated(i))
-			{
-				std::cout << "Unallocated" << std::endl;
-				size_t blockPos =  i * _blockSize;
-				internal::Byte* bytePos = _memory;
-				bytePos += blockPos;
-				Block block(bytePos, _blockSize);
-				_flags[i] = ALLOCATED;
-				return block;
-			}
+			//if (_isUnallocated(i))
+			//{
+			//	std::cout << "Unallocated" << std::endl;
+			//	size_t blockPos =  i * _blockSize;
+			//	internal::Byte* bytePos = _memory;
+			//	bytePos += blockPos;
+			//	Block block(bytePos, _blockSize);
+			//	_flags[i] = ALLOCATED;
+			//	return block;
+			//}
 			if (_isFree(i))
 			{
 				std::cout << "Free" << std::endl;
