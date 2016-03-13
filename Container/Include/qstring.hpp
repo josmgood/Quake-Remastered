@@ -1,24 +1,12 @@
 #pragma once
 
-/*Standard Library*/
 #include <iostream>
-#include <string.h>
 
-/*Custom Library*/
 #include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
 
-namespace aux
-{
-	size_t qStrLen			(const char* string);
-	size_t qStrLen			(const char* string, size_t buffer);
-	void qStrCpy			(const char* src, char* dest, size_t buffer);
-	bool qStrCmp			(const char* s1, const char* s2);
-	bool qStrCmp			(const char* s1, const char* s2, size_t buffer);
-}
-
-#define STRING_CHUNK_SIZE			sizeof(char*)
 #define DEFAULT_STRING_CAPACITY		32
 
+template<typename TAllocator = PoolAllocator<char>>
 class QString
 {
 public:
@@ -32,7 +20,7 @@ public:
 private:
 	enum SEARCH_CASE_SENSITIVITY
 	{
-		/*Characters must have eact casing*/
+		/*Characters must have exact casing*/
 		SENSITIVE,
 		/*Character casing is irrelevant.*/
 		UNSENSITIVE
@@ -54,3 +42,5 @@ private:
 	/*Memory pool*/
 	//PoolAllocator<char>	_pool;
 };
+
+#include "..\Source\qstring.inl"

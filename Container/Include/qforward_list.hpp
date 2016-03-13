@@ -4,9 +4,9 @@
 #include <iostream>
 
 /*Custom Library*/
-#include "..\Base\Include\base.hpp"
+#include "base.hpp"
 
-#include "..\..\Memory\Allocators\Include\pool_allocator.hpp"
+#include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
 
 //template<typename T>
 //class QForwardList
@@ -53,26 +53,22 @@
 //	PoolAllocator<sizeof(Node)>		_pool;
 //};
 
+
 template<typename Type>
+struct ForwardNode
+{
+	Type data;
+	ForwardNode* next;
+};
+
+template<typename Type,
+	typename TAllocator = PoolAllocator<ForwardNode<Type>>>
 class QForwardList
-	: public QLinearContainer<Type, ForwardIterator<Type>, PoolAllocator>
+	: public QAuxiliary<Type, TAllocator>
 {
 public:
-	QForwardList(size_t capacity);
-	QForwardList();
-	virtual ~QForwardList() override;
+	QForwardList(size_t maxSize, ConstReference value);
 
-	virtual void clear() override;
-	virtual bool isEmpty() const override;
-
-	virtual void insert(const Reference value, ForwardIterator& next) override;
-	virtual void append(const Reference value, ForwardIterator& prev) override;
-	virtual void swap(ForwardIterator& one, ForwardIterator& two) override;
-	virtual void erase(ForwardIterator& itr) override;
-
-	Iterator& beforeBegin() override;
-	virtual const Iterator& begin() override;
-	virtual const Iterator& end() override;
-}
+};
 
 //#include "..\Source\qforward_list.inl"
