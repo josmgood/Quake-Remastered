@@ -1,5 +1,4 @@
-#include "..\..\Include\Internal\BoolSet.h"
-
+#include "..\..\Include\Internal\boolset.h"
 
 namespace internal
 {
