@@ -245,16 +245,33 @@ public:
 #define DEFAULT_CONTAINER_SIZE 16
 
 template<typename Type,
-	typename TAllocator,
-	typename TIterator>
-struct QContainerDefs
+	typename TAllocator>
+//	typename TIterator>
+class QAuxiliary
 {
+public:
 	typedef Type					Value;
 	typedef Type&					Reference;
+	typedef const Type&				ConstReference;
 	typedef Type*					Pointer;
 	typedef TAllocator				Allocator;
-	typedef TIterator				Iterator;
-	typedef TIterator				ConstIterator;
+	//typedef TIterator				Iterator;
+	//typedef TIterator				ConstIterator;
+
+	QAuxiliary(size_t maxSize = DEFAULT_CONTAINER_SIZE);
+
+	bool isEmpty() const;
+	bool isFull() const;
+
+	size_t getSize() const;
+	size_t getMaxSize() const;
+protected:
+	void _incrementSize();
+	void _decrementSize();
+
+	Allocator _allocator;
+	size_t _size;
+	size_t _maxSize;
 };
 
 template<typename Type,
@@ -324,13 +341,15 @@ template<typename Type,
 class Arrayable
 {
 public:
+	typedef Pointer Array;
+
 	Arrayable(size_t size = DEFAULT_CONTAINER_SIZE)
 		: _array(new Value[size]) {}
 
 	virtual Reference operator[](Index index) = 0;
 	virtual Reference at(Index index) = 0;
 protected:
-	Pointer _array;
+	Array _array;
 };
 
 template<typename TNode>
@@ -370,6 +389,8 @@ template<typename Type,
 class Stackable
 {
 public:
+	typedef Pointer Stack;
+
 	Stackable()
 		: _stack() {}
 	virtual ConstReference getTop() const = 0;
@@ -378,7 +399,7 @@ public:
 protected:
 	void _setStack(Pointer stack) { _stack = stack; }
 
-	Pointer _stack;
+	Stack _stack;
 };
 
 template<typename Type>
@@ -388,3 +409,5 @@ public:
 	virtual void resize(size_t amount) = 0;
 	virtual void reserve(size_t amount) = 0;
 };
+
+#include "..\Source\base.inl"
