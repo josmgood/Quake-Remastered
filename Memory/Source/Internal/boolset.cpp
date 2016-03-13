@@ -14,17 +14,16 @@ namespace internal
 		{
 			_bools[i] = initial;
 		}
-		std::cout << this << std::endl;
 	}
 
 	BoolSet::BoolSet(const BoolSet& bSet)
-		: _bools(bSet._bools), _size(bSet._size)
+		: _bools(new QBool[bSet._size]), _size(bSet._size)
 	{	
+		*this = bSet;
 	}
 
 	BoolSet::~BoolSet()
 	{
-		std::cout << this << std::endl;
 		clear();
 	}
 
@@ -83,6 +82,14 @@ namespace internal
 			}
 		}
 		return true;
+	}
+
+	void BoolSet::operator=(const BoolSet& bSet)
+	{
+		_size = bSet._size;
+		_bools = new QBool[_size];
+		//std::copy(bSet._bools, bSet._bools + _size, _bools);
+		internal::copy(bSet._bools, _size, _bools);
 	}
 
 	QBool& BoolSet::operator[](size_t index) const

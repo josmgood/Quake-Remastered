@@ -1,5 +1,9 @@
 #pragma once
 
+#include <algorithm>
+
+#include "auxiliary.h"
+
 #include "..\..\..\Container\Include\qbool.h"
 
 namespace internal
@@ -19,6 +23,7 @@ namespace internal
 		QBool any() const;
 		QBool none() const;
 
+		void operator=(const BoolSet& bSet);
 		QBool& operator[](size_t index) const;
 		void resize(size_t amount);
 
