@@ -22,6 +22,7 @@ public:
 	bool operator!=(const QBool& qbool) const;
 	bool operator<(const QBool& qbool) const;
 	bool operator>(const QBool& qbool) const;
+	std::ostream& operator<<(std::ostream& os);
 
 	std::string toString();
 private:

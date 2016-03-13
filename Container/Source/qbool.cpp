@@ -65,6 +65,11 @@ bool QBool::operator>(const QBool& qbool) const
 	return(_bool > qbool._bool);
 }
 
+std::ostream& QBool::operator<<(std::ostream& os)
+{
+	return os << _bool;
+}
+
 std::string QBool::toString()
 {
 	switch (_bool)
