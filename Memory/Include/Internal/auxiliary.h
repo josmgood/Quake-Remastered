@@ -55,7 +55,7 @@ namespace internal
 		return(n);
 	}
 
-	inline constexpr bool addressMatch(void* one, void* two)
+	inline constexpr bool memoryMatch(void* one, void* two)
 	{
 		return(one == two);
 	}
