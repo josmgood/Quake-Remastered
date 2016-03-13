@@ -7,7 +7,7 @@
 #include "..\Internal\traits.h"
 
 #include "..\..\..\Container\Include\qbool.h"
-#include "..\..\..\Core\Include\common.h"
+#include "..\..\..\common.h"
 
 /*Batching is incorrect. Make freelist weave many blocks into one block*/
 
@@ -49,6 +49,18 @@ private:
 	size_t _blockSize;
 	size_t _numNodes;
 	size_t _memoryUsed;
+
+	FreeList(FreeList&) = delete;
+	FreeList(const FreeList&) = delete;
+	FreeList(FreeList&&) = delete;
+	FreeList operator=(FreeList&) = delete;
+	FreeList& operator=(const FreeList&) = delete;
+	FreeList* operator&() = delete;
+
+	void* operator new(size_t) = delete;
+	void* operator new[](size_t) = delete;
+	void operator delete(void*) = delete;
+	void operator delete[](void*) = delete;
 };
 
 #include "..\..\Source\Allocator\freelist.inl"
