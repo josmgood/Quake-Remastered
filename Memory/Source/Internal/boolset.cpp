@@ -17,6 +17,11 @@ namespace internal
 		std::cout << this << std::endl;
 	}
 
+	BoolSet::BoolSet(const BoolSet& bSet)
+		: _bools(bSet._bools), _size(bSet._size)
+	{	
+	}
+
 	BoolSet::~BoolSet()
 	{
 		std::cout << this << std::endl;

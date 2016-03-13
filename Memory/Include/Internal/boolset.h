@@ -9,6 +9,7 @@ namespace internal
 	public:
 		BoolSet();
 		BoolSet(size_t size, QBool initial = false);
+		BoolSet(const BoolSet& bSet);
 		~BoolSet();
 
 		void reset();
