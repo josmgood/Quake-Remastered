@@ -6,7 +6,7 @@
 /*Custom Libraries*/
 #include "..\Internal\boolset.h"
 
-#include "..\..\..\Core\Include\common.h"
+#include "..\..\..\common.h"
 #include "..\..\..\Container\Include\qbool.h"
 
 #define DEFAULT_ALLOCATOR_CAPACITY	512
