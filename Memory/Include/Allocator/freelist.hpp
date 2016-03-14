@@ -18,13 +18,12 @@ public:
 	{
 		Node* next;
 	};
+	inline FreeList();
 	inline FreeList(size_t capacity, size_t blockSize);
-	inline ~FreeList();
 
-	inline Block allocate();
-	inline void deallocate(Block& block);
-	inline QBool owns(Block block);
-	inline void destroy();
+	inline void allocate(void* memory);
+	inline Block deallocate();
+	inline QBool owns(Block block) const;
 
 	inline QBool isFull() const;
 	inline QBool hasFreeMemory() const;
@@ -32,6 +31,7 @@ public:
 	inline size_t getCapacity() const;
 	inline size_t getNumNodes() const;
 	inline size_t getMemoryUsed() const;
+	inline size_t getBlockSize() const;
 private:
 	inline Node* _getNext(Node* current);
 	inline void _setNext(Node* current, Node* next);

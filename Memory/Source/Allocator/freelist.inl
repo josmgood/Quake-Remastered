@@ -1,61 +1,53 @@
 #include "..\..\Include\Allocator\freelist.hpp"
 
-FreeList::FreeList(size_t capacity,size_t blockSize)
-	: _root(nullptr), 
-	_capacity(internal::alignToPowerOfTwo(capacity)),
-	_blockSize(internal::alignToPowerOfTwo(blockSize)), 
-	_numNodes(), 
+FreeList::FreeList()
+	: _root(nullptr),
+	_capacity(),
+	_blockSize(),
+	_numNodes(),
 	_memoryUsed()
 {
 }
 
-FreeList::~FreeList()
+FreeList::FreeList(size_t capacity,size_t blockSize)
+	: _root(nullptr), 
+	_numNodes(), 
+	_memoryUsed()
 {
-	destroy();
+	_blockSize = internal::alignToPowerOfTwo(blockSize);
+	_capacity = internal::alignToPowerOfTwo(capacity) * _blockSize;
 }
 
-Block FreeList::allocate()
+void FreeList::allocate(void* memory)
 {
-	if (hasFreeMemory())
+	if (!isFull())
 	{
-		Block block(_root, _blockSize);
+		//Block block(memory, _blockSize);
+		Node* node = static_cast<Node*>(memory);
+		std::cout << (void*)node << std::endl;
+		_setNext(node, _root);
+		_root = node;
+		_incrementNumNodes();
+		_addMemoryUsed();
+	}
+}
+
+Block FreeList::deallocate()
+{
+	if (hasFreeMemory() && _memoryUsed + _blockSize <= _capacity)
+	{
+		Block* block = reinterpret_cast<Block*>(_root);
 		_root = _getNext(_root);
 		_decrementNumNodes();
 		_subtractMemoryUsed();
-		return(block);
+		return *block;
 	}
-	return(UNALLOCATED_BLOCK);
+	return UNALLOCATED_BLOCK;
 }
 
-void FreeList::deallocate(Block& block)
-{
-	size_t length = block.length;
-	if (block)
-	{
-		if (_memoryUsed + length <= _capacity)
-		{
-			Node* node = _blockToNode(block);
-			_setNext(node, _root);
-			_root = node;
-			_incrementNumNodes();
-			_addMemoryUsed();
-		}
-	}
-}
-
-QBool FreeList::owns(Block block)
+QBool FreeList::owns(Block block) const
 {
 	return block.length == _blockSize;
-}
-
-void FreeList::destroy()
-{
-	for (size_t i = 0; i < _numNodes; i++)
-	{
-		Node* node = _root;
-		_root = _getNext(_root);
-		delete node;
-	}
 }
 
 QBool FreeList::isFull() const
@@ -81,6 +73,11 @@ size_t FreeList::getNumNodes() const
 size_t FreeList::getMemoryUsed() const
 {
 	return _memoryUsed;
+}
+
+size_t FreeList::getBlockSize() const
+{
+	return _blockSize;
 }
 
 FreeList::Node* FreeList::_getNext(Node* current)
