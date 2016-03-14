@@ -51,6 +51,7 @@ struct Block
 };
 
 #define UNALLOCATED_BLOCK		Block()
+#define UNALLOCATED_BLOCKS		nullptr
 
 //template<size_t maxSize>
 //struct AddressVolume
