@@ -51,6 +51,28 @@ void qStrCpy(const char* src, char* dest, size_t buffer)
 	}
 }
 
+char* qStrCat(const char* A, const char* B)
+{
+	size_t len = qStrLen(A) + qStrLen(B);
+	char* str = new char[len];
+	char* c = str;
+	while (!*A)
+	{
+		*c = *A;
+
+		A++;
+		c++;
+	}
+	while (!*B)
+	{
+		*c = *B;
+
+		B++;
+		c++;
+	}
+	return str;
+}
+
 QBool qStrCmp(const char* A, const char* B)
 {
 	while (true)
@@ -115,7 +137,7 @@ QBool qStrFind(const char* string, char ch, size_t buffer)
 	return false;
 }
 
-const char* qStrConstChar(const char* string, char ch)
+const char* qStrConstChr(const char* string, char ch)
 {
 	for (const char* c = string; *c; c++)
 	{
@@ -127,7 +149,7 @@ const char* qStrConstChar(const char* string, char ch)
 	return nullptr;
 }
 
-const char* qStrConstChar(const char* string, char ch, size_t buffer)
+const char* qStrConstChr(const char* string, char ch, size_t buffer)
 {
 	for (const char* c = string; *c && buffer--; c++)
 	{
