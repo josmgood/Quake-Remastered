@@ -257,21 +257,6 @@ public:
 	typedef TAllocator				Allocator;
 	//typedef TIterator				Iterator;
 	//typedef TIterator				ConstIterator;
-
-	QAuxiliary(size_t maxSize = DEFAULT_CONTAINER_SIZE);
-
-	bool isEmpty() const;
-	bool isFull() const;
-
-	size_t getSize() const;
-	size_t getMaxSize() const;
-protected:
-	void _incrementSize();
-	void _decrementSize();
-
-	Allocator _allocator;
-	size_t _size;
-	size_t _maxSize;
 };
 
 template<typename Type,

@@ -45,24 +45,24 @@ public:
 	typedef Pointer Array;
 	typedef Value Node;
 
-	QArray(size_t maxSize = DEFAULT_CONTAINER_SIZE, ConstReference initial = Value());
-	~QArray();
+	inline QArray(size_t maxSize = DEFAULT_CONTAINER_SIZE, ConstReference initial = Value());
+	inline ~QArray();
 
-	void pushFront(ConstReference value);
-	void pushBack(ConstReference value);
+	inline void pushFront(ConstReference value);
+	inline void pushBack(ConstReference value);
 
-	void setFront(ConstReference value);
-	void setBack(ConstReference value);
+	inline void setFront(ConstReference value);
+	inline void setBack(ConstReference value);
 
-	void popFront();
-	void popBack();
+	inline void popFront();
+	inline void popBack();
 
-	ConstReference getFront() const;
-	ConstReference getBack() const;
+	inline ConstReference getFront() const;
+	inline ConstReference getBack() const;
 
-	size_t find(ConstReference value);
-	bool owns(ConstReference value);
-	void clear(size_t index);
+	inline size_t find(ConstReference value);
+	inline bool owns(ConstReference value);
+	inline void clear(size_t index);
 	void clear();
 	void swap(QArray& other);
 	void pack();
@@ -72,8 +72,13 @@ public:
 	void set(size_t index, ConstReference value);
 
 	std::ostream& operator<<(std::ostream& os);
+
+	size_t getSize() const;
+	size_t getMaxSize() const;
 private:
 	Array _array;
+	size_t _size;
+	size_t _maxSize;
 	size_t _back;
 };
 
