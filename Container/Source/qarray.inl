@@ -213,3 +213,17 @@ std::ostream& QArray<Type, TAllocator>::operator<<(std::ostream& os)
 {
 	
 }
+
+template<typename Type,
+	typename TAllocator>
+size_t QArray<Type, TAllocator>::getSize() const
+{
+	return _size;
+}
+
+template<typename Type,
+	typename TAllocator>
+size_t QArray<Type, TAllocator>::getMaxSize() const
+{
+	return _maxSize;
+}
