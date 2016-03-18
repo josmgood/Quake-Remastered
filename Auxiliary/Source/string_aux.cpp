@@ -1,5 +1,10 @@
 #include "..\Include\string_aux.h"
 
+QBool isEmptyChar(char ch)
+{
+	return ch == EMPTY_CHAR;
+}
+
 size_t qStrLen(const char* string)
 {
 	size_t count = 0;
@@ -73,6 +78,58 @@ char* qStrCat(const char* A, const char* B)
 	return str;
 }
 
+QBool qIsAlpha(char ch)
+{
+	return ch >= 65 && ch <= 122;
+}
+
+QBool qIsNumeric(char ch)
+{
+	return ch >= 48 && ch <= 57;
+}
+
+QBool qIsUpper(char ch)
+{
+	return ch >= 65 && ch <= 90;
+}
+
+QBool qIsLower(char ch)
+{
+	return ch >= 97 && ch <= 122;
+}
+
+char qToUpper(char ch)
+{
+	if (qIsLower(ch))
+	{
+		return ch - 32;
+	}
+	return EMPTY_CHAR;
+}
+
+char qToLower(char ch)
+{
+	if (qIsUpper(ch))
+	{
+		return ch + 32;
+	}
+	return EMPTY_CHAR;
+}
+
+int qToInt(char ch)
+{
+	if (qIsNumeric(ch))
+	{
+		return ch - '0';
+	}
+	return -1;
+}
+
+QBool qChrCmp(char A, char B)
+{
+	return A == B;
+}
+
 QBool qStrCmp(const char* A, const char* B)
 {
 	while (true)
@@ -81,7 +138,7 @@ QBool qStrCmp(const char* A, const char* B)
 		{
 			return false;
 		}
-		else if (!*A)
+		else if (!*A || !*B)
 		{
 			return true;
 		}
@@ -101,7 +158,7 @@ QBool qStrCmp(const char* A, const char* B, size_t buffer)
 		{
 			return false;
 		}
-		else if (!*A)
+		else if (!*A || !*B)
 		{
 			return true;
 		}
@@ -111,6 +168,28 @@ QBool qStrCmp(const char* A, const char* B, size_t buffer)
 			B++;
 		}
 	}
+}
+
+QBool qChrCaseCmp(char A, char B)
+{
+	char equalA = qToLower(A);
+	char equalB = qToLower(B);
+	return equalA == equalB;
+}
+
+QBool qStrCaseCmp(const char* A, const char* B)
+{
+	while (true)
+	{
+		if (!*A || !*B )
+		{
+			return false;
+		}
+		else
+		{
+		}
+	}
+	return true;
 }
 
 QBool qStrFind(const char* string, char ch)
