@@ -69,3 +69,5 @@ namespace internal
 		}
 	}
 }
+
+#define BYTE_SIZE sizeof(internal::Byte)
