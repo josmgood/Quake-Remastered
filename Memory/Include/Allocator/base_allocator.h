@@ -1,9 +1,8 @@
 #pragma once
 
-/*Standard Library*/
+#include <string>
 #include <type_traits>
 
-/*Custom Libraries*/
 #include "..\Internal\boolset.h"
 
 #include "..\..\..\common.h"
@@ -53,31 +52,71 @@ struct Block
 #define UNALLOCATED_BLOCK		Block()
 #define UNALLOCATED_BLOCKS		nullptr
 
-//template<size_t maxSize>
-//struct AddressVolume
+struct Batch
+{
+	Batch(Block* blks, size_t sz)
+		: blocks(blks), size(sz) {}
+	Batch(size_t sz)
+		: blocks(new Block[sz]), size(sz) {}
+	Batch()
+		: blocks(nullptr), size() {}
+
+	Block& operator[](size_t index)
+	{
+		return index >= 0 && index <= size ?
+			blocks[index] : UNALLOCATED_BLOCK;
+	}
+
+	operator bool()
+	{
+		return blocks && size;
+	}
+
+	Block* blocks;
+	size_t size;
+};
+
+#define UNALLOCATED_BATCH Batch()
+
+enum ALLOCATION_SIZES
+	: size_t
+{
+	DO_NOT_INIT_SIZE = 0,
+	SMALL_SIZE = 128,
+	MEDIUM_SIZE = 256,
+	DEFAULT_SIZE = 512,
+	LARGE_SIZE = 1024,
+	MAX_SIZE = 4294967295
+};
+
+enum ALLOCATOR_INIT_STATUS
+	: int8
+{
+	NONE = -1,
+	SUCCESS = 0,
+	ALREADY_INITIALIZED = 1,
+	BAD_CAPACITY = 2,
+	BAD_MEMORY = 3,
+	INTERNAL_ERROR = 4
+};
+
+//std::string aisToString(ALLOCATOR_INIT_STATUS status)
 //{
-//	AddressVolume()
-//		: flags(), current(), size(maxSize) {}
-//	void add(Address address)
+//	switch (status)
 //	{
-//		if (!addresses[current])
-//		{
-//			for (size_t i = 0; i < size; i++)
-//			{
-//
-//			}
-//		}
-//		else
-//		{
-//			addresses[current] = address;
-//			current++;
-//		}
+//	case ALLOCATOR_INIT_STATUS::NONE:
+//		return "NONE";
+//	case ALLOCATOR_INIT_STATUS::SUCCESS:
+//		return "SUCCESS";
+//	case ALLOCATOR_INIT_STATUS::ALREADY_INITIALIZED:
+//		return "ALREADY INITIALIZED";
+//	case ALLOCATOR_INIT_STATUS::BAD_CAPACITY:
+//		return "BAD CAPACITY";
+//	case ALLOCATOR_INIT_STATUS::BAD_MEMORY:
+//		return "BAD MEMORY";
+//	case ALLOCATOR_INIT_STATUS::INTERNAL_ERROR:
+//		return "INTERNAL ERROR";
+//	default:
+//		return "NULL STATUS";
 //	}
-//	void remove(Address address);
-//	QBool owns(Address address);
-//
-//	Address addresses[maxSize];
-//	internal::QBoolSet flags;
-//	size_t current;
-//	size_t size;
-//};
+//}
