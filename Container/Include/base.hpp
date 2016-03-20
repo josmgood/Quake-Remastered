@@ -1,5 +1,8 @@
 #pragma once
 
+struct ContigiousIterator;
+struct NodeIterator;
+
 /*
 *==========================================================================
 *
