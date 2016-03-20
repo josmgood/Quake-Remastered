@@ -5,7 +5,7 @@ QBool isEmptyChar(char ch)
 	return ch == EMPTY_CHAR;
 }
 
-size_t qStrLen(const char* string)
+size_t Q_strLen(const char* string)
 {
 	size_t count = 0;
 	const char* c = string;
@@ -17,7 +17,7 @@ size_t qStrLen(const char* string)
 	return count;
 }
 
-size_t qStrLen(const char* string, size_t buffer)
+size_t Q_strLen(const char* string, size_t buffer)
 {
 	size_t count = 0;
 	const char* c = string;
@@ -29,7 +29,7 @@ size_t qStrLen(const char* string, size_t buffer)
 	return count;
 }
 
-void qStrCpy(const char* src, char* dest)
+void Q_strCpy(const char* src, char* dest)
 {
 	while (*src)
 	{
@@ -41,7 +41,7 @@ void qStrCpy(const char* src, char* dest)
 	*dest++ = 0;
 }
 
-void qStrCpy(const char* src, char* dest, size_t buffer)
+void Q_strCpy(const char* src, char* dest, size_t buffer)
 {
 	while (*src && buffer--)
 	{
@@ -56,9 +56,9 @@ void qStrCpy(const char* src, char* dest, size_t buffer)
 	}
 }
 
-char* qStrCat(const char* A, const char* B)
+char* Q_strCat(const char* A, const char* B)
 {
-	size_t len = qStrLen(A) + qStrLen(B);
+	size_t len = Q_strLen(A) + Q_strLen(B);
 	char* str = new char[len];
 	char* c = str;
 	while (!*A)
@@ -78,59 +78,77 @@ char* qStrCat(const char* A, const char* B)
 	return str;
 }
 
-QBool qIsAlpha(char ch)
+QBool Q_isAlpha(char ch)
 {
 	return ch >= 65 && ch <= 122;
 }
 
-QBool qIsNumeric(char ch)
+QBool Q_isNumeric(char ch)
 {
 	return ch >= 48 && ch <= 57;
 }
 
-QBool qIsUpper(char ch)
+QBool Q_isUpper(char ch)
 {
 	return ch >= 65 && ch <= 90;
 }
 
-QBool qIsLower(char ch)
+QBool Q_isLower(char ch)
 {
 	return ch >= 97 && ch <= 122;
 }
 
-char qToUpper(char ch)
+char Q_toUpper(char ch)
 {
-	if (qIsLower(ch))
+	if (Q_isLower(ch))
 	{
 		return ch - 32;
 	}
-	return EMPTY_CHAR;
+	return ch;
 }
 
-char qToLower(char ch)
+char Q_toLower(char ch)
 {
-	if (qIsUpper(ch))
+	if (Q_isUpper(ch))
 	{
 		return ch + 32;
 	}
-	return EMPTY_CHAR;
+	return ch;
 }
 
-int qToInt(char ch)
+int Q_toInt(char ch)
 {
-	if (qIsNumeric(ch))
+	if (Q_isNumeric(ch))
 	{
 		return ch - '0';
 	}
 	return -1;
 }
 
-QBool qChrCmp(char A, char B)
+int Q_toInt(char* string)
+{
+	int num = 0;
+	while (!*string)
+	{
+		if (Q_isNumeric(*string))
+		{
+			num += *string;
+		}
+		else
+		{
+			return -1;
+		}
+		string++;
+	}
+	return num;
+}
+
+QBool Q_chrCmp(char A, char B)
 {
 	return A == B;
 }
 
-QBool qStrCmp(const char* A, const char* B)
+QBool Q_strCmp(const char* A, const char* B)
 {
 	while (true)
 	{
@@ -150,7 +168,7 @@ QBool qStrCmp(const char* A, const char* B)
 	}
 }
 
-QBool qStrCmp(const char* A, const char* B, size_t buffer)
+QBool Q_strCmp(const char* A, const char* B, size_t buffer)
 {
 	while (true)
 	{
@@ -170,29 +188,26 @@ QBool qStrCmp(const char* A, const char* B, size_t buffer)
 	}
 }
 
-QBool qChrCaseCmp(char A, char B)
+QBool Q_chrCaseCmp(char A, char B)
 {
-	char equalA = qToLower(A);
-	char equalB = qToLower(B);
+	char equalA = Q_toLower(A);
+	char equalB = Q_toLower(B);
 	return equalA == equalB;
 }
 
-QBool qStrCaseCmp(const char* A, const char* B)
+QBool Q_strCaseCmp(const char* A, const char* B)
 {
-	while (true)
+	while (!*A || !*B)
 	{
-		if (!*A || !*B )
+		if (!Q_chrCaseCmp(*A, *B))
 		{
 			return false;
-		}
-		else
-		{
 		}
 	}
 	return true;
 }
 
-QBool qStrFind(const char* string, char ch)
+QBool Q_strFind(const char* string, char ch)
 {
 	for (const char* c = string; *c; c++)
 	{
@@ -204,7 +219,7 @@ QBool qStrFind(const char* string, char ch)
 	return false;
 }
 
-QBool qStrFind(const char* string, char ch, size_t buffer)
+QBool Q_strFind(const char* string, char ch, size_t buffer)
 {
 	for (const char* c = string; *c && buffer--; c++)
 	{
@@ -216,7 +231,7 @@ QBool qStrFind(const char* string, char ch, size_t buffer)
 	return false;
 }
 
-const char* qStrConstChr(const char* string, char ch)
+const char* Q_strConstChr(const char* string, char ch)
 {
 	for (const char* c = string; *c; c++)
 	{
@@ -228,7 +243,7 @@ const char* qStrConstChr(const char* string, char ch)
 	return nullptr;
 }
 
-const char* qStrConstChr(const char* string, char ch, size_t buffer)
+const char* Q_strConstChr(const char* string, char ch, size_t buffer)
 {
 	for (const char* c = string; *c && buffer--; c++)
 	{
@@ -240,7 +255,7 @@ const char* qStrConstChr(const char* string, char ch, size_t buffer)
 	return nullptr;
 }
 
-char* qStrChr(char* string, char ch)
+char* Q_strChr(char* string, char ch)
 {
 	for (char* c = string; *c; c++)
 	{
@@ -252,7 +267,7 @@ char* qStrChr(char* string, char ch)
 	return nullptr;
 }
 
-char* qStrChr(char* string, char ch, size_t buffer)
+char* Q_strChr(char* string, char ch, size_t buffer)
 {
 	for (char* c = string; *c && buffer--; c++)
 	{
@@ -264,7 +279,19 @@ char* qStrChr(char* string, char ch, size_t buffer)
 	return nullptr;
 }
 
-void qStrPrint(const char* string)
+void Q_strDelete(char* string, size_t length)
+{
+	if (length == 1)
+	{
+		delete string;
+	}
+	else
+	{
+		delete[] string;
+	}
+}
+
+void Q_strPrint(const char* string)
 {
 	const char* c = string;
 	while (*c)

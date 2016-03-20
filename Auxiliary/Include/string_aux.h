@@ -4,40 +4,49 @@
 
 static char EMPTY_CHAR = ' ';
 
+struct cString
+{
+	char* string;
+	size_t length;
+};
+
 QBool isEmptyChar(char ch);
 
-size_t qStrLen(const char* string);
-size_t qStrLen(const char* string, size_t buffer);
+size_t Q_strLen(const char* string);
+size_t Q_strLen(const char* string, size_t buffer);
 
-void qStrCpy(const char* src, char* dest);
-void qStrCpy(const char* src, char* dest, size_t buffer);
+void Q_strCpy(const char* src, char* dest);
+void Q_strCpy(const char* src, char* dest, size_t buffer);
 
 //char* qStrCat(const char* A, const char* B);
 
-QBool qIsAlpha(char ch);
-QBool qIsNumeric(char ch);
-QBool qIsUpper(char ch);
-QBool qIsLower(char ch);
+QBool Q_isAlpha(char ch);
+QBool Q_isNumeric(char ch);
+QBool Q_isUpper(char ch);
+QBool Q_isLower(char ch);
 
-char qToUpper(char ch);
-char qToLower(char ch);
+char Q_toUpper(char ch);
+char Q_toLower(char ch);
 
-int qToInt(char ch);
+int Q_toInt(char ch);
+int Q_toInt(char* string);
 
-QBool qChrCmp(char A, char B);
-QBool qStrCmp(const char* A, const char* B);
-QBool qStrCmp(const char* A, const char* B, size_t buffer);
-QBool qChrCaseCmp(char A, char B);
-QBool qStrCaseCmp(const char* A, const char* B);
+QBool Q_chrCmp(char A, char B);
+QBool Q_strCmp(const char* A, const char* B);
+QBool Q_strCmp(const char* A, const char* B, size_t buffer);
+QBool Q_chrCaseCmp(char A, char B);
+QBool Q_strCaseCmp(const char* A, const char* B);
 //QBool qStrCaseCmp(const char* A, const char* B, size_t buffer);
 
-QBool qStrFind(const char* string, char ch);
-QBool qStrFind(const char* string, char ch, size_t buffer);
+QBool Q_strFind(const char* string, char ch);
+QBool Q_strFind(const char* string, char ch, size_t buffer);
 
-const char* qStrConstChr(const char* string, char ch);
-const char* qStrConstChr(const char* string, char ch, size_t buffer);
+const char* Q_strConstChr(const char* string, char ch);
+const char* Q_strConstChr(const char* string, char ch, size_t buffer);
 
-char* qStrChr(char* string, char ch);
-char* qStrChr(char* string, char ch, size_t buffer);
+char* Q_strChr(char* string, char ch);
+char* Q_strChr(char* string, char ch, size_t buffer);
 
-void qStrPrint(const char* string);
+void Q_strDelete(char* string, size_t length);
+
+void Q_strPrint(const char* string);
