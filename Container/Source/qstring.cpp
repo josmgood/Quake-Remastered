@@ -1,23 +1,101 @@
 #include "..\Include\qstring.h"
 
-QBool startBeginning(Start start)
+QBool isForward(Direction dir)
 {
-	return start == STRING_SEARCH_STARTING_POINT::BEGINNING;
+	return dir == STR_FORWARD;
 }
 
-QBool startEnding(Start start)
+QBool isBackward(Direction dir)
 {
-	return start == STRING_SEARCH_STARTING_POINT::ENDING;
+	return dir == STR_BACKWARD;
 }
 
 QBool isSensitive(Sensitivity sensitivity)
 {
-	return sensitivity == STRING_SEARCH_CASE_SENSITIVITY::SENSITIVE;
+	return sensitivity == STR_SENSITIVE;
 }
 
 QBool isUnsensitivity(Sensitivity sensitivity)
 {
-	return sensitivity == STRING_SEARCH_CASE_SENSITIVITY::UNSENSITIVE;
+	return sensitivity == STR_UNSENSITIVE;
+}
+
+QString::Iterator::Iterator()
+	: _ptr(nullptr)
+{
+}
+
+QString::Iterator::Iterator(char& ch)
+	: _ptr(&ch)
+{
+}
+
+QString::Iterator::Iterator(char* ch)
+	: _ptr(ch)
+{
+}
+
+QString::Iterator& QString::Iterator::next()
+{
+	Iterator next;
+	next._ptr += sizeof(char);
+	return next;
+}
+
+QString::Iterator& QString::Iterator::prev()
+{
+	Iterator prev;
+	prev._ptr -= sizeof(char);
+	return prev;
+}
+
+char* QString::Iterator::ptr() const
+{
+	return _ptr;
+}
+
+char& QString::Iterator::get() const
+{
+	return *_ptr;
+}
+
+QString::Iterator& QString::Iterator::operator++()
+{
+	Iterator next(++_ptr);
+	return next;
+	//return Iterator(_ptr++);
+}
+
+QString::Iterator& QString::Iterator::operator--()
+{
+	Iterator prev;
+	prev._ptr--;
+	return prev;
+}
+
+QBool QString::Iterator::operator==(const Iterator& other) const
+{
+	std::cout << (void*)_ptr << std::endl;
+	std::cout << (void*)other._ptr << std::endl;
+	return _ptr == other._ptr;
+}
+
+QBool QString::Iterator::operator!=(const Iterator& other) const
+{
+	return (void*)_ptr != (void*)other._ptr;
+}
+
+std::ostream& operator<<(std::ostream& os, const QString::Iterator& itr)
+{
+	return os << itr.get() << std::endl;
+}
+
+QString::_IterationAttribs::_IterationAttribs(Direction dir, size_t len)
+{
+	length = len;
+	begin = isForward(dir) ? 0 : length - 1;
+	end = isForward(dir) ? length : 0;
+	increment = isForward(dir) ? 1 : -1;
 }
 
 QString::QString(size_t length)
@@ -30,28 +108,23 @@ QString::QString(size_t length)
 QString::QString(const char* string)
 	: _maxLength(), _length()
 {
-	size_t len = qStrLen(string);
+	size_t len = Q_strLen(string);
 	_maxLength = len;
 	_length = len;
 	_string = new char[len];
-	qStrCpy(string, _string, len);
-}
-
-QString::QString(char* string)
-	: _maxLength(), _length()
-{
-	size_t len = qStrLen(string);
-	_maxLength = len;
-	_length = len;
-	_string = new char[len];
-	qStrCpy(string, _string, len);
+	Q_strCpy(string, _string, len);
 }
 
 QString::QString(const QString& string)
 	: _maxLength(string._maxLength), _length(string._length)
 {
 	_string = new char[_length];
-	qStrCpy(string._string, _string, _length);
+	Q_strCpy(string._string, _string, _length);
+}
+
+QString::~QString()
+{
+	delete[] _string;
 }
 
 void QString::pushFront(Character ch)
@@ -105,44 +178,183 @@ QString::ConstReference QString::getBack() const
 	return _string[_length - 1];
 }
 
+void QString::set(size_t index, Character ch)
+{
+	if (_checkIndex(index))
+	{
+		_string[index] = ch;
+	}
+}
+
+void QString::set(size_t begin, size_t end, const char* string)
+{
+	if (_checkIndicies(begin, end))
+	{
+		//for (size_t i = begin; _interationCheck(begin, end); i)
+	}
+}
 
 QString QString::substring(size_t begin)
 {
 	if (begin <= _length)
 	{
-		size_t len = _length - begin;
+		size_t len = _length - begin - 1;
 		QString string(len);
 		string._length = len;
-		Index start = _string + begin;
-		qStrCpy(start, string._string);
+		Index start = _string + begin + 1;
+		Q_strCpy(start, string._string);
 		return string;
 	}
 	return EMPTY_STRING;
 }
 
-size_t QString::find(Character ch, Sensitivity sensitivity, Start start)
+size_t QString::find(Character ch, Sensitivity sensitivty, Direction dir) const
 {
-	return 0;
+	_IterationAttribs attribs(dir, _length);
+	QBool sensitive = isSensitive(sensitivty);
+	size_t begin = attribs.begin;
+	size_t end = attribs.end;
+	size_t increment = attribs.increment;
+	for (size_t i = begin; _interationCheck(i, end, dir); i += increment)
+	{
+		if (!sensitive)
+		{
+			if (Q_chrCaseCmp(ch, _string[i]))
+			{
+				return i;
+			}
+		}
+		else
+		{
+			if (Q_chrCmp(ch, _string[i]))
+			{
+				return i;
+			}
+		}
+	}
+	return BAD_INDEX;
 }
 
-QBool QString::has(Character ch, Sensitivity sensitivity, Start start)
+size_t QString::findLast(Character ch, Sensitivity sensitivity, Direction dir) const
 {
-	size_t begin = (startBeginning(start)) ? 0 : _length - 1;
-	size_t end = (startBeginning(start)) ? _length - 1 : 0;
+	_IterationAttribs attribs(dir, _length);
 	QBool sensitive = isSensitive(sensitivity);
-	for (size_t i = begin; i != end; i++)
+	size_t begin = attribs.begin;
+	size_t end = attribs.end;
+	size_t increment = attribs.increment;
+	size_t last = BAD_INDEX;
+	for (size_t i = begin; _interationCheck(i, end, dir); i += increment)
 	{
-		if (sensitive)
+		if (!sensitive)
 		{
-			if (qChrCaseCmp(ch, _string[i]))
+			if (Q_chrCaseCmp(ch, _string[i]))
+			{
+				last = i;
+			}
+		}
+		else
+		{
+			if (Q_chrCmp(ch, _string[i]))
+			{
+				last = i;
+			}
+		}
+	}
+	return last;
+}
+
+QBool QString::has(Character ch, Sensitivity sensitivity, Direction dir) const
+{
+	_IterationAttribs attribs(dir, _length);
+	QBool sensitive = isSensitive(sensitivity);
+	size_t begin = attribs.begin;
+	size_t end = attribs.end;
+	size_t increment = attribs.increment;
+	for (size_t i = begin; _interationCheck(i, end, dir); i += increment)
+	{
+		if (!sensitive)
+		{
+			if (Q_chrCaseCmp(ch, _string[i]))
 			{
 				return true;
 			}
 		}
 		else
 		{
-
+			if (Q_chrCmp(ch, _string[i]))
+			{
+				return true;
+			}
 		}
+	}
+	return false;
+}
+
+QBool QString::isAlpha() const
+{
+	size_t length = _length - 1;
+	for (size_t i = 0; i < length; i++)
+	{
+		if (!Q_isAlpha(_string[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+QBool QString::isAlpha(size_t index) const
+{
+	return _checkIndex(index) ? Q_isAlpha(_string[index]) : false;
+}
+
+QBool QString::isAlpha(size_t begin, size_t end) const
+{
+	if (_checkIndicies(begin, end))
+	{
+		for (size_t i = 0; i <= end; i++)
+		{
+			std::cout << i << std::endl;
+			if (!Q_isAlpha(_string[i]))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+QBool QString::isNumeric() const
+{
+	size_t length = _length - 1;
+	for (size_t i = 0; i < length; i++)
+	{
+		if (!Q_isNumeric(_string[i]))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+QBool QString::isNumeric(size_t index) const
+{
+	return _checkIndex(index) ? Q_isNumeric(_string[index]) : false;
+}
+
+QBool QString::isNumeric(size_t begin, size_t end) const 
+{
+	if (_checkIndicies(begin, end))
+	{
+		for (size_t i = 0; i <= end; i++)
+		{
+			if (!Q_isNumeric(_string[i]))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	return false;
 }
@@ -153,6 +365,7 @@ QString QString::toUpper() const
 	upper._length = _length;
 	for (size_t i = 0; i < _length; i++)
 	{
+		std::cout << i << std::endl;
 		upper[i] = toupper(_string[i]);
 	}
 	return upper;
@@ -178,9 +391,7 @@ void QString::setUpper(size_t index)
 
 void QString::setUpper(size_t begin, size_t end)
 {
-	QBool begCheck = _checkIndex(begin);
-	QBool endCheck = _checkIndex(end);
-	if (begCheck && endCheck)
+	if (_checkIndicies(begin, end))
 	{
 		for (size_t i = begin; i < end + 1; i++)
 		{
@@ -221,9 +432,7 @@ void QString::setLower(size_t index)
 
 void QString::setLower(size_t begin, size_t end)
 {
-	QBool begCheck = _checkIndex(begin);
-	QBool endCheck = _checkIndex(end);
-	if (begCheck && endCheck)
+	if (_checkIndicies(begin, end))
 	{
 		for (size_t i = begin; i < end + 1; i++)
 		{
@@ -233,6 +442,69 @@ void QString::setLower(size_t begin, size_t end)
 	}
 }
 
+void QString::copy(const QString& string)
+{
+	/*size_t maxLength = (_maxLength < string._maxLength) ? string._maxLength : _maxLength;
+	if (_length < maxLength)
+	{
+		delete[] _string;
+		_string = new char[maxLength];
+	}
+	Q_strCpy(string._string, _string, maxLength);*/
+}
+
+void QString::clear(size_t index)
+{
+	if (_checkIndex(index))
+	{
+		_string[index] = EMPTY_CHAR;
+	}
+}
+
+void QString::clear(size_t begin, size_t end)
+{
+	if (_checkIndicies(begin, end))
+	{
+		for (size_t i = begin; i != end; i++)
+		{
+			_string[i] = EMPTY_CHAR;
+		}
+	}
+}
+
+void QString::clear()
+{
+	for (size_t i = 0; i < _length; i++)
+	{
+		_string[i] = EMPTY_CHAR;
+	}
+	_length = 0;
+}
+
+QBool QString::isEmpty() const
+{
+	return !_length;
+}
+
+QBool QString::isFull() const
+{
+	return _length;
+}
+
+void QString::pack()
+{
+	/*size_t length = _length;
+	for (size_t i = 0; i < length; i++)
+	{
+		Character current = _string[i];
+		Character next = (_checkIndex(i + 1)) ? _string[i + 1] : EMPTY_CHAR;
+		if (isEmptyChar(current) && !isEmptyChar(next))
+		{
+			current = next;
+		}
+	}*/
+}
+
 char& QString::at(size_t index) const
 {
 	return _checkIndex(index) ? _string[index] : EMPTY_CHAR;
@@ -240,9 +512,7 @@ char& QString::at(size_t index) const
 
 QString QString::at(size_t begin, size_t end) const
 {
-	QBool begCheck = _checkIndex(begin);
-	QBool endCheck = _checkIndex(end);
-	if (begCheck && endCheck)
+	if (_checkIndicies(begin, end))
 	{
 		size_t subLen = (end - begin != 0) ? end - begin : 1;
 		QString string(subLen);
@@ -260,6 +530,32 @@ QString::Reference QString::operator[](size_t index) const
 	return at(index);
 }
 
+QString QString::operator+(const char* string)
+{
+	/*size_t len = Q_strLen(string);
+	if (_length + len >= _maxLength)
+	{
+		size_t oldLen = _length;
+		Q_strDelete(_string, _maxLength);
+		_string = new char[oldLen + len];
+	}
+	for (size_t i = 0, j = _l; i < len; i++)
+	{
+
+	}*/
+	return EMPTY_STRING;
+}
+
+const QString::Iterator& QString::getBegin() const
+{
+	return Iterator(_string[0]);
+}
+
+const QString::Iterator& QString::getEnd() const
+{
+	return Iterator(_string[_length]);
+}
+
 size_t QString::getLength() const
 {
 	return _length;
@@ -269,7 +565,6 @@ size_t QString::getMaxLength() const
 {
 	return _maxLength;
 }
-
 
 size_t QString::getSize() const
 {
@@ -289,6 +584,28 @@ void QString::_setLength(size_t len)
 QBool QString::_checkIndex(size_t index) const
 {
 	return index <= _length - 1 && index >= 0;
+}
+
+QBool QString::_checkIndicies(size_t begin, size_t end) const
+{
+	return _checkIndex(begin) && _checkIndex(end) && _comesBefore(begin, end);
+}
+
+QBool QString::_comesBefore(size_t begin, size_t end) const
+{
+	return begin <= end;
+}
+
+QBool QString::_interationCheck(size_t index, size_t end, Direction dir) const
+{
+	if (isForward(dir))
+	{
+		return index < end;
+	}
+	else if (isBackward(dir))
+	{
+		return index >= end;
+	}
 }
 
 void QString::_incrementLength()
