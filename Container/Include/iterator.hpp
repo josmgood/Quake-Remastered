@@ -150,7 +150,7 @@ public:
 
 template<typename Type>
 class BidirectionalArrayIterator
-	: public BidirectionalIterator<Type, BidirectionalNodeIterator>
+	: public BidirectionalIterator<Type, BidirectionalArrayIterator>
 {
 public:
 	BidirectionalArrayIterator();
