@@ -124,55 +124,53 @@ public:
 	virtual void operator-=(int itrs) = 0;
 	virtual Iterator operator--() = 0;
 };
-//
-//template<typename TIterator, 
-//	typename Type>
-//class BidirectionalNodeIterator
-//	: public BidirectionalIterator<TIterator, Type>
-//{
-//public:
-//	BidirectionalNodeIterator();
-//	BidirectionalNodeIterator(const Pointer ptr);
-//
-//	Iterator next() const override;
-//	Iterator prev() const override;
-//	Reference operator*() const override;
-//	Pointer ptr() const override;
-//	Reference get() const override;
-//
-//	Iterator operator+(int itrs) override;
-//	void operator+=(int itrs) override;
-//	Iterator operator++() override;
-//
-//	Iterator operator-(int itrs) override;
-//	void operator-=(int itrs) override;
-//	Iterator operator--() override;
-//};
-//
-//template<typename TIterator, 
-//	typename Type>
-//class BidirectionalArrayIterator
-//	: public BidirectionalIterator<TIterator, Type>
-//{
-//public:
-//	BidirectionalArrayIterator();
-//	BidirectionalArrayIterator(const Pointer ptr);
-//
-//	Iterator next() const override;
-//	Iterator prev() const override;
-//	Reference operator*() const override;
-//	Pointer ptr() const override;
-//	Reference get() const override;
-//
-//	Iterator operator+(int itrs) override;
-//	void operator+=(int itrs) override;
-//	Iterator operator++() override;
-//
-//	Iterator operator-(int itrs) override;
-//	void operator-=(int itrs) override;
-//	Iterator operator--() override;
-//};
-//
+
+template<typename Type>
+class BidirectionalNodeIterator
+	: public BidirectionalIterator<Type, BidirectionalNodeIterator>
+{
+public:
+	BidirectionalNodeIterator();
+	BidirectionalNodeIterator(const Pointer ptr);
+
+	Iterator next() const override;
+	Iterator prev() const override;
+	Reference operator*() const override;
+	Pointer ptr() const override;
+	Reference get() const override;
+
+	Iterator operator+(int itrs) override;
+	void operator+=(int itrs) override;
+	Iterator operator++() override;
+
+	Iterator operator-(int itrs) override;
+	void operator-=(int itrs) override;
+	Iterator operator--() override;
+};
+
+template<typename Type>
+class BidirectionalArrayIterator
+	: public BidirectionalIterator<Type, BidirectionalNodeIterator>
+{
+public:
+	BidirectionalArrayIterator();
+	BidirectionalArrayIterator(const Pointer ptr);
+
+	Iterator next() const override;
+	Iterator prev() const override;
+	Reference operator*() const override;
+	Pointer ptr() const override;
+	Reference get() const override;
+
+	Iterator operator+(int itrs) override;
+	void operator+=(int itrs) override;
+	Iterator operator++() override;
+
+	Iterator operator-(int itrs) override;
+	void operator-=(int itrs) override;
+	Iterator operator--() override;
+};
+
 //template<typename TIterator, typename Type>
 //using BValue = typename BidirectionalIterator<TIterator, Type>::Value;
 //

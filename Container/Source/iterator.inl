@@ -81,13 +81,13 @@ ForwardIterator<Type, TIterator>::ForwardIterator(const Pointer ptr)
 
 template<typename Type>
 ForwardNodeIterator<Type>::ForwardNodeIterator()
-	: _ptr(nullptr)
+	: ForwardIterator()
 {
 }
 
 template<typename Type>
 ForwardNodeIterator<Type>::ForwardNodeIterator(const Pointer ptr)
-	: _ptr(ptr)
+	: ForwardIterator(ptr)
 {
 }
 
@@ -149,14 +149,14 @@ ForwardNodeIterator<Type>::operator++()
 
 template<typename Type>
 ForwardArrayIterator<Type>::ForwardArrayIterator()
+	: ForwardIterator()
 {
-	_ptr = nullptr;
 }
 
 template<typename Type>
 ForwardArrayIterator<Type>::ForwardArrayIterator(const Pointer ptr)
+	: ForwardIterator(ptr)
 {
-	_ptr = ptr;
 }
 
 template<typename Type>
@@ -223,202 +223,194 @@ BidirectionalIterator<Type, TIterator>::BidirectionalIterator(const Pointer ptr)
 {
 }
 
-//template< 
-//	typename Type>
-//BidirectionalNodeIterator< Type>::BidirectionalNodeIterator()
-//	: IteratorBase()
-//{
-//}
-//
-//template< 
-//	typename Type>
-//BidirectionalNodeIterator< Type>::BidirectionalNodeIterator(const Pointer ptr)
-//	: IteratorBase(ptr)
-//{
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalNodeIterator< Type>::next() const
-//{
-//	return Iterator(_ptr->next);
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalNodeIterator< Type>::prev() const
-//{
-//	return Iterator(_ptr->prev);
-//}
-//
-//template< 
-//	typename Type>
-//BReference< Type> BidirectionalNodeIterator< Type>::operator*() const
-//{
-//	return _ptr->data;
-//}
-//
-//template< 
-//	typename Type>
-//BPointer< Type> BidirectionalNodeIterator< Type>::ptr() const
-//{
-//	return &_ptr->data;
-//}
-//
-//template< 
-//	typename Type>
-//BReference< Type> BidirectionalNodeIterator< Type>::get() const
-//{
-//	return _ptr->data;
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalNodeIterator< Type>::operator+(int itrs)
-//{
-//	Iterator itr(_ptr);
-//	while (!itrs--)
-//	{
-//		itr._ptr = itr._ptr->next;
-//	}
-//	return itr;
-//}
-//
-//template< 
-//	typename Type>
-//void BidirectionalNodeIterator< Type>::operator+=(int itrs)
-//{
-//	while (!itrs--)
-//	{
-//		_ptr = _ptr->next;
-//	}
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalNodeIterator< Type>::operator++()
-//{
-//	return Iterator(_ptr = _ptr->next);
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalNodeIterator< Type>::operator-(int itrs)
-//{
-//	Iterator itr(_ptr);
-//	while (!itrs--)
-//	{
-//		itr._ptr = itr._ptr->next;
-//	}
-//	return itr;
-//}
-//
-//template< 
-//	typename Type>
-//void BidirectionalNodeIterator< Type>::operator-=(int itrs)
-//{
-//	while (!itrs--)
-//	{
-//		_ptr = _ptr->prev;
-//	}
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalNodeIterator< Type>::operator--()
-//{
-//	return Iterator(_ptr = _ptr->prev);
-//}
-//
-//template< 
-//	typename Type>
-//BidirectionalArrayIterator< Type>::BidirectionalArrayIterator()
-//	: BidirectionalIterator()
-//{
-//}
-//
-//template< 
-//	typename Type>
-//BidirectionalArrayIterator< Type>::BidirectionalArrayIterator(const Pointer ptr)
-//	: BidirectionalArrayIterator(ptr)
-//{
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalArrayIterator< Type>::next() const
-//{
-//	return Iterator(_ptr + sizeof(Value));
-//}
-//
-//template< 
-//	typename Type>
-//BIterator< Type> BidirectionalArrayIterator< Type>::prev() const
-//{
-//	return Iterator(_ptr - sizeof(Value));
-//}
-//
-//template<
-//	typename Type>
-//BReference< Type> BidirectionalArrayIterator< Type>::operator*() const
-//{
-//	return *_ptr;
-//}
-//
-//template<
-//	typename Type>
-//BPointer< Type> BidirectionalArrayIterator< Type>::ptr() const
-//{
-//	return _ptr;
-//}
-//
-//template<
-//	typename Type>
-//BReference< Type> BidirectionalArrayIterator< Type>::get() const
-//{
-//	return *_ptr;
-//}
-//
-//template<
-//	typename Type>
-//BIterator< Type> BidirectionalArrayIterator< Type>::operator+(int itrs)
-//{
-//	return Iterator(_ptr + sizeof(Value) * itrs);
-//}
-//
-//template<
-//	typename Type>
-//void BidirectionalArrayIterator< Type>::operator+=(int itrs)
-//{
-//	_ptr += sizeof(Value) * itrs;
-//}
-//
-//template<
-//	typename Type>
-//BIterator< Type> BidirectionalArrayIterator< Type>::operator++()
-//{
-//	return Iterator(++_ptr);
-//}
-//
-//template<
-//	typename Type>
-//BIterator< Type> BidirectionalArrayIterator< Type>::operator-(int itrs)
-//{
-//	return Iterator(_ptr - sizeof(Value) * itrs);
-//}
-//
-//template<
-//	typename Type>
-//void BidirectionalArrayIterator< Type>::operator-=(int itrs)
-//{
-//	_ptr -= sizeof(Value) * itrs;
-//}
-//
-//template<
-//	typename Type>
-//BIterator< Type> BidirectionalArrayIterator< Type>::operator--()
-//{
-//	return Iterator(--_ptr);
-//}
-//
-////=======================================================================================
+template<typename Type>
+BidirectionalNodeIterator<Type>::BidirectionalNodeIterator()
+	: IteratorBase()
+{
+}
+
+template<typename Type>
+BidirectionalNodeIterator<Type>::BidirectionalNodeIterator(const Pointer ptr)
+	: IteratorBase(ptr)
+{
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Iterator
+BidirectionalNodeIterator<Type>::next() const
+{
+	return Iterator(_ptr->next);
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Iterator
+BidirectionalNodeIterator<Type>::prev() const
+{
+	return Iterator(_ptr->prev);
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Reference 
+BidirectionalNodeIterator<Type>::operator*() const
+{
+	return _ptr->data;
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Pointer
+BidirectionalNodeIterator<Type>::ptr() const
+{
+	return &_ptr->data;
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Reference
+BidirectionalNodeIterator<Type>::get() const
+{
+	return _ptr->data;
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Iterator
+BidirectionalNodeIterator<Type>::operator+(int itrs)
+{
+	Iterator itr(_ptr);
+	while (!itrs--)
+	{
+		itr._ptr = itr._ptr->next;
+	}
+	return itr;
+}
+
+template<typename Type>
+void BidirectionalNodeIterator< Type>::operator+=(int itrs)
+{
+	while (!itrs--)
+	{
+		_ptr = _ptr->next;
+	}
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Iterator
+BidirectionalNodeIterator<Type>::operator++()
+{
+	return Iterator(_ptr = _ptr->next);
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Iterator
+BidirectionalNodeIterator<Type>::operator-(int itrs)
+{
+	Iterator itr(_ptr);
+	while (!itrs--)
+	{
+		itr._ptr = itr._ptr->next;
+	}
+	return itr;
+}
+
+template<typename Type>
+void BidirectionalNodeIterator<Type>::operator-=(int itrs)
+{
+	while (!itrs--)
+	{
+		_ptr = _ptr->prev;
+	}
+}
+
+template<typename Type>
+typename BidirectionalNodeIterator<Type>::Iterator
+BidirectionalNodeIterator<Type>::operator--()
+{
+	return Iterator(_ptr = _ptr->prev);
+}
+
+template< typename Type>
+BidirectionalArrayIterator<Type>::BidirectionalArrayIterator()
+	: BidirectionalIterator()
+{
+}
+
+template<typename Type>
+BidirectionalArrayIterator<Type>::BidirectionalArrayIterator(const Pointer ptr)
+	: BidirectionalIterator(ptr)
+{
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Iterator
+BidirectionalArrayIterator<Type>::next() const
+{
+	return Iterator(_ptr + 1);
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Iterator
+BidirectionalArrayIterator< Type>::prev() const
+{
+	return Iterator(_ptr - 1);
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Reference
+BidirectionalArrayIterator<Type>::operator*() const
+{
+	return *_ptr;
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Pointer
+BidirectionalArrayIterator<Type>::ptr() const
+{
+	return _ptr;
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Reference
+BidirectionalArrayIterator<Type>::get() const
+{
+	return *_ptr;
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Iterator
+BidirectionalArrayIterator<Type>::operator+(int itrs)
+{
+	return Iterator(_ptr + 1 * itrs);
+}
+
+template<typename Type>
+void BidirectionalArrayIterator<Type>::operator+=(int itrs)
+{
+	_ptr += 1 * itrs;
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Iterator
+BidirectionalArrayIterator<Type>::operator++()
+{
+	return Iterator(++_ptr);
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Iterator
+BidirectionalArrayIterator<Type>::operator-(int itrs)
+{
+	return Iterator(_ptr - 1 * itrs);
+}
+
+template<typename Type>
+void BidirectionalArrayIterator<Type>::operator-=(int itrs)
+{
+	_ptr -= 1 * itrs;
+}
+
+template<typename Type>
+typename BidirectionalArrayIterator<Type>::Iterator
+BidirectionalArrayIterator<Type>::operator--()
+{
+	return Iterator(--_ptr);
+}
+
+//=======================================================================================
