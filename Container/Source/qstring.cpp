@@ -37,16 +37,12 @@ QString::Iterator::Iterator(char* ch)
 
 QString::Iterator& QString::Iterator::next()
 {
-	Iterator next;
-	next._ptr += sizeof(char);
-	return next;
+	return Iterator(++_ptr);
 }
 
 QString::Iterator& QString::Iterator::prev()
 {
-	Iterator prev;
-	prev._ptr -= sizeof(char);
-	return prev;
+	return Iterator(--_ptr);
 }
 
 char* QString::Iterator::ptr() const
@@ -59,35 +55,174 @@ char& QString::Iterator::get() const
 	return *_ptr;
 }
 
+char& QString::Iterator::operator*() const
+{
+	return *_ptr;
+}
+
+QString::Iterator& QString::Iterator::operator+(int itrs)
+{
+	return Iterator(_ptr + sizeof(char) * itrs);
+}
+
+void QString::Iterator::operator+=(int itrs)
+{
+	_ptr += sizeof(char) * itrs;
+}
+
+QString::Iterator& QString::Iterator::operator-(int itrs)
+{
+	return Iterator(_ptr - sizeof(char) * itrs);
+}
+
+void QString::Iterator::operator-=(int itrs)
+{
+	_ptr -= sizeof(char) * itrs;
+}
+
 QString::Iterator& QString::Iterator::operator++()
 {
-	Iterator next(++_ptr);
-	return next;
-	//return Iterator(_ptr++);
+	return Iterator(++_ptr);
 }
 
 QString::Iterator& QString::Iterator::operator--()
 {
-	Iterator prev;
-	prev._ptr--;
-	return prev;
+	return Iterator(--_ptr);
 }
 
-QBool QString::Iterator::operator==(const Iterator& other) const
+QBool QString::Iterator::operator==(Iterator other) const
 {
-	std::cout << (void*)_ptr << std::endl;
-	std::cout << (void*)other._ptr << std::endl;
-	return _ptr == other._ptr;
+	return _ptr == other.ptr();
 }
 
-QBool QString::Iterator::operator!=(const Iterator& other) const
+QBool QString::Iterator::operator!=(Iterator other) const
 {
-	return (void*)_ptr != (void*)other._ptr;
+	return _ptr != other._ptr;
+}
+
+QBool QString::Iterator::operator<(Iterator other) const
+{
+	return _ptr < other._ptr;
+}
+
+QBool QString::Iterator::operator<=(Iterator other) const
+{
+	return _ptr <= other._ptr;
+}
+
+QBool QString::Iterator::operator>(Iterator other) const
+{
+	return _ptr > other._ptr;
+}
+
+QBool QString::Iterator::operator>=(Iterator other) const
+{
+	return _ptr >= other._ptr;
 }
 
 std::ostream& operator<<(std::ostream& os, const QString::Iterator& itr)
 {
 	return os << itr.get() << std::endl;
+}
+
+QString::ReverseIterator::ReverseIterator()
+	: _ptr(nullptr)
+{
+}
+
+QString::ReverseIterator::ReverseIterator(char& ch)
+	: _ptr(&ch)
+{
+}
+
+QString::ReverseIterator::ReverseIterator(char* ch)
+	: _ptr(ch)
+{
+}
+
+QString::ReverseIterator& QString::ReverseIterator::next()
+{
+	return ReverseIterator(--_ptr);
+}
+
+QString::ReverseIterator& QString::ReverseIterator::prev()
+{
+	return ReverseIterator(++_ptr);
+}
+
+char* QString::ReverseIterator::ptr() const
+{
+	return _ptr;
+}
+
+char& QString::ReverseIterator::get() const
+{
+	return *_ptr;
+}
+
+char& QString::ReverseIterator::operator*() const
+{
+	return *_ptr;
+}
+
+QString::ReverseIterator& QString::ReverseIterator::operator+(int itrs)
+{
+	return ReverseIterator(_ptr - sizeof(char) * itrs);
+}
+
+void QString::ReverseIterator::operator+=(int itrs)
+{
+	_ptr -= sizeof(char) * itrs;
+}
+
+QString::ReverseIterator& QString::ReverseIterator::operator-(int itrs)
+{
+	return ReverseIterator(_ptr + sizeof(char) * itrs);
+}
+
+void QString::ReverseIterator::operator-=(int itrs)
+{
+	_ptr += sizeof(char) * itrs;
+}
+
+QString::ReverseIterator& QString::ReverseIterator::operator++()
+{
+	return ReverseIterator(--_ptr);
+}
+
+QString::ReverseIterator& QString::ReverseIterator::operator--()
+{
+	return ReverseIterator(++_ptr);
+}
+
+QBool QString::ReverseIterator::operator==(ReverseIterator other) const
+{
+	return _ptr == other._ptr;
+}
+
+QBool QString::ReverseIterator::operator!=(ReverseIterator other) const
+{
+	return _ptr != other._ptr;
+}
+
+QBool QString::ReverseIterator::operator<(ReverseIterator other) const
+{
+	return _ptr < other._ptr;
+}
+
+QBool QString::ReverseIterator::operator<=(ReverseIterator other) const
+{
+	return _ptr <= other._ptr;
+}
+
+QBool QString::ReverseIterator::operator>(ReverseIterator other) const
+{
+	return _ptr > other._ptr;
+}
+
+QBool QString::ReverseIterator::operator>=(ReverseIterator other) const
+{
+	return _ptr >= other._ptr;
 }
 
 QString::_IterationAttribs::_IterationAttribs(Direction dir, size_t len)
@@ -208,31 +343,36 @@ QString QString::substring(size_t begin)
 	return EMPTY_STRING;
 }
 
-size_t QString::find(Character ch, Sensitivity sensitivty, Direction dir) const
+//size_t QString::find(Character ch, Sensitivity sensitivty, Direction dir) const
+//{
+//	_IterationAttribs attribs(dir, _length);
+//	QBool sensitive = isSensitive(sensitivty);
+//	size_t begin = attribs.begin;
+//	size_t end = attribs.end;
+//	size_t increment = attribs.increment;
+//	for (size_t i = begin; _interationCheck(i, end, dir); i += increment)
+//	{
+//		if (!sensitive)
+//		{
+//			if (Q_chrCaseCmp(ch, _string[i]))
+//			{
+//				return i;
+//			}
+//		}
+//		else
+//		{
+//			if (Q_chrCmp(ch, _string[i]))
+//			{
+//				return i;
+//			}
+//		}
+//	}
+//	return BAD_INDEX;
+//}
+
+QString::Iterator QString::find(Character ch, Sensitivity sensitivity, Direction dir) const
 {
-	_IterationAttribs attribs(dir, _length);
-	QBool sensitive = isSensitive(sensitivty);
-	size_t begin = attribs.begin;
-	size_t end = attribs.end;
-	size_t increment = attribs.increment;
-	for (size_t i = begin; _interationCheck(i, end, dir); i += increment)
-	{
-		if (!sensitive)
-		{
-			if (Q_chrCaseCmp(ch, _string[i]))
-			{
-				return i;
-			}
-		}
-		else
-		{
-			if (Q_chrCmp(ch, _string[i]))
-			{
-				return i;
-			}
-		}
-	}
-	return BAD_INDEX;
+	return Iterator();
 }
 
 size_t QString::findLast(Character ch, Sensitivity sensitivity, Direction dir) const

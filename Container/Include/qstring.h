@@ -41,8 +41,9 @@ class QString
 	: public QAuxiliary<char, int>
 {
 public:
-	struct Iterator
+	class Iterator
 	{
+	public:
 		Iterator();
 		Iterator(char& ch);
 		Iterator(char* ch);
@@ -51,13 +52,51 @@ public:
 		char* ptr() const;
 		char& get() const;
 
+		char& operator*() const;
+		Iterator& operator+(int itrs);
+		void operator+=(int itrs);
+		Iterator& operator-(int itrs);
+		void operator-=(int itrs);
 		Iterator& operator++();
 		Iterator& operator--();
 
-		QBool operator==(const Iterator& other) const;
-		QBool operator!=(const Iterator& other) const;
+		QBool operator==(Iterator other) const;
+		QBool operator!=(Iterator other) const;
+		QBool operator<(Iterator other) const;
+		QBool operator<=(Iterator other) const;
+		QBool operator>(Iterator other) const;
+		QBool operator>=(Iterator other) const;
 
 		friend std::ostream& operator<<(std::ostream& os, const Iterator& itr);
+	private:
+		char* _ptr;
+	};
+
+	class ReverseIterator
+	{
+	public:
+		ReverseIterator();
+		ReverseIterator(char& ch);
+		ReverseIterator(char* ch);
+		ReverseIterator& next();
+		ReverseIterator& prev();
+		char* ptr() const;
+		char& get() const;
+
+		char& operator*() const;
+		ReverseIterator& operator+(int itrs);
+		void operator+=(int itrs);
+		ReverseIterator& operator-(int itrs);
+		void operator-=(int itrs);
+		ReverseIterator& operator++();
+		ReverseIterator& operator--();
+
+		QBool operator==(ReverseIterator other) const;
+		QBool operator!=(ReverseIterator other) const;
+		QBool operator<(ReverseIterator other) const;
+		QBool operator<=(ReverseIterator other) const;
+		QBool operator>(ReverseIterator other) const;
+		QBool operator>=(ReverseIterator other) const;
 	private:
 		char* _ptr;
 	};
@@ -92,7 +131,8 @@ public:
 	QString substring(size_t begin, size_t end);
 	//QString substring();
 
-	size_t find(Character ch, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator find(Character ch, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
+	//size_t find(Character ch, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
 	size_t find(const char* string, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
 	size_t find(const QString& string, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
 	size_t findLast(Character ch, Sensitivity sensitivity = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
@@ -150,6 +190,8 @@ public:
 
 	const Iterator& getBegin() const;
 	const Iterator& getEnd() const;
+	const ReverseIterator& getRBegin() const;
+	const ReverseIterator& getREnd() const;
 
 	size_t getLength() const;
 	size_t getMaxLength() const;

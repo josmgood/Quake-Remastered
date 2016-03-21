@@ -1,7 +1,7 @@
 #pragma once
 
 struct ContigiousIterator;
-struct NodeIterator;
+struct LinkedIterator;
 
 /*
 *==========================================================================
@@ -98,28 +98,28 @@ public:
 *
 *===============================================
 */
-template<typename Tag, typename Type>
-class BaseIterator
-	: public IteratorDefs<Tag, Type>
-{
-public:
-	BaseIterator(const Pointer ptr) 
-		: _ptr(ptr) {}
-
-	Reference operator*() { return(*_ptr); }
-
-	void set(const Pointer ptr) { _ptr = ptr; }
-
-	Pointer get() { return(_ptr); }
-
-	bool operator==(const BaseIterator& other) 
-	{ return _ptr == other._ptr; }
-
-	bool operator!=(const BaseIterator& other) 
-	{ return _ptr != other._ptr; }
-protected:
-	Pointer _ptr;
-};
+//template<typename Tag, typename Type>
+//class BaseIterator
+//	: public IteratorDefs<Tag, Type>
+//{
+//public:
+//	BaseIterator(const Pointer ptr) 
+//		: _ptr(ptr) {}
+//
+//	Reference operator*() { return(*_ptr); }
+//
+//	void set(const Pointer ptr) { _ptr = ptr; }
+//
+//	Pointer get() { return(_ptr); }
+//
+//	bool operator==(const BaseIterator& other) 
+//	{ return _ptr == other._ptr; }
+//
+//	bool operator!=(const BaseIterator& other) 
+//	{ return _ptr != other._ptr; }
+//protected:
+//	Pointer _ptr;
+//};
 
 /*
 *====================================================
@@ -132,16 +132,16 @@ protected:
 *
 *====================================================
 */
-template<typename Type>
-class ForwardIterator
-	: public BaseIterator<iter::ForwardTag, Type>
-{
-public:
-	ForwardIterator(const Pointer ptr)
-		: BaseIterator(ptr) {}
-
-	virtual ForwardIterator& operator++() = 0;
-};
+//template<typename Type>
+//class ForwardIterator
+//	: public BaseIterator<iter::ForwardTag, Type>
+//{
+//public:
+//	ForwardIterator(const Pointer ptr)
+//		: BaseIterator(ptr) {}
+//
+//	virtual ForwardIterator& operator++() = 0;
+//};
 
 /*
 *====================================================
@@ -154,18 +154,18 @@ public:
 *
 *====================================================
 */
-template<typename Type>
-class BidirectionalIterator
-	: public BaseIterator<iter::BidirectionTag, Type>
-{
-public:
-	BidirectionalIterator(const Pointer ptr)
-		: BaseIterator(ptr) {}
-
-	virtual BidirectionalIterator& operator++() = 0;
-
-	virtual BidirectionalIterator& operator--() = 0;
-};
+//template<typename Type>
+//class BidirectionalIterator
+//	: public BaseIterator<iter::BidirectionTag, Type>
+//{
+//public:
+//	BidirectionalIterator(const Pointer ptr)
+//		: BaseIterator(ptr) {}
+//
+//	virtual BidirectionalIterator& operator++() = 0;
+//
+//	virtual BidirectionalIterator& operator--() = 0;
+//};
 
 /*
 *====================================================
@@ -179,20 +179,20 @@ public:
 *
 *====================================================
 */
-template<typename Type>
-class ArrayIterator
-	: public BidirectionalIterator<Type>
-{
-public:
-	ArrayIterator(const Pointer ptr = nullptr)
-		: BidirectionalIterator(ptr) {}
-
-	virtual ArrayIterator& operator++() override 
-	{ ++_ptr; return(*this); }
-
-	virtual ArrayIterator& operator--() override 
-	{ --_ptr; return(*this); }
-};
+//template<typename Type>
+//class ArrayIterator
+//	: public BidirectionalIterator<Type>
+//{
+//public:
+//	ArrayIterator(const Pointer ptr = nullptr)
+//		: BidirectionalIterator(ptr) {}
+//
+//	virtual ArrayIterator& operator++() override 
+//	{ ++_ptr; return(*this); }
+//
+//	virtual ArrayIterator& operator--() override 
+//	{ --_ptr; return(*this); }
+//};
 
 /*
 *====================================================
@@ -206,17 +206,17 @@ public:
 *
 *====================================================
 */
-template<typename Type>
-class ForwardListIterator
-	: public ForwardIterator<Type>
-{
-public:
-	ForwardListIterator(const Pointer ptr)
-		: ForwardIterator(ptr) {}
-
-	virtual ForwardListIterator& operator++() override 
-	{ _ptr = (!_ptr->next) ? _ptr : _ptr->next }
-};
+//template<typename Type>
+//class ForwardListIterator
+//	: public ForwardIterator<Type>
+//{
+//public:
+//	ForwardListIterator(const Pointer ptr)
+//		: ForwardIterator(ptr) {}
+//
+//	virtual ForwardListIterator& operator++() override 
+//	{ _ptr = (!_ptr->next) ? _ptr : _ptr->next }
+//};
 
 /*
 *====================================================
@@ -230,20 +230,20 @@ public:
 *
 *====================================================
 */
-template<typename Type>
-class ListIterator
-	: public BidirectionalIterator<Type>
-{
-public:
-	ListIterator(const Pointer ptr)
-		: BidirectionalIterator(ptr) {}
-
-	virtual BidirectionalIterator& operator++() override 
-	{ _ptr = (!_ptr->next) ? _ptr : _ptr->next; }
-
-	virtual BidirectionalIterator& operator--() override 
-	{ _ptr = (!_ptr->prev) ? _ptr : _ptr->prev; }
-};
+//template<typename Type>
+//class ListIterator
+//	: public BidirectionalIterator<Type>
+//{
+//public:
+//	ListIterator(const Pointer ptr)
+//		: BidirectionalIterator(ptr) {}
+//
+//	virtual BidirectionalIterator& operator++() override 
+//	{ _ptr = (!_ptr->next) ? _ptr : _ptr->next; }
+//
+//	virtual BidirectionalIterator& operator--() override 
+//	{ _ptr = (!_ptr->prev) ? _ptr : _ptr->prev; }
+//};
 
 #define DEFAULT_CONTAINER_SIZE 16
 
