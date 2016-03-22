@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "base.hpp"
+#include "iterator.hpp"
 #include "..\..\Auxiliary\Include\string_aux.h"
 #include "..\..\Math\Include\math.h"
 #include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
@@ -41,68 +42,14 @@ class QString
 	: public QAuxiliary<char, int>
 {
 public:
-	class Iterator
-	{
-	public:
-		Iterator();
-		Iterator(char& ch);
-		Iterator(char* ch);
-		Iterator& next();
-		Iterator& prev();
-		char* ptr() const;
-		char& get() const;
-
-		char& operator*() const;
-		Iterator& operator+(int itrs);
-		void operator+=(int itrs);
-		Iterator& operator-(int itrs);
-		void operator-=(int itrs);
-		Iterator& operator++();
-		Iterator& operator--();
-
-		QBool operator==(Iterator other) const;
-		QBool operator!=(Iterator other) const;
-		QBool operator<(Iterator other) const;
-		QBool operator<=(Iterator other) const;
-		QBool operator>(Iterator other) const;
-		QBool operator>=(Iterator other) const;
-
-		friend std::ostream& operator<<(std::ostream& os, const Iterator& itr);
-	private:
-		char* _ptr;
-	};
-
-	class ReverseIterator
-	{
-	public:
-		ReverseIterator();
-		ReverseIterator(char& ch);
-		ReverseIterator(char* ch);
-		ReverseIterator& next();
-		ReverseIterator& prev();
-		char* ptr() const;
-		char& get() const;
-
-		char& operator*() const;
-		ReverseIterator& operator+(int itrs);
-		void operator+=(int itrs);
-		ReverseIterator& operator-(int itrs);
-		void operator-=(int itrs);
-		ReverseIterator& operator++();
-		ReverseIterator& operator--();
-
-		QBool operator==(ReverseIterator other) const;
-		QBool operator!=(ReverseIterator other) const;
-		QBool operator<(ReverseIterator other) const;
-		QBool operator<=(ReverseIterator other) const;
-		QBool operator>(ReverseIterator other) const;
-		QBool operator>=(ReverseIterator other) const;
-	private:
-		char* _ptr;
-	};
 	typedef Value Character;
 	typedef Pointer Index;
 	typedef Pointer String;
+
+	typedef BidirectionalArrayIterator<Character> Iterator;
+	typedef BidirectionalArrayIterator<const Character> ConstIterator;
+	typedef ReverseArrayIterator<Character> ReverseIterator;
+	typedef ReverseArrayIterator<const Character> ConstReverseIterator;
 
 	QString(size_t length = DEFAULT_STRING_SIZE);
 	QString(const char* string);
@@ -188,8 +135,8 @@ public:
 
 	friend std::ostream& operator<<(std::ostream& os, const QString& string);
 
-	const Iterator& getBegin() const;
-	const Iterator& getEnd() const;
+	const Iterator getBegin() const;
+	const Iterator getEnd() const;
 	const ReverseIterator& getRBegin() const;
 	const ReverseIterator& getREnd() const;
 
