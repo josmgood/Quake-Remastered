@@ -20,6 +20,16 @@ QBool isUnsensitivity(Sensitivity sensitivity)
 	return sensitivity == STR_UNSENSITIVE;
 }
 
+QBool appearsFirst(Apperance appearance)
+{
+	return appearance == STR_FIRST;
+}
+
+QBool appearsLast(Apperance apperance)
+{
+	return apperance == STR_LAST;
+}
+
 QString::QString(size_t length)
 	: _maxLength(length), _length()
 {
@@ -66,131 +76,130 @@ void QString::pushFront(Character ch)
 	}
 }
 
-//void QString::setFront(Character ch)
-//{
-//	if (_length > 0)
-//	{
-//		_string[0] = ch;
-//	}
-//}
-//
-//QString::ConstReference QString::getFront() const
-//{
-//	return _string[0];
-//}
-//
-//void QString::pushBack(Character ch)
-//{
-//	if (_length + 1 <= _maxLength)
-//	{
-//		_string[_length] = ch;
-//		_incrementLength();
-//	}
-//}
-//
-//void QString::setBack(Character ch)
-//{
-//	if (_length - 1 >= 0)
-//	{
-//		_string[_length - 1] = ch;
-//	}
-//}
-//
-//QString::ConstReference QString::getBack() const
-//{
-//	return _string[_length - 1];
-//}
-//
-//void QString::set(size_t index, Character ch)
-//{
-//	if (_checkIndex(index))
-//	{
-//		_string[index] = ch;
-//	}
-//}
-//
-//void QString::set(size_t begin, size_t end, const char* string)
-//{
-//	if (_checkIndicies(begin, end))
-//	{
-//		//for (size_t i = begin; _interationCheck(begin, end); i)
-//	}
-//}
-//
-//QString QString::substring(size_t begin)
-//{
-//	if (begin <= _length)
-//	{
-//		size_t len = _length - begin - 1;
-//		QString string(len);
-//		string._length = len;
-//		Index start = _string + begin + 1;
-//		Q_strCpy(start, string._string);
-//		return string;
-//	}
-//	return EMPTY_STRING;
-//}
-//
-////size_t QString::find(Character ch, Sensitivity sensitivty, Direction dir) const
-////{
-////	_IterationAttribs attribs(dir, _length);
-////	QBool sensitive = isSensitive(sensitivty);
-////	size_t begin = attribs.begin;
-////	size_t end = attribs.end;
-////	size_t increment = attribs.increment;
-////	for (size_t i = begin; _interationCheck(i, end, dir); i += increment)
-////	{
-////		if (!sensitive)
-////		{
-////			if (Q_chrCaseCmp(ch, _string[i]))
-////			{
-////				return i;
-////			}
-////		}
-////		else
-////		{
-////			if (Q_chrCmp(ch, _string[i]))
-////			{
-////				return i;
-////			}
-////		}
-////	}
-////	return BAD_INDEX;
-////}
-//
-//QString::Iterator QString::find(Character ch, Sensitivity sensitivity, Direction dir) const
-//{
-//	return Iterator();
-//}
-//
-//size_t QString::findLast(Character ch, Sensitivity sensitivity, Direction dir) const
-//{
-//	_IterationAttribs attribs(dir, _length);
-//	QBool sensitive = isSensitive(sensitivity);
-//	size_t begin = attribs.begin;
-//	size_t end = attribs.end;
-//	size_t increment = attribs.increment;
-//	size_t last = BAD_INDEX;
-//	for (size_t i = begin; _interationCheck(i, end, dir); i += increment)
-//	{
-//		if (!sensitive)
-//		{
-//			if (Q_chrCaseCmp(ch, _string[i]))
-//			{
-//				last = i;
-//			}
-//		}
-//		else
-//		{
-//			if (Q_chrCmp(ch, _string[i]))
-//			{
-//				last = i;
-//			}
-//		}
-//	}
-//	return last;
-//}
-//
+void QString::setFront(Character ch)
+{
+	if (_length > 0)
+	{
+		_string[0] = ch;
+	}
+}
+
+QString::Reference QString::getFront() const
+{
+	return _string[0];
+}
+
+void QString::pushBack(Character ch)
+{
+	if (_length + 1 <= _maxLength)
+	{
+		_string[_length] = ch;
+		_incrementLength();
+	}
+}
+
+void QString::setBack(Character ch)
+{
+	if (_length - 1 >= 0)
+	{
+		_string[_length - 1] = ch;
+	}
+}
+
+QString::Reference QString::getBack() const
+{
+	return _string[_length - 1];
+}
+
+void QString::set(size_t index, Character ch)
+{
+	if (_checkIndex(index))
+	{
+		_string[index] = ch;
+	}
+}
+
+void QString::set(size_t begin, size_t end, const char* string)
+{
+	if (_checkIndicies(begin, end))
+	{
+		//for (size_t i = begin; _interationCheck(begin, end); i)
+	}
+}
+
+QString QString::substring(size_t begin)
+{
+	if (begin <= _length)
+	{
+		size_t len = _length - begin - 1;
+		QString string(len);
+		string._length = len;
+		Index start = _string + begin + 1;
+		Q_strCpy(start, string._string);
+		return string;
+	}
+	return EMPTY_STRING;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*Perhaps make two find(Character ch) and findLast(Character ch) two separate functions without functions abstraction*/
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+QString::Iterator QString::find(Character ch, Sensitivity sensitivity, Direction dir) const
+{
+	if (isBackward(dir))
+	{
+		return _rfind(ch, sensitivity, STR_FIRST);
+	}
+	else
+	{
+		return _find(ch, sensitivity, STR_FIRST);
+	}
+}
+
+QString::Iterator QString::find(const char* string, Sensitivity sensitivity, Direction dir) const
+{
+	/*size_t len = Q_strLen(string);
+	if (isBackward(dir))
+	{
+		ReverseIterator rbegin = getRBegin();
+		ReverseIterator rend = getREnd();
+		for (ReverseIterator i = rbegin; i < rend; ++i)
+		{
+			if (Q_chrCmp(i.get(), string[0]))
+			{
+				ReverseIterator saved = i;
+				for (size_t j = 1; j < len; ++j, ++i)
+				{
+					if (Q_chrCmp(i.get(), string[j]))
+					{
+						if (j == len - 1)
+						{
+							return Iterator(saved.ptr());
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+		}
+	}*/
+}
+
+QString::Iterator QString::findLast(Character ch, Sensitivity sensitivity, Direction dir) const
+{
+	if (isBackward(dir))
+	{
+		return _rfind(ch, sensitivity, STR_LAST);
+	}
+	else
+	{
+		return _find(ch, sensitivity, STR_LAST);
+	}
+}
+
 //QBool QString::has(Character ch, Sensitivity sensitivity, Direction dir) const
 //{
 //	_IterationAttribs attribs(dir, _length);
@@ -217,42 +226,68 @@ void QString::pushFront(Character ch)
 //	}
 //	return false;
 //}
-//
-//QBool QString::isAlpha() const
-//{
-//	size_t length = _length - 1;
-//	for (size_t i = 0; i < length; i++)
-//	{
-//		if (!Q_isAlpha(_string[i]))
-//		{
-//			return false;
-//		}
-//	}
-//	return true;
-//}
-//
-//QBool QString::isAlpha(size_t index) const
-//{
-//	return _checkIndex(index) ? Q_isAlpha(_string[index]) : false;
-//}
-//
-//QBool QString::isAlpha(size_t begin, size_t end) const
-//{
-//	if (_checkIndicies(begin, end))
-//	{
-//		for (size_t i = 0; i <= end; i++)
-//		{
-//			std::cout << i << std::endl;
-//			if (!Q_isAlpha(_string[i]))
-//			{
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-//	return false;
-//}
-//
+
+QBool QString::isAlpha() const
+{
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	for (Iterator i = begin; i < end; ++i)
+	{
+		if (!Q_isAlpha(i.get()))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+QBool QString::isAlpha(size_t index) const
+{
+	return _checkIndex(index) ? Q_isAlpha(_string[index]) : false;
+}
+
+QBool QString::isAlpha(size_t ibegin, size_t iend) const
+{
+	if (_checkIndicies(ibegin, iend))
+	{
+		Iterator begin(_string + 1 * ibegin);
+		Iterator end(_string + 1 * iend);
+		for (Iterator i = begin; i < end; ++i)
+		{
+			if (!Q_isAlpha(i.get()))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
+QBool QString::isAlpha(Iterator iterator) const
+{
+	if (_checkIterator(iterator))
+	{
+		return Q_isAlpha(iterator.get());
+	}
+}
+
+QBool QString::isAlpha(Iterator begin, Iterator end) const
+{
+	if (_checkIterators(begin, end))
+	{
+		for (Iterator i = begin; i < end; ++i)
+		{
+			if (!Q_isAlpha(i.get()))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	return false;
+}
+
 //QBool QString::isNumeric() const
 //{
 //	size_t length = _length - 1;
@@ -484,6 +519,16 @@ const QString::Iterator QString::getEnd() const
 	return Iterator(_string[_length]);
 }
 
+const QString::ReverseIterator QString::getRBegin() const
+{
+	return ReverseIterator(_string[_length - 1]);
+}
+
+const QString::ReverseIterator QString::getREnd() const
+{
+	return ReverseIterator(_string[0 - 1]);
+}
+
 size_t QString::getLength() const
 {
 	return _length;
@@ -504,6 +549,71 @@ size_t QString::getMaxSize() const
 	return _maxLength;
 }
 
+QString::Iterator QString::_find(Character ch, Sensitivity sensitivity, Apperance appearance) const
+{
+	QBool sensitive = isSensitive(sensitivity);
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	if (appearsFirst(appearance))
+	{
+		if (!sensitive)
+		{
+			return find_if_val(begin, end, Q_chrCaseCmp, ch);
+		}
+		else
+		{
+			return find_if_val(begin, end, Q_chrCmp, ch);
+		}
+	}
+	else if (appearsLast(appearance))
+	{
+		if (!sensitive)
+		{
+			return find_last_if_val(begin, end, Q_chrCaseCmp, ch);
+		}
+		else
+		{
+			return find_last_if_val(begin, end, Q_chrCmp, ch);
+		}
+	}
+	return end;
+}
+
+QString::Iterator QString::_rfind(Character ch, Sensitivity sensitivty, Apperance appearance) const
+{
+	QBool sensitive = isSensitive(sensitivty);
+	ReverseIterator rbegin = getRBegin();
+	ReverseIterator rend = getREnd();
+	ReverseIterator found = rend;
+	if (appearsFirst(appearance))
+	{
+		if (!sensitive)
+		{
+			found = find_if_val(rbegin, rend, Q_chrCaseCmp, ch);
+			return Iterator(found.ptr());
+		}
+		else
+		{
+			found = find_if_val(rbegin, rend, Q_chrCmp, ch);
+			return Iterator(found.ptr());
+		}
+	}
+	else if (appearsLast(appearance))
+	{
+		if (!sensitive)
+		{
+			found = find_last_if_val(rbegin, rend, Q_chrCaseCmp, ch);
+			return Iterator(found.ptr());
+		}
+		else
+		{
+			found = find_if_val(rbegin, rend, Q_chrCmp, ch);
+			return Iterator(found.ptr());
+		}
+	}
+	return Iterator(found.ptr());
+}
+
 void QString::_setLength(size_t len)
 {
 	_length = len;
@@ -514,27 +624,31 @@ QBool QString::_checkIndex(size_t index) const
 	return index <= _length - 1 && index >= 0;
 }
 
-//QBool QString::_checkIndicies(size_t begin, size_t end) const
-//{
-//	return _checkIndex(begin) && _checkIndex(end) && _comesBefore(begin, end);
-//}
-//
-//QBool QString::_comesBefore(size_t begin, size_t end) const
-//{
-//	return begin <= end;
-//}
-//
-//QBool QString::_interationCheck(size_t index, size_t end, Direction dir) const
-//{
-//	if (isForward(dir))
-//	{
-//		return index < end;
-//	}
-//	else if (isBackward(dir))
-//	{
-//		return index >= end;
-//	}
-//}
+QBool QString::_checkIndicies(size_t begin, size_t end) const
+{
+	return _checkIndex(begin) && _checkIndex(end) && _comesBefore(begin, end);
+}
+
+
+QBool QString::_checkIterator(Iterator iterator) const
+{
+	return iterator >= getBegin() && iterator < getEnd();
+}
+
+QBool QString::_checkIterators(Iterator begin, Iterator end) const
+{
+	return _checkIterator(begin) && _checkIterator(end) && _comesBefore(begin, end);
+}
+
+QBool QString::_checkReverseIterator(ReverseIterator iterator) const
+{
+	return iterator >= getRBegin() && iterator < getREnd();
+}
+
+QBool QString::_checkReverseIterators(ReverseIterator begin, ReverseIterator end) const
+{
+	return _checkReverseIterator(begin) && _checkReverseIterator(end) && _comesBefore(begin, end);
+}
 
 void QString::_incrementLength()
 {
