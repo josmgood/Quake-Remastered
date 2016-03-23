@@ -1,7 +1,10 @@
 #pragma once
 
 #include <iostream>
+
 #include "qbool.h"
+
+#include "..\..\common.h"
 
 template<typename Type,
 	template<typename T> typename TIterator>
@@ -21,12 +24,12 @@ public:
 	virtual Pointer ptr() const = 0;
 	virtual Reference get() const = 0;
 
-	QBool operator==(Iterator other) const;
-	QBool operator!=(Iterator other) const;
-	QBool operator<(Iterator other) const;
-	QBool operator<=(Iterator other) const;
-	QBool operator>(Iterator other) const;
-	QBool operator>=(Iterator other) const;
+	virtual QBool operator==(Iterator other) const;
+	virtual QBool operator!=(Iterator other) const;
+	virtual QBool operator<(Iterator other) const;
+	virtual QBool operator<=(Iterator other) const;
+	virtual QBool operator>(Iterator other) const;
+	virtual QBool operator>=(Iterator other) const;
 
 	void set(const Pointer ptr);
 	void set(const Reference ref);
@@ -218,6 +221,11 @@ public:
 	virtual Iterator operator-(int itrs) = 0;
 	virtual void operator-=(int itrs) = 0;
 	virtual Iterator operator--() = 0;
+
+	QBool operator<(Iterator other) const override;
+	QBool operator<=(Iterator other) const override;
+	QBool operator>(Iterator other) const override;
+	QBool operator>=(Iterator other) const override;
 };
 
 template<typename Type>
@@ -268,6 +276,21 @@ public:
 	Iterator operator--() override;
 };
 
-//typedef BidirectionalIterator<int> IntIterator;
+template<typename TIterator>
+QBool isNext(TIterator current, TIterator next)
+{
+	return next == current.next();
+}
+
+template<typename TIterator>
+QBool isPrev(TIterator current, TIterator prev)
+{
+	return prev == current.prev();
+}
+
+typedef BidirectionalArrayIterator<int> IntegerIterator;
+typedef BidirectionalArrayIterator<float32> FloatIterator;
+typedef BidirectionalArrayIterator<float64> DoubleIterator;
+typedef BidirectionalArrayIterator<char> CharacterIterator;
 
 #include "..\Source\iterator.inl"
