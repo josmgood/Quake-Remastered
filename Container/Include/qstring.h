@@ -28,31 +28,19 @@ enum class STRING_SEARCH_DIRECTION
 	BACKWARD = 1
 };
 
-enum class STRING_SEARCH_APPEARANCE
-{
-	FIRST = 0,
-	LAST = 1
-};
-
 #define STR_FORWARD STRING_SEARCH_DIRECTION::FORWARD
 #define STR_BACKWARD STRING_SEARCH_DIRECTION::BACKWARD
 #define STR_SENSITIVE STRING_SEARCH_CASE_SENSITIVITY::SENSITIVE
 #define STR_UNSENSITIVE STRING_SEARCH_CASE_SENSITIVITY::UNSENSITIVE
-#define STR_FIRST STRING_SEARCH_APPEARANCE::FIRST
-#define STR_LAST STRING_SEARCH_APPEARANCE::LAST
 
 typedef STRING_SEARCH_CASE_SENSITIVITY Sensitivity;
 typedef STRING_SEARCH_DIRECTION Direction;
-typedef STRING_SEARCH_APPEARANCE Apperance;
 
 QBool isForward(Direction dir);
 QBool isBackward(Direction dir);
 
 QBool isSensitive(Sensitivity sensitivity);
 QBool isUnsensitivity(Sensitivity sensitivity);
-
-QBool appearsFirst(Apperance appearance);
-QBool appearsLast(Apperance apperance);
 
 class QString
 	: public QAuxiliary<char, int>
@@ -94,17 +82,21 @@ public:
 	QString substring(size_t begin, size_t end);
 	//QString substring();
 
-	Iterator find(Character ch, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator find(const char* string, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator find(const QString& string, Sensitivity sensitivty = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator find(Character ch, Sensitivity sensitivty = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator find(const char* string, Sensitivity sensitivty = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator find(const QString& string, Sensitivity sensitivty = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
 
-	Iterator findLast(Character ch, Sensitivity sensitivity = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator findLast(const char* string, Sensitivity sensitivity = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator findLast(const QString& string, Sensitivity sensitivity = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator findLast(Character ch, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator findLast(const char* string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator findLast(const QString& string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
 
-	QBool has(Character ch, Sensitivity sensitivity = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
-	QBool has(const char* string, Sensitivity sensitivity = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
-	QBool has(const QString& string, Sensitivity sensitivity = STR_UNSENSITIVE, Direction dir = STR_FORWARD) const;
+	QBool has(Character ch, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	QBool has(const char* string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	QBool has(const QString& string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+
+	size_t occurance(Character ch, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	size_t occurance(const char* string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	size_t occurance(const QString& string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
 
 	QBool isAlpha() const;
 	QBool isAlpha(size_t index) const;
@@ -177,8 +169,6 @@ public:
 	size_t getSize() const;
 	size_t getMaxSize() const;
 private:
-	Iterator _find(Character ch, Sensitivity sensitivity, Apperance appearance) const;
-	Iterator _rfind(Character ch, Sensitivity sensitivty, Apperance appearance) const;
 	void _setLength(size_t len);
 
 	QBool _checkIndex(size_t index) const;
