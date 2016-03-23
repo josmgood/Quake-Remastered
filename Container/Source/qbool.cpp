@@ -60,9 +60,9 @@ bool QBool::operator>(const QBool& qbool) const
 	return(_bool > qbool._bool);
 }
 
-std::ostream& QBool::operator<<(std::ostream& os)
+std::ostream& operator<<(std::ostream& os, const QBool& qbool)
 {
-	return os << _bool;
+	return os << qbool.get();
 }
 
 std::string QBool::toString()
