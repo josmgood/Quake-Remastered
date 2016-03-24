@@ -6,6 +6,11 @@
 
 #include "..\..\common.h"
 
+template<typename Type>
+class VOID_ITERATOR
+{
+};
+
 template<typename Type,
 	template<typename T> typename TIterator>
 class IteratorBase
@@ -230,7 +235,7 @@ public:
 
 template<typename Type>
 class ReverseNodeIterator
-	: public ReverseIterator<Type, ReverseNodeIterator>
+	: public BidirectionalNodeIterator<Type>
 {
 public:
 	ReverseNodeIterator();
@@ -254,7 +259,7 @@ public:
 
 template<typename Type>
 class ReverseArrayIterator
-	: public ReverseIterator<Type, ReverseArrayIterator>
+	: public BidirectionalArrayIterator<Type>
 {
 public:
 	ReverseArrayIterator();
@@ -276,17 +281,46 @@ public:
 	Iterator operator--() override;
 };
 
-template<typename TIterator>
-QBool isNext(TIterator current, TIterator next)
-{
-	return next == current.next();
-}
+//=======================================================================================
 
-template<typename TIterator>
-QBool isPrev(TIterator current, TIterator prev)
+template<typename Type>
+class IterationDirection
 {
-	return prev == current.prev();
-}
+public:
+	typedef IterationDirection<Type> Direction;
+	typedef BidirectionalArrayIterator<Type> Iterator;
+	typedef BidirectionalArrayIterator<Type>* pIterator;
+	typedef Type value;
+	typedef Type& Reference;
+	typedef Type* Pointer;
+
+	IterationDirection(pIterator iterator);
+
+	Reference operator*() const;
+	Pointer ptr() const;
+	Reference get() const;
+
+	//void operator+=(int itrs);
+	//void operator-=(int itrs);
+
+	void operator++();
+	void operator--();
+
+	QBool operator==(Direction other) const;
+	QBool operator!=(Direction other) const;
+	QBool operator<(Direction other) const;
+	QBool operator<=(Direction other) const;
+	QBool operator>(Direction other) const;
+	QBool operator>=(Direction other) const;
+
+	void set(Reference ref);
+	void set(Pointer ptr);
+private:
+	friend class BidirectionalArrayIterator<Type>;
+	friend class ReverseArrayIterator<Type>;
+
+	pIterator _iterator;
+};
 
 typedef BidirectionalArrayIterator<int> IntegerIterator;
 typedef BidirectionalArrayIterator<float32> FloatIterator;

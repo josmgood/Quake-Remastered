@@ -524,19 +524,19 @@ QBool ReverseIterator<Type, TIterator>::operator>=(Iterator other) const
 
 template<typename Type>
 ReverseNodeIterator<Type>::ReverseNodeIterator()
-	: ReverseIterator()
+	: BidirectionalArrayIterator()
 {
 }
 
 template<typename Type>
 ReverseNodeIterator<Type>::ReverseNodeIterator(const Pointer ptr)
-	: ReverseIterator(ptr)
+	: BidirectionalArrayIterator(ptr)
 {
 }
 
 template<typename Type>
 ReverseNodeIterator<Type>::ReverseNodeIterator(const Reference ref)
-	: ReverseIterator(ref)
+	: BidirectionalArrayIterator(ref)
 {
 }
 
@@ -635,19 +635,19 @@ ReverseNodeIterator<Type>::operator--()
 
 template<typename Type>
 ReverseArrayIterator<Type>::ReverseArrayIterator()
-	: ReverseIterator()
+	: BidirectionalArrayIterator()
 {
 }
 
 template<typename Type>
 ReverseArrayIterator<Type>::ReverseArrayIterator(const Pointer ptr)
-	: ReverseIterator(ptr)
+	: BidirectionalArrayIterator(ptr)
 {
 }
 
 template<typename Type>
 ReverseArrayIterator<Type>::ReverseArrayIterator(const Reference ref)
-	: ReverseIterator(ref)
+	: BidirectionalArrayIterator(ref)
 {
 }
 
@@ -726,4 +726,94 @@ ReverseArrayIterator<Type>::operator--()
 {
 	++_ptr;
 	return *this;
+}
+
+//=======================================================================================
+
+template<typename Type>
+IterationDirection<Type>::IterationDirection(pIterator iterator)
+	: _iterator(iterator)
+{
+}
+
+template<typename Type>
+typename IterationDirection<Type>::Reference
+IterationDirection<Type>::operator*() const
+{
+	return _iterator->get();
+}
+
+template<typename Type>
+typename IterationDirection<Type>::Pointer 
+IterationDirection<Type>::ptr() const
+{
+	return _iterator->ptr();
+}
+
+template<typename Type>
+typename IterationDirection<Type>::Reference
+IterationDirection<Type>::get() const
+{
+	return _iterator->get();
+}
+
+template<typename Type>
+void IterationDirection<Type>::operator++()
+{
+	*_iterator->operator++();
+}
+
+template<typename Type>
+void IterationDirection<Type>::operator--()
+{
+	*_iterator->operator--();
+}
+
+template<typename Type>
+QBool IterationDirection<Type>::operator==(Direction other) const
+{
+	return _iterator->ptr() == other.ptr();
+}
+
+template<typename Type>
+QBool IterationDirection<Type>::operator!=(Direction other) const
+{
+	return _iterator->ptr() == other.ptr();
+}
+
+template<typename Type>
+QBool IterationDirection<Type>::operator<(Direction other) const
+{
+	//return _iterator->ptr() < other.ptr();
+	return _iterator < other._iterator;
+}
+
+template<typename Type>
+QBool IterationDirection<Type>::operator<=(Direction other) const
+{
+	return _iterator->ptr() <= other.ptr();
+}
+
+template<typename Type>
+QBool IterationDirection<Type>::operator>(Direction other) const
+{
+	return _iterator->ptr() > other.ptr();
+}
+
+template<typename Type>
+QBool IterationDirection<Type>::operator>=(Direction other) const
+{
+	return _iterator->ptr() >= other.ptr();
+}
+
+template<typename Type>
+void IterationDirection<Type>::set(Reference ref)
+{
+	_iterator.set(ref);
+}
+
+template<typename Type>
+void IterationDirection<Type>::set(Pointer ptr)
+{
+	_iterator.set(ptr);
 }
