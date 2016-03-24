@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <functional>
 
 #include "base.hpp"
 #include "iterator.hpp"
@@ -22,22 +23,10 @@ enum class STRING_SEARCH_CASE_SENSITIVITY
 	UNSENSITIVE = 1
 };
 
-enum class STRING_SEARCH_DIRECTION
-{
-	FORWARD = 0,
-	BACKWARD = 1
-};
-
-#define STR_FORWARD STRING_SEARCH_DIRECTION::FORWARD
-#define STR_BACKWARD STRING_SEARCH_DIRECTION::BACKWARD
 #define STR_SENSITIVE STRING_SEARCH_CASE_SENSITIVITY::SENSITIVE
 #define STR_UNSENSITIVE STRING_SEARCH_CASE_SENSITIVITY::UNSENSITIVE
 
 typedef STRING_SEARCH_CASE_SENSITIVITY Sensitivity;
-typedef STRING_SEARCH_DIRECTION Direction;
-
-QBool isForward(Direction dir);
-QBool isBackward(Direction dir);
 
 QBool isSensitive(Sensitivity sensitivity);
 QBool isUnsensitivity(Sensitivity sensitivity);
@@ -49,6 +38,8 @@ public:
 	typedef Value Character;
 	typedef Pointer Index;
 	typedef Pointer String;
+
+	typedef std::function<QBool(Character, Character)> CaseChecker;
 
 	typedef BidirectionalArrayIterator<Character> Iterator;
 	typedef BidirectionalArrayIterator<const Character> ConstIterator;
@@ -82,21 +73,33 @@ public:
 	QString substring(size_t begin, size_t end);
 	//QString substring();
 
-	Iterator find(Character ch, Sensitivity sensitivty = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator find(const char* string, Sensitivity sensitivty = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator find(const QString& string, Sensitivity sensitivty = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator find(Character ch, Sensitivity sensitivty = STR_SENSITIVE) const;
+	Iterator find(const Character* string, Sensitivity sensitivty = STR_SENSITIVE) const;
+	Iterator find(const QString& string, Sensitivity sensitivty = STR_SENSITIVE) const;
 
-	Iterator findLast(Character ch, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator findLast(const char* string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	Iterator findLast(const QString& string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	ReverseIterator rfind(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
+	ReverseIterator rfind(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	ReverseIterator rfind(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
-	QBool has(Character ch, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	QBool has(const char* string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	QBool has(const QString& string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	Iterator findnth(Character ch, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
+	Iterator findnth(const Character* string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
+	Iterator findnth(const QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
 
-	size_t occurance(Character ch, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	size_t occurance(const char* string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
-	size_t occurance(const QString& string, Sensitivity sensitivity = STR_SENSITIVE, Direction dir = STR_FORWARD) const;
+	ReverseIterator rfindnth(Character ch, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
+	ReverseIterator rfindnth(const Character* string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
+	ReverseIterator rfindnth(const QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
+
+	Iterator findLast(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
+	Iterator findLast(const char* string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	Iterator findLast(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
+
+	QBool has(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
+	QBool has(const char* string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	QBool has(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
+
+	size_t occurances(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
+	size_t occurances(const char* string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	size_t occurances(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	QBool isAlpha() const;
 	QBool isAlpha(size_t index) const;
@@ -195,6 +198,11 @@ private:
 	size_t _length;
 	/*Maximum length*/
 	size_t _maxLength;
+
+	Iterator _begin;
+	Iterator _end;
+	ReverseIterator _rbegin;
+	ReverseIterator _rend;
 	/*Memory Allocator*/
 	//Allocator _allocator;
 };
