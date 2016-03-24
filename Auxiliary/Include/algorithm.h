@@ -92,3 +92,13 @@ TIterator find_if_not_val(TIterator begin, TIterator end, TConditional condition
 	}
 	return end;
 }
+
+template<typename TIterator, typename TConverter, typename TValue = TIterator::Value>
+void convert_to(TIterator begin, TIterator end, TConverter converter)
+{
+	for (TIterator i = begin; i < end; ++i)
+	{
+		TValue value = converter(i.get());
+		i.set(value);
+	}
+}
