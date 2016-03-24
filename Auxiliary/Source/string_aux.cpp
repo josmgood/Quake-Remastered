@@ -83,6 +83,11 @@ QBool Q_isAlpha(char ch)
 	return ch >= 65 && ch <= 122;
 }
 
+QBool Q_isSpace(char ch)
+{
+	return ch == 32;
+}
+
 QBool Q_isNumeric(char ch)
 {
 	return ch >= 48 && ch <= 57;
