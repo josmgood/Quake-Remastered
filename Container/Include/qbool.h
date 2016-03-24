@@ -28,3 +28,6 @@ public:
 private:
 	bool _bool;
 };
+
+#define QTRUE (QBool)true
+#define QFALSE (QBool)false
