@@ -524,19 +524,19 @@ QBool ReverseIterator<Type, TIterator>::operator>=(Iterator other) const
 
 template<typename Type>
 ReverseNodeIterator<Type>::ReverseNodeIterator()
-	: BidirectionalArrayIterator()
+	: ReverseIterator()
 {
 }
 
 template<typename Type>
 ReverseNodeIterator<Type>::ReverseNodeIterator(const Pointer ptr)
-	: BidirectionalArrayIterator(ptr)
+	: ReverseIterator(ptr)
 {
 }
 
 template<typename Type>
 ReverseNodeIterator<Type>::ReverseNodeIterator(const Reference ref)
-	: BidirectionalArrayIterator(ref)
+	: ReverseIterator(ref)
 {
 }
 
@@ -635,19 +635,19 @@ ReverseNodeIterator<Type>::operator--()
 
 template<typename Type>
 ReverseArrayIterator<Type>::ReverseArrayIterator()
-	: BidirectionalArrayIterator()
+	: ReverseIterator()
 {
 }
 
 template<typename Type>
 ReverseArrayIterator<Type>::ReverseArrayIterator(const Pointer ptr)
-	: BidirectionalArrayIterator(ptr)
+	: ReverseIterator(ptr)
 {
 }
 
 template<typename Type>
 ReverseArrayIterator<Type>::ReverseArrayIterator(const Reference ref)
-	: BidirectionalArrayIterator(ref)
+	: ReverseIterator(ref)
 {
 }
 
@@ -726,6 +726,30 @@ ReverseArrayIterator<Type>::operator--()
 {
 	++_ptr;
 	return *this;
+}
+
+template<typename Type>
+QBool ReverseArrayIterator<Type>::operator<(Iterator other) const
+{
+	return _ptr > other._ptr;
+}
+
+template<typename Type>
+QBool ReverseArrayIterator<Type>::operator<=(Iterator other) const
+{
+	return _ptr >= other._ptr;
+}
+
+template<typename Type>
+QBool ReverseArrayIterator<Type>::operator>(Iterator other) const
+{
+	return _ptr < other._ptr;
+}
+
+template<typename Type>
+QBool ReverseArrayIterator<Type>::operator>=(Iterator other) const
+{
+	return _ptr <= other._ptr;
 }
 
 //=======================================================================================

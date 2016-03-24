@@ -6,11 +6,6 @@
 
 #include "..\..\common.h"
 
-template<typename Type>
-class VOID_ITERATOR
-{
-};
-
 template<typename Type,
 	template<typename T> typename TIterator>
 class IteratorBase
@@ -235,7 +230,7 @@ public:
 
 template<typename Type>
 class ReverseNodeIterator
-	: public BidirectionalNodeIterator<Type>
+	: public ReverseIterator<Type, ReverseNodeIterator>
 {
 public:
 	ReverseNodeIterator();
@@ -255,11 +250,16 @@ public:
 	Iterator operator-(int itrs) override;
 	void operator-=(int itrs) override;
 	Iterator operator--() override;
+
+	/*QBool operator<(Iterator other) const override;
+	QBool operator<=(Iterator other) const override;
+	QBool operator>(Iterator other) const override;
+	QBool operator>=(Iterator other) const override;*/
 };
 
 template<typename Type>
 class ReverseArrayIterator
-	: public BidirectionalArrayIterator<Type>
+	: public ReverseIterator<Type, ReverseArrayIterator>
 {
 public:
 	ReverseArrayIterator();
@@ -279,6 +279,11 @@ public:
 	Iterator operator-(int itrs) override;
 	void operator-=(int itrs) override;
 	Iterator operator--() override;
+
+	QBool operator<(Iterator other) const override;
+	QBool operator<=(Iterator other) const override;
+	QBool operator>(Iterator other) const override;
+	QBool operator>=(Iterator other) const override;
 };
 
 //=======================================================================================
@@ -326,5 +331,6 @@ typedef BidirectionalArrayIterator<int> IntegerIterator;
 typedef BidirectionalArrayIterator<float32> FloatIterator;
 typedef BidirectionalArrayIterator<float64> DoubleIterator;
 typedef BidirectionalArrayIterator<char> CharacterIterator;
+typedef BidirectionalArrayIterator<unsigned char> UnsignedCharacterIterator;
 
 #include "..\Source\iterator.inl"
