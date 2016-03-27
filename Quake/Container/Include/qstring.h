@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <functional>
+#include <string.h>
 
 #include "base.hpp"
 #include "iterator.hpp"
@@ -11,9 +12,7 @@
 
 #include "..\..\Math\Include\math.h"
 
-#include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
-
-#define DEFAULT_STRING_SIZE		32
+#define DEFAULT_STRING_SIZE	32
 
 enum class STRING_SEARCH_CASE_SENSITIVITY
 {
@@ -37,7 +36,7 @@ public:
 	typedef Pointer Index;
 	typedef Pointer String;
 
-	typedef std::function<QBool(Character, Character)> CaseChecker;
+	typedef std::function<int(Character*, Character*, size_t)> CaseChecker;
 
 	typedef BidirectionalArrayIterator<Character> Iterator;
 	typedef BidirectionalArrayIterator<const Character> ConstIterator;
@@ -146,14 +145,13 @@ public:
 	void rto(ReverseIterator iterator, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
 	void rto(ReverseIterator begin, ReverseIterator end, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
 
-	void copy(const Character* string, size_t length = 0);
+	void copy(const Character* string);
 	void copy(const QString& string);
 	void reserve(size_t size);
-
-	void create(size_t length);
-	void create(const Character* string, size_t length = 0);
-	void create(const QString& string);
 	void clear();
+
+	QBool equals(const Character* other) const;
+	QBool equals(const QString& other) const;
 
 	QBool isEmpty() const;
 	QBool isFull() const;
@@ -165,20 +163,20 @@ public:
 	//size_t toSize_t() const;
 	//float32 toFloat32() const;
 	float64 toFloat64() const;
-	cString toCString() const;
+	const Character* toCString() const;
 
 	Reference at(size_t index) const;
 	Reference operator[](size_t index) const;
 
 	//void operator=(const char* string);
 	//void operator(const QString& string);
-	QString operator+(const char* string);
+	QString operator+(const Character* string);
 	QString operator+(const QString& string);
-	QString operator+=(const char* string);
+	QString operator+=(const Character* string);
 	void operator+=(const QString& string);
 	QString operator*(size_t times);
 	void operator*=(size_t times);
-	void operator=(const char* string);
+	void operator=(const Character* string);
 	void operator=(const QString& string);
 
 	QBool operator==(const Character* other) const;
@@ -199,16 +197,22 @@ public:
 
 	const Iterator getBegin() const;
 	const Iterator getEnd() const;
+	const ConstIterator getCBegin() const;
+	const ConstIterator getCEnd() const;
 	const ReverseIterator getRBegin() const;
 	const ReverseIterator getREnd() const;
+	const ConstReverseIterator getCRBegin() const;
+	const ConstReverseIterator getCREnd() const;
 
-	QBool isInitialized() const;
 	size_t getLength() const;
 	size_t getMaxLength() const;
 	size_t getSize() const;
 	size_t getMaxSize() const;
 private:
 	void _setLength(size_t len);
+	void _setMaxLength(size_t max);
+	void _incrementLength();
+	void _decrementLength();
 	void _addLength(size_t amount);
 	void _subtractLength(size_t amount);
 
@@ -218,20 +222,11 @@ private:
 	QBool _checkIndex(size_t index) const;
 	QBool _checkIndicies(size_t begin, size_t end) const;
 
-	QBool _checkNegativeIndex(size_t index) const;
-	QBool _checkNegativeIndicies(size_t begin, size_t end) const;
-
-	size_t _negToPos(size_t negative) const;
-	QBool _negComesBefore(size_t begin, size_t end) const;
-
 	QBool _checkIterator(Iterator iterator) const;
 	QBool _checkIterators(Iterator begin, Iterator end) const;
 
 	QBool _checkReverseIterator(ReverseIterator iterator) const;
 	QBool _checkReverseIterators(ReverseIterator begin, ReverseIterator end) const;
-
-	void _createIteratorFlags(size_t length);
-	void _adjustEnd(size_t num);
 
 	template<typename TIterator>
 	QBool _comesBefore(TIterator begin, TIterator end) const
@@ -241,22 +236,12 @@ private:
 
 	CaseChecker _getCase(Sensitivity sensitivity) const;
 
-	void _incrementLength();
-	void _decrementLength();
-
-	QBool _isInitialized;
-
 	/*Raw string*/
 	String _string;
 	/*String length*/
 	size_t _length;
 	/*Maximum length*/
 	size_t _maxLength;
-
-	Iterator _begin;
-	Iterator _end;
-	ReverseIterator _rbegin;
-	ReverseIterator _rend;
 	/*Memory Allocator*/
 	//Allocator _allocator;
 };
