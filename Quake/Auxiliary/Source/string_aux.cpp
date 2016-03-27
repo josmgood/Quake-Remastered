@@ -10,6 +10,11 @@ QBool isEmptyChar(char ch)
 	return ch == EMPTY_CHAR;
 }
 
+QBool isTerminatingZero(char ch)
+{
+	return ch == '\0';
+}
+
 size_t Q_strLen(const char* string)
 {
 	size_t count = 0;

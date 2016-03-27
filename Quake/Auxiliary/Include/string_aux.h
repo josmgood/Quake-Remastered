@@ -16,6 +16,7 @@ struct cString
 };
 
 QBool isEmptyChar(char ch);
+QBool isTerminatingZero(char ch);
 
 size_t Q_strLen(const char* string);
 size_t Q_strLen(const char* string, size_t buffer);
