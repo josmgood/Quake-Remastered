@@ -30,6 +30,8 @@
 
 #define GTEST
 
+#define AMOUNT 40000000
+
 int main()
 {
 	glewExperimental = GL_TRUE;
@@ -52,7 +54,18 @@ int main()
 	//std::cout << cated << std::endl;
 	//std::cout << Q_strCmp(together, cated) << std::endl;
 
-	std::cout << Q_strCmp("Hello", "Hello") << std::endl;
+	/*QString hello("Hello World!");
+	QString::Iterator i = hello.findnth('z', 1);
+	std::cout << hello.substring(i) << std::endl;*/
+
+	//QString str("Hello");
+	//QBool b = str < "hello";
+	//QBool b = QString("Hello") == QString("Hello");
+	//std::cout << b << std::endl;
+
+	const char* str1 = "Hello World";
+	const char* str2 = "Hello Worlz";
+	std::cout << strncmp(str1, str2, 12) << std::endl;
 
 	std::cin.get();
 	return 0;
