@@ -14,8 +14,6 @@
 #include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
 
 #define DEFAULT_STRING_SIZE		32
-#define EMPTY_STRING QString(nullptr);
-#define BAD_INDEX 0
 
 enum class STRING_SEARCH_CASE_SENSITIVITY
 {
@@ -47,28 +45,28 @@ public:
 	typedef ReverseArrayIterator<const Character> ConstReverseIterator;
 
 	QString(size_t length = DEFAULT_STRING_SIZE);
-	QString(const char* string);
+	QString(const Character* string);
 	QString(const QString& string);
 
 	~QString();
 
 	void pushFront(Character ch);
-	void pushFront(const Character* string, size_t length = 0);
+	void pushFront(const Character* string);
 	void pushFront(const QString& string);
 	void setFront(Character ch);
-	void setFront(const Character* string, size_t length = 0);
+	void setFront(const Character* string);
 	void setFront(const QString& string);
 	Reference getFront() const;
 
 	void pushBack(Character ch);
-	void pushBack(const Character* string, size_t length = 0);
+	void pushBack(const Character* string);
 	void pushBack(const QString& string);
 	void setBack(Character ch);
-	void setBack(const Character* string, size_t length = 0);
+	void setBack(const Character* string);
 	void setBack(const QString& string);
 	Reference getBack() const;
 
-	void concat(const Character* string, size_t length = 0);
+	void concat(const Character* string);
 	void concat(const QString& string);
 
 	void insert(size_t index, Character ch);
@@ -89,10 +87,10 @@ public:
 	void set(Iterator begin, Iterator end, const Character* string);
 	void set(Iterator begin, Iterator end, const QString& string);
 
-	QString substring(size_t index);
-	QString substring(size_t begin, size_t end);
-	QString substring(Iterator iterator);
-	QString substring(Iterator begin, Iterator end);
+	QString substring(size_t index) const;
+	QString substring(size_t begin, size_t end) const;
+	QString substring(Iterator iterator) const;
+	QString substring(Iterator begin, Iterator end) const;
 
 	Iterator find(Character ch, Sensitivity sensitivty = STR_SENSITIVE) const;
 	Iterator find(const Character* string, Sensitivity sensitivty = STR_SENSITIVE) const;
@@ -183,6 +181,20 @@ public:
 	void operator=(const char* string);
 	void operator=(const QString& string);
 
+	QBool operator==(const Character* other) const;
+	QBool operator!=(const Character* other) const;
+	QBool operator<(const Character* other) const;
+	QBool operator<=(const Character* other) const;
+	QBool operator>(const Character* other) const;
+	QBool operator>=(const Character* other) const;
+
+	QBool operator==(const QString& other) const;
+	QBool operator!=(const QString& other) const;
+	QBool operator<(const QString& other) const;
+	QBool operator<=(const QString& other) const;
+	QBool operator>(const QString& other) const;
+	QBool operator>=(const QString& other) const;
+
 	friend std::ostream& operator<<(std::ostream& os, const QString& string);
 
 	const Iterator getBegin() const;
@@ -197,8 +209,11 @@ public:
 	size_t getMaxSize() const;
 private:
 	void _setLength(size_t len);
+	void _addLength(size_t amount);
+	void _subtractLength(size_t amount);
 
 	QBool _hasSpaceFor(size_t num) const;
+	void _setTerminatingZero(size_t index);
 
 	QBool _checkIndex(size_t index) const;
 	QBool _checkIndicies(size_t begin, size_t end) const;
@@ -245,3 +260,5 @@ private:
 	/*Memory Allocator*/
 	//Allocator _allocator;
 };
+
+static const QString EMPTY_STRING(nullptr);
