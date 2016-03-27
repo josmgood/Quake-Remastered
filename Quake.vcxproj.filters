@@ -15,78 +15,84 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Quake\UI\Source\OpenGL\opengl_context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Math\Source\math.cpp">
+    <ClCompile Include="Quake\Memory\Source\Allocator\mallocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Memory\Source\Internal\boolset.cpp">
+    <ClCompile Include="Quake\Memory\Source\Allocator\null_allocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Container\Source\qbool.cpp">
+    <ClCompile Include="Quake\Memory\Source\Internal\boolset.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Memory\Source\Allocator\mallocator.cpp">
+    <ClCompile Include="Quake\Math\Source\math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Memory\Source\Allocator\null_allocator.cpp">
+    <ClCompile Include="Quake\Game\Source\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Source\window.cpp">
+    <ClCompile Include="Quake\Game\Source\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Source\game.cpp">
+    <ClCompile Include="Quake\Container\Source\qbool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Auxiliary\Source\string_aux.cpp">
+    <ClCompile Include="Quake\Container\Source\qstring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Quake\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tests\Container\test_qstring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Container\Source\qarray.inl">
+    <None Include="Quake\Memory\Source\Allocator\fallback_allocator.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Container\Source\qstack.inl">
+    <None Include="Quake\Memory\Source\Allocator\freelist.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Internal\smart_ptr.inl">
+    <None Include="Quake\Memory\Source\Allocator\lax_freelist.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Internal\stack.inl">
+    <None Include="Quake\Memory\Source\Allocator\pool_allocator.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Allocator\segregator.inl">
+    <None Include="Quake\Memory\Source\Allocator\segregator.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Allocator\pool_allocator.inl">
+    <None Include="Quake\Memory\Source\Internal\batch_queue.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Allocator\fallback_allocator.inl">
+    <None Include="Quake\Memory\Source\Internal\smart_ptr.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Math\Source\vector4.inl">
+    <None Include="Quake\Memory\Source\Internal\stack.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Math\Source\vector2.inl">
+    <None Include="Quake\Math\Source\vector2.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Math\Source\vector3.inl">
+    <None Include="Quake\Math\Source\vector3.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Allocator\freelist.inl">
+    <None Include="Quake\Math\Source\vector4.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Allocator\lax_freelist.inl">
+    <None Include="Quake\Container\Source\base.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Memory\Source\Internal\batch_queue.inl">
+    <None Include="Quake\Container\Source\iterator.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Container\Source\base.inl">
+    <None Include="Quake\Container\Source\qarray.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="Container\Source\qstring.inl">
+    <None Include="Quake\Container\Source\qstack.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>
@@ -97,103 +103,115 @@
     <ClInclude Include="memory\internal\include\reallocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Container\Include\qforward_list.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Include\qhash_string.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Include\base.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Include\qvector.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Include\qarray.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Container\Include\qstack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Include\math.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\affix_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\base_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\fallback_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\linear_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\pool_allocator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\segregator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Internal\traits.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Internal\stack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Internal\auxiliary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Internal\boolset.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\slab_allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Math\Include\vector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Container\Include\qbool.h">
+    <ClInclude Include="Quake\UI\Include\OpenGL\opengl_context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\freelist.hpp">
+    <ClInclude Include="Quake\Memory\Include\Allocator\affix_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\lax_freelist.hpp">
+    <ClInclude Include="Quake\Memory\Include\Allocator\base_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\mallocator.h">
+    <ClInclude Include="Quake\Memory\Include\Allocator\fallback_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Allocator\null_allocator.h">
+    <ClInclude Include="Quake\Memory\Include\Allocator\freelist.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IO\Include\file.hpp">
+    <ClInclude Include="Quake\Memory\Include\Allocator\lax_freelist.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Container\Include\qarraylist.hpp">
+    <ClInclude Include="Quake\Memory\Include\Allocator\linear_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Container\Include\qstring.hpp">
+    <ClInclude Include="Quake\Memory\Include\Allocator\mallocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Exception\error.h">
+    <ClInclude Include="Quake\Memory\Include\Allocator\null_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Include\game.h">
+    <ClInclude Include="Quake\Memory\Include\Allocator\pool_allocator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Include\window.h">
+    <ClInclude Include="Quake\Memory\Include\Allocator\segregator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
+    <ClInclude Include="Quake\Memory\Include\Allocator\slab_allocator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Auxiliary\Include\string_aux.h">
+    <ClInclude Include="Quake\Memory\Include\Internal\auxiliary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Include\Internal\batch_queue.hpp">
+    <ClInclude Include="Quake\Memory\Include\Internal\batch_queue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Memory\Include\Internal\boolset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Memory\Include\Internal\stack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Memory\Include\Internal\traits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Math\Include\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\IO\Include\file.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Game\Include\game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Game\Include\window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Exception\error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\base.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\iterator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qarray.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qarraylist.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qbool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qforward_list.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qhash_string.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qstack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Container\Include\qvector.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Auxiliary\Include\algorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\Auxiliary\Include\string_aux.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Quake\UI\Include\Windows\windows_defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
