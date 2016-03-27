@@ -33,7 +33,6 @@ QString::QString(const char* string)
 	_length = len;
 	_string = new char[len];
 	Q_strCpy(string, _string, len);
-	
 	if (_string)
 	{
 		_createIteratorFlags(len);
@@ -47,7 +46,6 @@ QString::QString(const QString& string)
 {
 	_string = new char[_length];
 	Q_strCpy(string._string, _string, _length);
-
 	if (_string)
 	{
 		_createIteratorFlags(_length);
@@ -62,7 +60,7 @@ QString::~QString()
 
 void QString::pushFront(Character ch)
 {
-	if (_length + 1 <= _maxLength)
+	/*if (_hasSpaceFor(1))
 	{
 		Character last = _string[0];
 		_string[0] = ch;
@@ -74,7 +72,24 @@ void QString::pushFront(Character ch)
 			last = tmp;
 		}
 		_incrementLength();
+		_adjustEnd(1);
+	}*/
+
+	if (!_hasSpaceFor(1))
+	{
+		reserve(_maxLength + 1);
 	}
+	Character last = _string[0];
+	_string[0] = ch;
+	size_t end = _length + 1;
+	for (size_t i = 1; i < end; ++i)
+	{
+		Character hold = _string[i];
+		_string[i] = last;
+		last = hold;
+	}
+	_incrementLength();
+	_adjustEnd(1);
 }
 
 void QString::setFront(Character ch)
@@ -92,10 +107,37 @@ QString::Reference QString::getFront() const
 
 void QString::pushBack(Character ch)
 {
-	if (_length + 1 <= _maxLength)
+	if (_hasSpaceFor(1))
 	{
 		_string[_length] = ch;
 		_incrementLength();
+		_adjustEnd(1);
+	}
+}
+
+void QString::pushBack(const Character* string, size_t length)
+{
+	size_t len = !length ? Q_strLen(string) : length;
+	if (!_hasSpaceFor(len))
+	{
+		reserve(_maxLength + len);
+	}
+	for (size_t i = _length, j = 0; i < _maxLength; ++i, ++j)
+	{
+		_string[i] = string[j];
+	}
+}
+
+void QString::pushBack(const QString& string)
+{
+	size_t len = string.getLength();
+	if (!_hasSpaceFor(len))
+	{
+		reserve(_maxLength + len);
+	}
+	for (size_t i = _length, j = 0; i < _maxLength; ++i, ++j)
+	{
+		_string[i] = string[j];
 	}
 }
 
@@ -112,6 +154,134 @@ QString::Reference QString::getBack() const
 	return _string[_length - 1];
 }
 
+void QString::concat(const Character* string, size_t length)
+{
+	size_t len = length != 0 ? length : Q_strLen(string);
+	size_t spaceLeft = _maxLength - _length;
+	if (spaceLeft < len)
+	{
+		size_t newLen = _maxLength + len;
+		Character* str = new Character[newLen];
+		Q_strCpy(_string, str, _length);
+		delete[] _string;
+		_string = str;
+		_maxLength = newLen;
+	}
+	Q_strCpy(string, _string + _length, len);
+	_length += len;
+	_createIteratorFlags(_length);
+}
+
+void QString::concat(const QString& string)
+{
+	size_t len = string.getLength();
+	const char* raw = string._string;
+	size_t spaceLeft = _maxLength - _length;
+	if (spaceLeft < len)
+	{
+		size_t newLen = _maxLength + len;
+		Character* str = new Character[newLen];
+		Q_strCpy(_string, str, _length);
+		delete[] _string;
+		_string = str;
+		_maxLength = newLen;
+	}
+	Q_strCpy(raw, _string + _length, len);
+	_length += len;
+	_createIteratorFlags(_length);
+}
+
+void QString::insert(size_t index, Character ch)
+{
+	if (_checkIndex(index))
+	{
+		if (!_hasSpaceFor(1))
+		{
+			reserve(_maxLength + 5);
+		}
+		for (size_t i = index; i < _length; ++i)
+		{
+			Character hold = _string[i];
+			Character next = _string[i + 1];
+			_string[i + 1] = hold;
+		}
+		_string[index] = ch;
+		_incrementLength();
+		_adjustEnd(1);
+	}
+}
+
+void QString::insert(size_t begin, size_t end, const Character* string)
+{
+	if (_checkIndicies(begin, end) || _checkIndex(begin) && _comesBefore(begin, end))
+	{
+		size_t spaceNeeded = end - begin;
+		if (!_hasSpaceFor(spaceNeeded))
+		{
+			reserve(spaceNeeded);
+		}
+		size_t trueEnd = end + 1;
+		Character hold = _string[0];
+		for (size_t i = begin, j = 0; i < trueEnd; ++i, ++j)
+		{
+			Character hold = _string[i];
+			Character next = _string[i + 1];
+			_string[i + 1] = hold;
+			hold = next;
+
+			Character ch = string[j];
+			_string[i] = ch;
+		}
+		size_t newLen = _length + spaceNeeded;
+		_setLength(newLen);
+		_adjustEnd(newLen);
+	}
+}
+
+void QString::insert(size_t begin, size_t end, const QString& string)
+{
+	if (_checkNegativeIndicies(begin, end) || _checkIndex(begin) && _comesBefore(begin, end))
+	{
+		size_t spaceNeeded = end - begin;
+		if (!_hasSpaceFor(spaceNeeded))
+		{
+			reserve(_maxLength + spaceNeeded);
+		}
+		size_t trueEnd = end + 1;
+		for (size_t i = begin, j = 0; i < trueEnd; ++i, ++j)
+		{
+			Character hold = _string[i];
+			Character next = _string[i + 1];
+			_string[i + 1] = hold;
+
+			Character ch = string[j];
+			_string[i] = ch;
+		}
+		_setLength(_length + spaceNeeded);
+		//_adjustEnd(spaceNeeded);
+	}
+}
+
+void QString::insert(Iterator iterator, Character ch)
+{
+	if (_checkIterator(iterator))
+	{
+		if (!_hasSpaceFor(1))
+		{
+			reserve(_maxLength + 5);
+		}
+		for (Iterator i = _begin; i < _end; ++i)
+		{
+			Iterator hold = i;
+			Iterator next = i.next();
+			i.next() = hold;
+		}
+		iterator.set(ch);
+		_incrementLength();
+		_adjustEnd(1);
+	}
+}
+
 void QString::set(size_t index, Character ch)
 {
 	if (_checkIndex(index))
@@ -120,11 +290,67 @@ void QString::set(size_t index, Character ch)
 	}
 }
 
-void QString::set(size_t begin, size_t end, const char* string)
+void QString::set(size_t begin, size_t end, const Character* string)
 {
-	if (_checkIndicies(begin, end))
+	size_t len = Q_strLen(string);
+	if (_checkIndicies(begin, end) && begin + end == len)
 	{
-		//for (size_t i = begin; _interationCheck(begin, end); i)
+		size_t trueEnd = end + 1;
+		for (size_t i = begin, j = 0; i < trueEnd; ++i, ++j)
+		{
+			_string[i] = string[j];
+		}
+	}
+}
+
+void QString::set(size_t begin, size_t end, const QString& string)
+{
+	size_t len = string.getLength();
+	if (_checkIndicies(begin, end) && begin + end == len)
+	{
+		size_t trueEnd = end + 1;
+		for (size_t i = begin, j = 0; i < trueEnd; ++i, ++j)
+		{
+			_string[i] = string[j];
+		}
+	}
+}
+
+void QString::set(Iterator iterator, Character ch)
+{
+	if (_checkIterator(iterator))
+	{
+		iterator.set(ch);
+	}
+}
+
+void QString::set(Iterator begin, Iterator end, const Character* string)
+{
+	size_t len = Q_strLen(string);
+	if (_checkIterators(begin, end) && begin + len == end)
+	{
+		Iterator trueEnd = end + 1;
+		size_t j = 0;
+		for (Iterator i = begin; i < trueEnd; ++i, ++j)
+		{
+			Character ch = string[j];
+			i.set(ch);
+		}
+	}
+}
+
+void QString::set(Iterator begin, Iterator end, const QString& string)
+{
+	size_t len = string.getLength();
+	if (_checkIterators(begin, end) && begin + len == end)
+	{
+		Iterator trueEnd = end + 1;
+		size_t j = 0;
+		for (Iterator i = begin; i < trueEnd; ++i, ++j)
+		{
+			Character ch = string[j];
+			i.set(ch);
+		}
 	}
 }
 
@@ -949,6 +1175,7 @@ void QString::reserve(size_t size)
 	{
 		Character* string = new Character[size];
 		Q_strCpy(_string, string, size);
+		std::cout << string << std::endl;
 		delete[] _string;
 		_string = string;
 		_maxLength = size;
@@ -1030,25 +1257,155 @@ QBool QString::isFull() const
 	return _length == _maxLength;
 }
 
-QString::Reference QString::at(size_t index) const
+int32 QString::toInt32() const
 {
-	return _checkIndex(index) ? _string[index] : EMPTY_CHAR;
+	int32 value = 0;
+	int32 sign = 1;
+	Character ch = 0;
+	Character* str = _string;
+
+	if (*str == '-')
+	{
+		sign = -1;
+		str++;
+	}
+
+	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+	{
+		str += 2;
+		while (true)
+		{
+			ch = *str++;
+			if (!Q_isNumeric(ch))
+			{
+				value = (value << 4) + ch - '0';
+			}
+			else if (Q_isHexU(ch))
+			{
+				value = (value << 4) + ch - 'A' + 10;
+			}
+			else if (Q_isHexL(ch))
+			{
+				value = (value << 4) + ch - 'a' + 10;
+			}
+			else
+			{
+				return sign * value;
+			}
+		}
+	}
+
+	if (str[0] == '\'')
+	{
+		return sign * str[1];
+	}
+
+	while (true)
+	{
+		ch = *str++;
+		if (!Q_isNumeric(ch))
+		{
+			return sign * value;
+		}
+		value = value * 10 + ch - '0';
+	}
+	return 0;
 }
 
-//QString QString::at(size_t begin, size_t end) const
-//{
-//	if (_checkIndicies(begin, end))
-//	{
-//		size_t subLen = (end - begin != 0) ? end - begin : 1;
-//		QString string(subLen);
-//		for (size_t i = 0; i < subLen; i++)
-//		{
-//			string[i] = _string[i];
-//		}
-//		return string;
-//	}
-//	return EMPTY_STRING;
-//}
+float64 QString::toFloat64() const
+{
+	float64 value = 0;
+	int sign = 1;
+	char ch = 0;
+	int decimal = -1;
+	int total = 0;
+	Character* str = _string;
+
+	if (*str == '-')
+	{
+		sign = -1;
+		str++;
+	}
+
+	if (str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
+	{
+		str += 2;
+		while (true)
+		{
+			if (Q_isNumeric(ch))
+			{
+				value = (value * 16) + ch - '0';
+			}
+			else if (Q_isHexU(ch))
+			{
+				value = (value * 16) + ch - 'A' + 10;
+			}
+			else if (Q_isHexL(ch))
+			{
+				value = (value * 16) + ch - 'a' + 10;
+			}
+			else
+			{
+				return sign * value;
+			}
+		}
+	}
+
+	if (str[0] == '\'')
+	{
+		return sign * str[1];
+	}
+
+	while (true)
+	{
+		ch = *str++;
+		if (ch == '.')
+		{
+			decimal = total;
+			continue;
+		}
+		if (!Q_isNumeric(ch))
+		{
+			break;
+		}
+		value = (value * 10) + ch - '0';
+		total++;
+	}
+
+	if (decimal == -1)
+	{
+		return sign * value;
+	}
+
+	while (total > decimal)
+	{
+		value /= 10;
+		total--;
+	}
+	return sign * value;
+}
+
+cString QString::toCString() const
+{
+	return cString(_string, _length);
+}
+
+QString::Reference QString::at(size_t index) const
+{
+	if (_checkIndex(index))
+	{
+		return _string[index];
+	}
+	else if (_checkNegativeIndex(index))
+	{
+		size_t i = _negToPos(index);
+		return _string[i];
+	}
+	else
+	{
+		return EMPTY_CHAR;
+	}
+}
 
 QString::Reference QString::operator[](size_t index) const
 {
@@ -1121,9 +1478,14 @@ void QString::_setLength(size_t len)
 	_length = len;
 }
 
+QBool QString::_hasSpaceFor(size_t num) const
+{
+	return _length + num <= _maxLength;
+}
+
 QBool QString::_checkIndex(size_t index) const
 {
-	return index <= _length - 1 && index >= 0;
+	return (index < _length && index >= 0) || (_length == 0 && index == 0);
 }
 
 QBool QString::_checkIndicies(size_t begin, size_t end) const
@@ -1133,7 +1495,7 @@ QBool QString::_checkIndicies(size_t begin, size_t end) const
 
 QBool QString::_checkNegativeIndex(size_t index) const
 {
-	return index < 0 && index <= -_length;
+	return index < 0 && index <= -_length && _length != 0;
 }
 
 QBool QString::_checkNegativeIndicies(size_t begin, size_t end) const
@@ -1202,6 +1564,12 @@ void QString::_createIteratorFlags(size_t length)
 			_rend = ReverseIterator(_string[-1]);
 		}
 	}
+}
+
+void QString::_adjustEnd(size_t num)
+{
+	_end += num;
+	_rbegin += num;
 }
 
 QString::CaseChecker QString::_getCase(Sensitivity sensitivity) const

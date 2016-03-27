@@ -53,18 +53,28 @@ public:
 	~QString();
 
 	void pushFront(Character ch);
+	void pushFront(const Character* string, size_t length = 0);
+	void pushFront(const QString& string);
 	void setFront(Character ch);
+	void setFront(const Character* string, size_t length = 0);
+	void setFront(const QString& string);
 	Reference getFront() const;
 
 	void pushBack(Character ch);
+	void pushBack(const Character* string, size_t length = 0);
+	void pushBack(const QString& string);
 	void setBack(Character ch);
+	void setBack(const Character* string, size_t length = 0);
+	void setBack(const QString& string);
 	Reference getBack() const;
 
-	void concat(const char* string);
+	void concat(const Character* string, size_t length = 0);
 	void concat(const QString& string);
 
 	void insert(size_t index, Character ch);
+	void insert(size_t egin, size_t end, const Character* string);
 	void insert(size_t begin, size_t end, const QString& string);
+
 	void insert(Iterator iterator, Character ch);
 	void insert(Iterator begin, Iterator end, const Character* string);
 	void insert(Iterator begin, Iterator end, const QString& string);
@@ -153,17 +163,17 @@ public:
 	void swap(QString& other);
 
 	int32 toInt32() const;
-	uint32 toUnsignedInt() const;
-	size_t toSize_t() const;
-	float32 toFloat32() const;
+	//uint32 toUnsignedInt() const;
+	//size_t toSize_t() const;
+	//float32 toFloat32() const;
 	float64 toFloat64() const;
+	cString toCString() const;
 
 	Reference at(size_t index) const;
-	QString at(size_t begin, size_t end) const;
-	Reference nAt(size_t index) const;
-	QString nAt(size_t begin, size_t end) const;
 	Reference operator[](size_t index) const;
 
+	//void operator=(const char* string);
+	//void operator(const QString& string);
 	QString operator+(const char* string);
 	QString operator+(const QString& string);
 	QString operator+=(const char* string);
@@ -188,6 +198,8 @@ public:
 private:
 	void _setLength(size_t len);
 
+	QBool _hasSpaceFor(size_t num) const;
+
 	QBool _checkIndex(size_t index) const;
 	QBool _checkIndicies(size_t begin, size_t end) const;
 
@@ -204,6 +216,7 @@ private:
 	QBool _checkReverseIterators(ReverseIterator begin, ReverseIterator end) const;
 
 	void _createIteratorFlags(size_t length);
+	void _adjustEnd(size_t num);
 
 	template<typename TIterator>
 	QBool _comesBefore(TIterator begin, TIterator end) const
