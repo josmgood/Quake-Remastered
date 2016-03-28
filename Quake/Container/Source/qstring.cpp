@@ -50,19 +50,10 @@ QString::QString(const Character* string)
 QString::QString(const QString& string)
 	: _maxLength(string._maxLength), _length(string._length)
 {
-	if (string != EMPTY_STRING)
+	if (string)
 	{
 		_string = new char[_length];
-		Character* tc = _string;
-		Character* oc = string._string;
-		while(*oc)
-		{
-			*tc = *oc;
-
-			tc++;
-			oc++;
-		}
-		*tc++ = '\0';
+		strncpy_s(_string, _length, string._string, string._length);
 	}
 }
 
@@ -1343,43 +1334,60 @@ QString::Reference QString::operator[](size_t index) const
 ////	}*/
 ////	return EMPTY_STRING;
 ////}
-//
-//QBool QString::operator==(const Character* other) const
-//{
-//	const Character* A = _string;
-//	const Character* B = other;
-//	while (*A || *B)
-//	{
-//		if (!Q_chrCmp(*A, *B) || !*A || !*B)
-//		{
-//			return false;
-//		}
-//		A++;
-//		B++;
-//	}
-//	return true;
-//}
-//
-//QBool QString::operator!=(const Character* other) const
-//{
-//	/*for (size_t i = 0; i < _length; i++)
-//	{
-//
-//	}*/
-//	return false;
-//}
-//
+
+QString::operator bool() const
+{
+	return _string && _length && _maxLength;
+}
+
+QBool QString::operator==(const Character* other) const
+{
+	size_t len = strlen(other);
+	if (_length == len)
+	{
+		return !strncmp(_string, other, len);
+	}
+	return false;
+}
+
+QBool QString::operator!=(const Character* other) const
+{
+	size_t len = strlen(other);
+	if (_length == len)
+	{
+		return strncmp(_string, other, len);
+	}
+	return true;
+}
+
 QBool QString::operator<(const Character* other) const
 {
-	/*const Character* A = _string;
-	const Character* B = other;
-	size_t Alen = 0;
-	size_t Blen = 0;
-	while (*A || *B)
-	{
+	size_t otherLen = strlen(other);
+	size_t len = _length > otherLen ? _length : otherLen;
+	return strncmp(_string, other, len) == -1;
+}
 
-	}*/
-	return false;
+QBool QString::operator<=(const Character* other) const
+{
+	size_t otherLen = strlen(other);
+	size_t len = _length > otherLen ? _length : otherLen;
+	int32 result = strncmp(_string, other, len);
+	return result == -1 || result == 0;
+}
+
+QBool QString::operator>(const Character* other) const
+{
+	size_t otherLen = strlen(other);
+	size_t len = _length > otherLen ? _length : otherLen;
+	return strncmp(_string, other, len) == 1;
+}
+
+QBool QString::operator>=(const Character* other) const
+{
+	size_t otherLen = strlen(other);
+	size_t len = _length > otherLen ? _length : otherLen;
+	int32 result = strncmp(_string, other, len);
+	return result == 1 || result == 0;
 }
 
 QBool QString::operator==(const QString& other) const
@@ -1406,6 +1414,26 @@ QBool QString::operator<(const QString& other) const
 {
 	size_t len = _length > other._length ? _length : other._length;
 	return strncmp(_string, other._string, len) == -1;
+}
+
+QBool QString::operator<=(const QString& other) const
+{
+	size_t len = _length > other._length ? _length : other._length;
+	int32 result = strncmp(_string, other._string, len);
+	return result == -1 || result == 0;
+}
+
+QBool QString::operator>(const QString& other) const
+{
+	size_t len = _length > other._length ? _length : other._length;
+	return strncmp(_string, other._string, len) == 1;
+}
+
+QBool QString::operator>=(const QString& other) const
+{
+	size_t len = _length > other._length ? _length : other._length;
+	int32 result = strncmp(_string, other._string, len);
+	return result == 1 || result == 0;
 }
 
 const QString::Iterator QString::getBegin() const

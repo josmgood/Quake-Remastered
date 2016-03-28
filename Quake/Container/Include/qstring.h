@@ -179,6 +179,7 @@ public:
 	void operator=(const Character* string);
 	void operator=(const QString& string);
 
+	operator bool() const;
 	QBool operator==(const Character* other) const;
 	QBool operator!=(const Character* other) const;
 	QBool operator<(const Character* other) const;

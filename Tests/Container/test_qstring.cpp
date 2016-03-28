@@ -67,8 +67,21 @@ TEST(NAME, OPERATOR_UNEQUAL)
 TEST(NAME, OPERATOR_LESS)
 {
 	QString one("Hello Wo");
-	QString two("Hello World");
-	QString three("This is a test");
+	QString two("Hello Wor");
 	EXPECT_EQ(true, one < two);
-	EXPECT_EQ(false, one < three);
+	EXPECT_EQ(true, one < "Hello Wor");
+	EXPECT_EQ(true, one < "hello world");
+	EXPECT_EQ(false, one < "All the people.");
+}
+
+TEST(NAME, OPERATOR_LESS_EQUAL)
+{
+	QString one("Hello Wo");
+	QString two("Hello Wor");
+}
+
+TEST(NAME, OPERATOR_GREATER)
+{
+	QString one("Hello Wo");
+	QString two("Hello Wor");
 }
