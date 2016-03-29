@@ -96,23 +96,30 @@ TEST(NAME, SUBSTRING)
 
 TEST(NAME, FIND)
 {
-	QString string("Hello");
-	QString::Iterator found = string.find('e');
+	QString str1("Hello");
+	QString::Iterator found = str1.find('e');
 	EXPECT_EQ('e', found.get());
 
-	found = string.find('L', STR_INSENSITIVE);
-	EXPECT_EQ('l', found.get());
+	found = str1.find('l', 1);
+	EXPECT_EQ('e', (found - 1).get());
 
-	found = string.find("ello");
+	found = str1.find('l', 2);
+	EXPECT_EQ('l', (found - 1).get());
+
+	found = str1.find("ElLo", 1, STR_INSENSITIVE);
 	EXPECT_EQ('e', found.get());
 
-	found = string.find("ElLo", STR_INSENSITIVE);
-	EXPECT_EQ('e', found.get());
-
-	found = string.find(QString("HELLO"));
+	found = str1.find(QString("HELLO"));
 	EXPECT_EQ('\0', found.get());
 
-	found = string.find(QString("LLo"), STR_INSENSITIVE);
+	QString str2("Hello Hello");
+	found = str2.find("Hello", 2);
+	EXPECT_EQ(' ', (found - 1).get());
+
+	found = str2.find("Hello", 3);
+	EXPECT_EQ('\0', found.get());
+
+	found = str2.find(QString("LLo"), 2, STR_INSENSITIVE);
 	EXPECT_EQ('l', found.get());
 }
 
@@ -130,14 +137,33 @@ TEST(NAME, RFIND)
 
 }
 
-//TEST(NAME, HAS)
-//{
-//	QString string("775191asdfaf0362asdfasdfmljk");
-//	EXPECT_EQ(true, string.has('3'));
-//	EXPECT_EQ(false, string.has("ashdjfoiasodfkj"));
-//	EXPECT_EQ(false, string.has("7519 1asdfa"));
-//}
-//
+TEST(NAME, FIND_LAST)
+{
+	QString str1("Hello World");
+	QString::Iterator found = str1.findLast('L', STR_INSENSITIVE);
+	EXPECT_EQ('r', (found - 1).get());
+
+	found = str1.findLast('o');
+	EXPECT_EQ('W', (found - 1).get());
+
+	QString str2("oollloollloolllZoolllooMllloolllo");
+	found = str2.findLast("llloo");
+	EXPECT_EQ('M', (found - 1).get());
+
+	QString other("oollloo");
+	found = str2.findLast(other);
+	EXPECT_EQ('Z', (found - 1).get());
+}
+
+TEST(NAME, HAS)
+{
+	QString string("775191asdfaf0362asdfasdfmljk");
+	EXPECT_EQ(true, string.has('3'));
+	EXPECT_EQ(false, string.has("ashdjfoiasodfkj"));
+	EXPECT_EQ(false, string.has("7519 1asdfa"));
+	EXPECT_EQ(true, string.has(QString("asdfmljk"), STR_INSENSITIVE));
+}
+
 //TEST(NAME, GET_FRONT)
 //{
 //	/*QString string("Hello World");
@@ -244,8 +270,76 @@ TEST(NAME, BEGIN_END)
 	EXPECT_EQ('\0', end.get());
 
 	str2.pushFront('h');
+	str2.pushBack('g');
 	begin = str2.getBegin();
 	end = str2.getEnd();
 	EXPECT_EQ('h', begin.get());
 	EXPECT_EQ('\0', end.get());
+}
+
+TEST(NAME, CBEGIN_CEND)
+{
+	QString str1("Hello World");
+	QString::ConstIterator begin = str1.getCBegin();
+	QString::ConstIterator end = str1.getCEnd();
+
+	EXPECT_EQ('H', begin.get());
+	EXPECT_EQ('d', (end - 1).get());
+
+	QString str2;
+	begin = str2.getCBegin();
+	end = str2.getCEnd();
+	EXPECT_EQ('\0', begin.get());
+	EXPECT_EQ('\0', end.get());
+
+	str2.pushFront('h');
+	str2.pushBack('g');
+	begin = str2.getCBegin();
+	end = str2.getCEnd();
+	EXPECT_EQ('h', begin.get());
+	EXPECT_EQ('\0', end.get());
+}
+
+TEST(NAME, RBEGIN_REND)
+{
+	QString str1("Hello World");
+	QString::ReverseIterator begin = str1.getRBegin();
+	QString::ReverseIterator end = str1.getREnd();
+	EXPECT_EQ('d', begin.get());
+	EXPECT_EQ('H', (end - 1).get());
+
+	QString str2;
+	begin = str2.getRBegin();
+	end = str2.getREnd();
+	EXPECT_EQ('\0', (begin - 1).get());
+	EXPECT_EQ('\0', (end - 1).get());
+
+	str2.pushFront('h');
+	str2.pushBack('g');
+	begin = str2.getRBegin();
+	end = str2.getREnd();
+	EXPECT_EQ('g', begin.get());
+	EXPECT_EQ('h', (end - 1).get());
+}
+
+TEST(NAME, CRBEGIN_CREND)
+{
+	QString str1("Hello World");
+	QString::ConstReverseIterator begin = str1.getCRBegin();
+	QString::ConstReverseIterator end = str1.getCREnd();
+	EXPECT_EQ('d', begin.get());
+	EXPECT_EQ('H', (end - 1).get());
+
+	QString str2;
+	begin = str2.getCRBegin();
+	end = str2.getCREnd();
+	EXPECT_EQ('\0', (begin - 1).get());
+	EXPECT_EQ('\0', (end - 1).get());
+
+	str2.pushFront('h');
+	str2.pushBack('g');
+	begin = str2.getCRBegin();
+	end = str2.getCREnd();
+	EXPECT_EQ('g', begin.get());
+	EXPECT_EQ('h', (end - 1).get());
 }

@@ -405,14 +405,14 @@ QString QString::substring(size_t begin, size_t end) const
 ////	return EMPTY_STRING;
 ////}
 
-QString::Iterator QString::find(Character ch, Sensitivity sensitivity) const
+QString::Iterator QString::find(Character ch, size_t buffer, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	Iterator begin = getBegin();
 	Iterator end = getEnd();
 	for (Iterator i = begin; i < end; ++i)
 	{
-		if (charCheck(ch, i.get()))
+		if (charCheck(ch, i.get()) && !--buffer)
 		{
 			return i;
 		}
@@ -420,7 +420,7 @@ QString::Iterator QString::find(Character ch, Sensitivity sensitivity) const
 	return end;
 }
 
-QString::Iterator QString::find(const Character* string, Sensitivity sensitivity) const
+QString::Iterator QString::find(const Character* string, size_t buffer, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -431,18 +431,22 @@ QString::Iterator QString::find(const Character* string, Sensitivity sensitivity
 	{
 		if (charCheck(string[0], i.get()))
 		{
-			size_t distance = i.ptr() - begin.ptr();
+			size_t distance = iterator_distance(i, begin);
 			Character* start = _string + distance;
-			if (!strCheck(start, string, len))
+			if (!strCheck(start, string, len) && !--buffer)
 			{
 				return i;
+			}
+			else
+			{
+				i += len;
 			}
 		}
 	}
 	return end;
 }
 
-QString::Iterator QString::find(const QString& string, Sensitivity sensitivity) const
+QString::Iterator QString::find(const QString& string, size_t buffer, Sensitivity sensitivity) const
 {
 	size_t len = string._length - 1;
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -453,11 +457,15 @@ QString::Iterator QString::find(const QString& string, Sensitivity sensitivity) 
 	{
 		if (charCheck(string[0], i.get()))
 		{
-			size_t distance = i.ptr() - begin.ptr();
+			size_t distance = iterator_distance(i, begin);
 			Character* start = _string + distance;
-			if (!strCheck(start, string._string, len))
+			if (!strCheck(start, string._string, len) && !--buffer)
 			{
 				return i;
+			}
+			else
+			{
+				i += len;
 			}
 		}
 	}
@@ -479,364 +487,213 @@ QString::ReverseIterator QString::rfind(Character ch, Sensitivity sensitivity) c
 	return end;
 }
 
-QString::ReverseIterator QString::rfind(const Character* string, Sensitivity sensitivity) const
+//QString::ReverseIterator QString::rfind(const Character* string, Sensitivity sensitivity) const
+//{
+//	size_t len = strlen(string);
+//	CharChecker charCheck = _getCharChecker(sensitivity);
+//	StrChecker strCheck = _getStrChecker(sensitivity);
+//	ReverseIterator begin = getRBegin();
+//	ReverseIterator end = getREnd();
+//	for (ReverseIterator i = begin; i < end; ++i)
+//	{
+//		if (charCheck(string[len - 1], i.get()))
+//		{
+//			size_t distance = i.ptr() - begin.ptr();
+//			std::cout << distance << std::endl;
+//			Character* start = _string + distance;
+//			std::cout << string[len - 1] << std::endl;
+//			std::cout << start << std::endl;
+//			if (!strCheck(start, string, len))
+//			{
+//				return i;
+//			}
+//			else
+//			{
+//				i += len;
+//			}
+//		}
+//	}
+//	return end;
+//}
+
+QString::ReverseIterator QString::rfind(const QString& string, Sensitivity sensitivity) const
 {
-	size_t len = strlen(string);
+	/*size_t len = string.getLength();
 	CharChecker charCheck = _getCharChecker(sensitivity);
-	StrChecker strCheck = _getStrChecker(sensitivity);
-	ReverseIterator begin = getRBegin();
-	ReverseIterator end = getREnd();
+	ReverseIterator begin = _rbegin;
+	ReverseIterator end = _rend;
+	ReverseIterator found = end;
 	for (ReverseIterator i = begin; i < end; ++i)
 	{
 		if (charCheck(string[len - 1], i.get()))
 		{
-			size_t distance = i.ptr() - begin.ptr();
-			std::cout << distance << std::endl;
-			Character* start = _string + distance;
-			std::cout << string[len - 1] << std::endl;
-			std::cout << start << std::endl;
-			if (!strCheck(start, string, len))
+			found = i;
+			++i;
+			for (size_t j = len - 2; charCheck(string[j], i.get()); --j, ++i)
 			{
-				return i;
-			}
-			else
-			{
-				i += len;
+				if (j == -1)
+				{
+					return found;
+				}
 			}
 		}
 	}
-	return end;
+	return end;*/
+	return ReverseIterator();
 }
 
-////QString::ReverseIterator QString::rfind(const QString& string, Sensitivity sensitivity) const
-////{
-////	/*size_t len = string.getLength();
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	ReverseIterator begin = _rbegin;
-////	ReverseIterator end = _rend;
-////	ReverseIterator found = end;
-////	for (ReverseIterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[len - 1], i.get()))
-////		{
-////			found = i;
-////			++i;
-////			for (size_t j = len - 2; charCheck(string[j], i.get()); --j, ++i)
-////			{
-////				if (j == -1)
-////				{
-////					return found;
-////				}
-////			}
-////		}
-////	}
-////	return end;*/
-////	return ReverseIterator();
-////}
-////
-////QString::Iterator QString::findLast(Character ch, Sensitivity sensitivity) const
-////{
-////	/*CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	Iterator found = end;
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(ch, i.get()))
-////		{
-////			found = i;
-////		}
-////	}
-////	return found;*/
-////	return Iterator();
-////}
-////
-////QString::Iterator QString::findLast(const Character* string, Sensitivity sensitivity) const
-////{
-////	/*size_t len = Q_strLen(string);
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	Iterator found = end;
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[0], i.get()))
-////		{
-////			Iterator possible = i;
-////			++i;
-////			for (size_t j = 1; charCheck(string[j], i.get()); ++j, ++i)
-////			{
-////				if (j == len - 1)
-////				{
-////					found = possible;
-////				}
-////			}
-////		}
-////	}
-////	return found;*/
-////	return Iterator();
-////}
-////
-////QString::Iterator QString::findLast(const QString& string, Sensitivity sensitivity) const
-////{
-////	/*size_t len = string.getLength();
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	Iterator found = end;
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[0], i.get()))
-////		{
-////			Iterator possible = i;
-////			++i;
-////			for (size_t j = 1; charCheck(string[j], i.get()); ++j, ++i)
-////			{
-////				if (j == len - 1)
-////				{
-////					found = possible;
-////				}
-////			}
-////		}
-////	}
-////	return found;*/
-////	return Iterator();
-////}
-////
-////QString::Iterator QString::findnth(Character ch, size_t buffer, Sensitivity sensitivity) const
-////{
-////	/*CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	if (!buffer)
-////	{
-////		buffer = 1;
-////	}
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(ch, i.get()))
-////		{
-////			if (!--buffer)
-////			{
-////				return i;
-////			}
-////		}
-////	}
-////	return end;*/
-////	return Iterator();
-////}
-////
-////QString::Iterator QString::findnth(const Character* string, size_t buffer, Sensitivity sensitivity) const
-////{
-////	/*size_t len = Q_strLen(string);
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	if (!buffer)
-////	{
-////		buffer = 1;
-////	}
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[0], i.get()))
-////		{
-////			Iterator possible = i;
-////			++i;
-////			for (size_t j = 1; charCheck(string[j], i.get()); ++j, ++i)
-////			{
-////				if (j == len - 1)
-////				{
-////					if (!--buffer)
-////					{
-////						return possible;
-////					}
-////				}
-////			}
-////		}
-////	}
-////	return end;*/
-////	return Iterator();
-////}
-////
-////QString::Iterator QString::findnth(const QString& string, size_t buffer, Sensitivity sensitivity) const
-////{
-////	/*size_t len = string.getLength();
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	if (!buffer)
-////	{
-////		buffer = 1;
-////	}
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[0], i.get()))
-////		{
-////			Iterator possible = i;
-////			++i;
-////			for (size_t j = 1; charCheck(string[j], i.get()); ++j, ++i)
-////			{
-////				if (j == len - 1)
-////				{
-////					if (!--buffer)
-////					{
-////						return possible;
-////					}
-////				}
-////			}
-////		}
-////	}
-////	return end;*/
-////	return Iterator();
-////}
-////
-////QString::ReverseIterator QString::rfindnth(Character ch, size_t buffer, Sensitivity sensitivity) const
-////{
-////	/*CharChecker charCheck = _getCharChecker(sensitivity);
-////	ReverseIterator begin = _rbegin;
-////	ReverseIterator end = _rend;
-////	if (!buffer)
-////	{
-////		buffer = 1;
-////	}
-////	for (ReverseIterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(ch, i.get()))
-////		{
-////			if (!--buffer)
-////			{
-////				return i;
-////			}
-////		}
-////	}
-////	return end;*/
-////	return ReverseIterator();
-////}
-////
-////QString::ReverseIterator QString::rfindnth(const Character* string, size_t buffer, Sensitivity sensitivity) const
-////{
-////	/*size_t len = Q_strLen(string);
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	ReverseIterator begin = _rbegin;
-////	ReverseIterator end = _rend;
-////	if (!buffer)
-////	{
-////		buffer = 1;
-////	}
-////	for (ReverseIterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[len - 1], i.get()))
-////		{
-////			ReverseIterator possible = i;
-////			++i;
-////			for (size_t j = len - 2; charCheck(string[j], i.get()); --j, ++i)
-////			{
-////				if (charCheck(string[j], i.get()) && j == 0)
-////				{
-////					if (!--buffer)
-////					{
-////						return possible;
-////					}
-////				}
-////			}
-////		}
-////	}
-////	return end;*/
-////	return ReverseIterator();
-////}
-////
-////QString::ReverseIterator QString::rfindnth(const QString& string, size_t buffer, Sensitivity sensitivity) const
-////{
-////	size_t len = string.getLength();
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	ReverseIterator begin = _rbegin;
-////	ReverseIterator end = _rend;
-////	if (!buffer)
-////	{
-////		buffer = 1;
-////	}
-////	for (ReverseIterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[len - 1], i.get()))
-////		{
-////			ReverseIterator possible = i;
-////			++i;
-////			for (size_t j = len - 2; charCheck(string[j], i.get()); --j, ++i)
-////			{
-////				if (charCheck(string[j], i.get()) && j == 0)
-////				{
-////					if (!--buffer)
-////					{
-////						return possible;
-////					}
-////				}
-////			}
-////		}
-////	}
-////	return end;
-////}
-////
-////QBool QString::has(Character ch, Sensitivity sensitivity) const
-////{
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(ch, i.get()))
-////		{
-////			return true;
-////		}
-////	}
-////	return false;
-////}
-////
-////QBool QString::has(const Character* string, Sensitivity sensitivity) const
-////{
-////	size_t len = Q_strLen(string);
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[0], i.get()))
-////		{
-////			++i;
-////			for (size_t j = 1; charCheck(string[j], i.get()); ++j, ++i)
-////			{
-////				if (j == len - 1)
-////				{
-////					return true;
-////				}
-////			}
-////		}
-////	}
-////	return false;
-////}
-////
-////QBool QString::has(const QString& string, Sensitivity sensitivity) const
-////{
-////	size_t len = string.getLength();
-////	CharChecker charCheck = _getCharChecker(sensitivity);
-////	Iterator begin = _begin;
-////	Iterator end = _end;
-////	for (Iterator i = begin; i < end; ++i)
-////	{
-////		if (charCheck(string[0], i.get()))
-////		{
-////			++i;
-////			for (size_t j = 1; charCheck(string[j], i.get()); ++j, ++i)
-////			{
-////				if (j == len - 1)
-////				{
-////					return true;
-////				}
-////			}
-////		}
-////	}
-////	return false;
-////}
-////
+QString::Iterator QString::findLast(Character ch, Sensitivity sensitivity) const
+{
+	CharChecker charCheck = _getCharChecker(sensitivity);
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	Iterator found = end;
+	for (Iterator i = begin; i < end; ++i)
+	{
+		if (charCheck(ch, i.get()))
+		{
+			found = i;
+		}
+	}
+	return found;
+}
+
+QString::Iterator QString::findLast(const Character* string, Sensitivity sensitivity) const
+{
+	size_t len = strlen(string);
+	CharChecker charCheck = _getCharChecker(sensitivity);
+	StrChecker strCheck = _getStrChecker(sensitivity);
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	Iterator found = end;
+	size_t count = 0;
+	for (Iterator i = begin; i < end; ++i, ++count)
+	{
+		if (charCheck(string[0], i.get()))
+		{
+			size_t distance = iterator_distance(i, begin);
+			Character* start = _string + distance;
+			if (!strCheck(start, string, len))
+			{
+				found = i;
+				i += len;
+				count += len;
+				int32 indicesLeft = _length - count - 1;
+				if (indicesLeft < len)
+				{
+					return found;
+				}
+			}
+		}
+	}
+	return found;
+}
+
+QString::Iterator QString::findLast(const QString& string, Sensitivity sensitivity) const
+{
+	size_t len = string._length - 1;
+	CharChecker charCheck = _getCharChecker(sensitivity);
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	Iterator found = end;
+	size_t count = 0;
+	for (Iterator i = begin; i < end; ++i, ++count)
+	{
+		if (charCheck(string[0], i.get()))
+		{
+			/*size_t distance = iterator_distance(i, begin);
+			Character* start = _string + distance;
+			if (!strCheck(start, string._string, len))
+			{
+				found = i;
+				i += len;
+				count += len;
+				int32 indicesLeft = _length - count - 1;
+				if (indicesLeft < len)
+				{
+					return found;
+				}
+			}*/
+
+			size_t distance = iterator_distance(i, begin);
+			Character* start = _string + distance;
+			Character* other = string._string;
+			//size_t traversed = _compare(start, other, len, charCheck);
+
+		}
+	}
+	return found;
+}
+
+QBool QString::has(Character ch, Sensitivity sensitivity)
+{
+	CharChecker charCheck = _getCharChecker(sensitivity);
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	for (Iterator i = begin; i < end; ++i)
+	{
+		if (charCheck(ch, i.get()))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+QBool QString::has(const Character* string, Sensitivity sensitivity)
+{
+	size_t len = strlen(string);
+	CharChecker charCheck = _getCharChecker(sensitivity);
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	for (Iterator i = begin; i < end; ++i)
+	{
+		if (charCheck(string[0], i.get()))
+		{
+			size_t distance = iterator_distance(i, begin);
+			Character* start = _string + distance;
+			size_t traversed = _compare(start, string, len, charCheck);
+			//ERROR - CHECKING TRAVERSION TO LEN IS NOT RELIABLE! FIX!!!!
+			if (traversed == len)
+			{
+				return true;
+			}
+			else
+			{
+				i = iterator_traverse(i, traversed);
+			}
+		}
+	}
+	return false;
+}
+
+QBool QString::has(const QString& string, Sensitivity sensitivity)
+{
+	size_t len = string._length - 1;
+	CharChecker charCheck = _getCharChecker(sensitivity);
+	Iterator begin = getBegin();
+	Iterator end = getEnd();
+	for (Iterator i = begin; i < end; ++i)
+	{
+		if (charCheck(string[0], i.get()))
+		{	
+			size_t distance = iterator_distance(i, begin);
+			Character* start = _string + distance;
+			Character* other = string._string;
+			size_t traversed = _compare(start, other, len, charCheck);
+			if (traversed == len)
+			{
+				return true;
+			}
+			else
+			{
+				i = iterator_traverse(i, traversed);
+			}
+		}
+	}
+	return false;
+}
+
 ////QBool QString::rhas(Character ch, Sensitivity sensitivity) const
 ////{
 ////	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -1533,6 +1390,25 @@ QBool QString::_checkReverseIterators(ReverseIterator begin, ReverseIterator end
 	return _checkReverseIterator(begin) && _checkReverseIterator(end) && _comesBefore(begin, end);
 }
 
+size_t QString::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker)
+{
+	const Character* c1 = A;
+	const Character* c2 = B;
+	size_t count = 0;
+	while (length--)
+	{
+		if (!checker(*c1, *c2))
+		{
+			break;
+		}
+
+		c1++;
+		c2++;
+		count++;
+	}
+	return count;
+}
+
 QString::CharChecker QString::_getCharChecker(Sensitivity sensitivity) const
 {
 	return isSensitive(sensitivity) ? CharChecker(chrcmp) : CharChecker(chricmp);
@@ -1545,5 +1421,5 @@ QString::StrChecker QString::_getStrChecker(Sensitivity sensitivity) const
 
 std::ostream& operator<<(std::ostream& os, const QString& string)
 {
-	return os << string;
+	return os << string._string;
 }
