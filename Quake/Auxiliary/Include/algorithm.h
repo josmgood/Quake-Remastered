@@ -1,5 +1,19 @@
 #pragma once
 
+#include "..\..\Container\Include\iterator.hpp"
+
+template<typename TIterator>
+Distance iterator_distance(TIterator A, TIterator B)
+{
+	return A.ptr() - B.ptr();
+}
+
+template<typename TIterator, typename Distance = size_t>
+TIterator iterator_traverse(TIterator iterator, Distance distance)
+{
+	return iterator + distance - 1;
+}
+
 template<typename TIterator, typename TValue>
 TIterator find(TIterator begin, TIterator end, TValue value)
 {
