@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+class QString;
+
 class QBool
 {
 public:
@@ -24,7 +26,7 @@ public:
 	bool operator>(const QBool& qbool) const;
 	friend std::ostream& operator<<(std::ostream& os, const QBool& qbool);
 
-	std::string toString();
+	QString toString();
 private:
 	bool _bool;
 };

@@ -1,4 +1,5 @@
 #include "..\Include\qbool.h"
+#include "..\Include\qstring.h"
 
 QBool::QBool(bool b)
 	: _bool(b)
@@ -47,17 +48,17 @@ void QBool::operator=(bool b)
 
 bool QBool::operator!=(const QBool& qbool) const
 {
-	return(_bool != qbool._bool);
+	return _bool != qbool._bool;
 }
 
 bool QBool::operator<(const QBool& qbool) const
 {
-	return(_bool < qbool._bool);
+	return _bool < qbool._bool;
 }
 
 bool QBool::operator>(const QBool& qbool) const
 {
-	return(_bool > qbool._bool);
+	return _bool > qbool._bool;
 }
 
 std::ostream& operator<<(std::ostream& os, const QBool& qbool)
@@ -65,13 +66,15 @@ std::ostream& operator<<(std::ostream& os, const QBool& qbool)
 	return os << qbool.get();
 }
 
-std::string QBool::toString()
+QString QBool::toString()
 {
 	switch (_bool)
 	{
 	case true:
-		return("True");
+		return "True";
 	case false:
-		return("False");
+		return "False";
+	default:
+		return "Undefined";
 	}
 }
