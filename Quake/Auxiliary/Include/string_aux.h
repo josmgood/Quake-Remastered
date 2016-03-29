@@ -6,7 +6,12 @@
 #include "..\..\Container\Include\qbool.h"
 #include "..\..\common.h"
 
+#define TZERO '\0';
+
 static char EMPTY_CHAR = ' ';
+
+QBool chricmp(char one, char two);
+QBool chrcmp(char one, char two);
 
 typedef std::function<QBool(char ch)> CharacterFilter;
 typedef std::function<char(char)> CharacterConverter;
