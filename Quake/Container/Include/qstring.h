@@ -17,16 +17,16 @@
 enum class STRING_SEARCH_CASE_SENSITIVITY
 {
 	SENSITIVE = 0,
-	UNSENSITIVE = 1
+	INSENSITIVE = 1
 };
 
 #define STR_SENSITIVE STRING_SEARCH_CASE_SENSITIVITY::SENSITIVE
-#define STR_UNSENSITIVE STRING_SEARCH_CASE_SENSITIVITY::UNSENSITIVE
+#define STR_INSENSITIVE STRING_SEARCH_CASE_SENSITIVITY::INSENSITIVE
 
 typedef STRING_SEARCH_CASE_SENSITIVITY Sensitivity;
 
 QBool isSensitive(Sensitivity sensitivity);
-QBool isUnsensitivity(Sensitivity sensitivity);
+QBool isInsensitive(Sensitivity sensitivity);
 
 class QString
 	: public QAuxiliary<char, void>
@@ -36,7 +36,9 @@ public:
 	typedef Pointer Index;
 	typedef Pointer String;
 
-	typedef std::function<int(Character*, Character*, size_t)> CaseChecker;
+	//typedef std::function<int(Character*, Character*, size_t)> CharChecker;
+	typedef std::function<QBool(Character, Character)> CharChecker;
+	typedef std::function<int(const Character*, const Character*, size_t)> StrChecker;
 
 	typedef BidirectionalArrayIterator<Character> Iterator;
 	typedef BidirectionalArrayIterator<const Character> ConstIterator;
@@ -235,7 +237,8 @@ private:
 		return begin <= end;
 	}
 
-	CaseChecker _getCase(Sensitivity sensitivity) const;
+	CharChecker _getCharChecker(Sensitivity sensitivity) const;
+	StrChecker _getStrChecker(Sensitivity Sensitivity) const;
 
 	/*Raw string*/
 	String _string;
@@ -247,4 +250,4 @@ private:
 	//Allocator _allocator;
 };
 
-static const QString EMPTY_STRING(nullptr);
+static const QString EMPTY_STRING((size_t)0);
