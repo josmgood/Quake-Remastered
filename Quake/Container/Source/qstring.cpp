@@ -596,31 +596,37 @@ QString::Iterator QString::findLast(const QString& string, Sensitivity sensitivi
 	Iterator begin = getBegin();
 	Iterator end = getEnd();
 	Iterator found = end;
+	Iterator i = begin;
 	size_t count = 0;
-	for (Iterator i = begin; i < end; ++i, ++count)
+	//for (Iterator i = begin; i < end; ++i, ++count)
+	//{
+	//	if (charCheck(string[0], i.get()))
+	//	{
+	//		/*size_t distance = iterator_distance(i, begin);
+	//		Character* start = _string + distance;
+	//		if (!strCheck(start, string._string, len))
+	//		{
+	//			found = i;
+	//			i += len;
+	//			count += len;
+	//			int32 indicesLeft = _length - count - 1;
+	//			if (indicesLeft < len)
+	//			{
+	//				return found;
+	//			}
+	//		}*/
+
+	//		size_t distance = iterator_distance(i, begin);
+	//		Character* start = _string + distance;
+	//		Character* other = string._string;
+	//		size_t traversed = _compare(start, other, len, charCheck);
+	//		//size_t traversed = _compare(start, other, len, charCheck);
+
+	//	}
+	//}
+	while (i < end)
 	{
-		if (charCheck(string[0], i.get()))
-		{
-			/*size_t distance = iterator_distance(i, begin);
-			Character* start = _string + distance;
-			if (!strCheck(start, string._string, len))
-			{
-				found = i;
-				i += len;
-				count += len;
-				int32 indicesLeft = _length - count - 1;
-				if (indicesLeft < len)
-				{
-					return found;
-				}
-			}*/
 
-			size_t distance = iterator_distance(i, begin);
-			Character* start = _string + distance;
-			Character* other = string._string;
-			//size_t traversed = _compare(start, other, len, charCheck);
-
-		}
 	}
 	return found;
 }
@@ -646,7 +652,8 @@ QBool QString::has(const Character* string, Sensitivity sensitivity)
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	Iterator begin = getBegin();
 	Iterator end = getEnd();
-	for (Iterator i = begin; i < end; ++i)
+	Iterator i = begin;
+	while (i < end)
 	{
 		if (charCheck(string[0], i.get()))
 		{
@@ -663,6 +670,10 @@ QBool QString::has(const Character* string, Sensitivity sensitivity)
 				i = iterator_traverse(i, traversed);
 			}
 		}
+		else
+		{
+			++i;
+		}
 	}
 	return false;
 }
@@ -673,10 +684,11 @@ QBool QString::has(const QString& string, Sensitivity sensitivity)
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	Iterator begin = getBegin();
 	Iterator end = getEnd();
-	for (Iterator i = begin; i < end; ++i)
+	Iterator i = begin;
+	while (i < end)
 	{
 		if (charCheck(string[0], i.get()))
-		{	
+		{
 			size_t distance = iterator_distance(i, begin);
 			Character* start = _string + distance;
 			Character* other = string._string;
@@ -689,6 +701,10 @@ QBool QString::has(const QString& string, Sensitivity sensitivity)
 			{
 				i = iterator_traverse(i, traversed);
 			}
+		}
+		else
+		{
+			++i;
 		}
 	}
 	return false;
