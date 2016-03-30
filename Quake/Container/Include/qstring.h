@@ -28,6 +28,10 @@ typedef STRING_SEARCH_CASE_SENSITIVITY Sensitivity;
 QBool isSensitive(Sensitivity sensitivity);
 QBool isInsensitive(Sensitivity sensitivity);
 
+/*
+class QWString
+	: public QAuxiliary<wchar_t, void>*/
+
 class QString
 	: public QAuxiliary<char, void>
 {
@@ -47,6 +51,8 @@ public:
 
 	QString(size_t length = DEFAULT_STRING_SIZE);
 	QString(const Character* string);
+	QString(const Character* begin, const Character* end);
+	QString(const Iterator begin, const Iterator end);
 	QString(const QString& string);
 
 	~QString();
@@ -74,9 +80,9 @@ public:
 	void insert(size_t egin, size_t end, const Character* string);
 	void insert(size_t begin, size_t end, const QString& string);
 
-	void insert(Iterator iterator, Character ch);
-	void insert(Iterator begin, Iterator end, const Character* string);
-	void insert(Iterator begin, Iterator end, const QString& string);
+	void insert(const Iterator iterator, Character ch);
+	void insert(const Iterator begin, const Iterator end, const Character* string);
+	void insert(const Iterator begin, const Iterator end, const QString& string);
 
 	void append(size_t index, Character ch);
 	void append(size_t begin, size_t end, const QString& string);
@@ -90,8 +96,8 @@ public:
 
 	QString substring(size_t index) const;
 	QString substring(size_t begin, size_t end) const;
-	QString substring(Iterator iterator) const;
-	QString substring(Iterator begin, Iterator end) const;
+	QString substring(const Iterator iterator) const;
+	QString substring(const Iterator begin, const Iterator end) const;
 
 	Iterator find(Character ch, size_t buffer = 1, Sensitivity sensitivty = STR_SENSITIVE) const;
 	Iterator find(const Character* string, size_t buffer = 1, Sensitivity sensitivty = STR_SENSITIVE) const;
@@ -105,17 +111,17 @@ public:
 	Iterator findnth(const Character* string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
 	Iterator findnth(const QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;*/
 
-	ReverseIterator rfindnth(Character ch, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
+	/*ReverseIterator rfindnth(Character ch, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
 	ReverseIterator rfindnth(const Character* string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
-	ReverseIterator rfindnth(const QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
+	ReverseIterator rfindnth(const QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;*/
 
 	Iterator findLast(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
 	Iterator findLast(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
 	Iterator findLast(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
-	QBool has(Character ch, Sensitivity sensitivity = STR_SENSITIVE);
-	QBool has(const Character* string, Sensitivity sensitivity = STR_SENSITIVE);
-	QBool has(const QString& string, Sensitivity sensitivity = STR_SENSITIVE);
+	QBool has(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
+	QBool has(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	QBool has(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	QBool rhas(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
 	QBool rhas(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
@@ -128,24 +134,24 @@ public:
 	QBool is(CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
 	QBool is(size_t index, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
 	QBool is(size_t begin, size_t end, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
-	QBool is(Iterator iterator, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
-	QBool is(Iterator begin, Iterator end, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
+	QBool is(const Iterator iterator, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
+	QBool is(const Iterator begin, const Iterator end, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
 
 	QBool ris(size_t index, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
 	QBool ris(size_t begin, size_t end, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
-	QBool ris(ReverseIterator iterator, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
-	QBool ris(ReverseIterator begin, ReverseIterator end, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
+	QBool ris(const ReverseIterator iterator, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
+	QBool ris(const ReverseIterator begin, const ReverseIterator end, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
 
-	void to(CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
-	void to(size_t index, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
-	void to(size_t begin, size_t end, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
-	void to(Iterator iterator, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
-	void to(Iterator begin, Iterator end, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
+	void to(CharacterConverter converter);
+	void to(size_t index, CharacterConverter converter);
+	void to(size_t begin, size_t end, CharacterConverter converter);
+	void to(const Iterator iterator, CharacterConverter converter);
+	void to(const Iterator begin, const Iterator end, CharacterConverter converter);
 
-	void rto(size_t index, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
-	void rto(size_t begin, size_t end, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
-	void rto(ReverseIterator iterator, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
-	void rto(ReverseIterator begin, ReverseIterator end, CharacterConverter converter, CharacterFilter filter = BLANK_FILTER);
+	void rto(size_t index, CharacterConverter converter);
+	void rto(size_t begin, size_t end, CharacterConverter converter);
+	void rto(const ReverseIterator iterator, CharacterConverter converter);
+	void rto(const ReverseIterator begin, const ReverseIterator end, CharacterConverter converter);
 
 	void copy(const Character* string);
 	void copy(const QString& string);
@@ -212,6 +218,13 @@ public:
 	size_t getSize() const;
 	size_t getMaxSize() const;
 private:
+	struct Comparison
+	{
+		Comparison(size_t trav, QBool equal);
+		size_t traversed;
+		QBool isEqual;
+	};
+
 	void _setLength(size_t len);
 	void _setMaxLength(size_t max);
 	void _incrementLength();
@@ -225,13 +238,13 @@ private:
 	QBool _checkIndex(size_t index) const;
 	QBool _checkIndicies(size_t begin, size_t end) const;
 
-	QBool _checkIterator(Iterator iterator) const;
-	QBool _checkIterators(Iterator begin, Iterator end) const;
+	QBool _checkIterator(const Iterator iterator) const;
+	QBool _checkIterators(const Iterator begin, const Iterator end) const;
 
-	QBool _checkReverseIterator(ReverseIterator iterator) const;
-	QBool _checkReverseIterators(ReverseIterator begin, ReverseIterator end) const;
+	QBool _checkReverseIterator(const ReverseIterator iterator) const;
+	QBool _checkReverseIterators(const ReverseIterator begin, const ReverseIterator end) const;
 
-	size_t _compare(const Character* A, const Character* B, size_t length, const CharChecker& checker);
+	Comparison _compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const;
 
 	template<typename TIterator>
 	QBool _comesBefore(TIterator begin, TIterator end) const

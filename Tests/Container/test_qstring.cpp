@@ -22,16 +22,19 @@ TEST(NAME, FRONT)
 
 TEST(NAME, BACK)
 {
-	QString string(1);
+	QString string;
 	string.pushBack('h');
 	EXPECT_EQ('h', string.getBack());
 
-	string.setBack('Z');
+	string.pushBack('Z');
 	EXPECT_EQ('Z', string.getBack());
 
-	/*string.pushBack("Hello");
-	EXPECT_EQ(true, string.getBack() == 'o');
-	EXPECT_EQ(true, string.getFront() == 'h');*/
+	string.pushBack("Hello");
+	EXPECT_EQ('o', string.getBack());
+
+	QString other("olleH");
+	string.pushBack(other);
+	EXPECT_EQ('H', string.getBack());
 }
 
 TEST(NAME, CONCAT)
@@ -39,12 +42,15 @@ TEST(NAME, CONCAT)
 	QString string(4);
 	string.concat("Hello");
 	EXPECT_EQ('H', string.getFront());
+	EXPECT_EQ(5, string.getLength());
 
 	string.concat("WorldDD");
 	EXPECT_EQ('D', string.getBack());
+	EXPECT_EQ(12, string.getLength());
 
 	string.concat(QString("Goodbye!"));
 	EXPECT_EQ('!', string.getBack());
+	EXPECT_EQ(20, string.getLength());
 }
 
 TEST(NAME, SET)
@@ -52,18 +58,20 @@ TEST(NAME, SET)
 	QString string("Hello");
 	string.set(0, 'W');
 	string.set(1, 'D');
+	string.set(4, 'G');
 	EXPECT_EQ('W', string.getFront());
 	EXPECT_EQ('D', string.at(1));
+	EXPECT_EQ('G', string.at(4));
 
-	const char* swag = "Swags";
-	string.set(2, 4, swag);
+	const char* swag = "Swa";
+	string.set(2, 5, swag);
 	EXPECT_EQ('S', string.at(2));
 	EXPECT_EQ('w', string.at(3));
 	EXPECT_EQ('a', string.at(4));
-	//EXPECT_EQ('g', string.at(4));
+	EXPECT_EQ(EMPTY_CHAR, string.at(5)); //_checkIndex revokes access to '\0''s index.
 
 	QString other("Goody");
-	string.set(0, 4, other);
+	string.set(0, 5, other);
 	EXPECT_EQ('G', string.at(0));
 	EXPECT_EQ('o', string.at(1));
 	EXPECT_EQ('o', string.at(2));
@@ -71,27 +79,43 @@ TEST(NAME, SET)
 	EXPECT_EQ('y', string.at(4));
 
 	QString hello("Hello");
-	hello.set(2, 4, "EIS");
+	hello.set(2, 5, "EIS");
 	EXPECT_EQ('E', hello.at(2));
 	EXPECT_EQ('I', hello.at(3));
 	EXPECT_EQ('S', hello.at(4));
+
+	QString goodbye("Goodbye!!");
+	QString::Iterator i = goodbye.getBegin();
+	QString::Iterator j = goodbye.getEnd();
+	goodbye.set(i, 'D');
+	EXPECT_EQ('D', goodbye.getFront());
+
+	goodbye.set(i, j, "Something");
+	EXPECT_EQ('S', goodbye.getFront());
+	EXPECT_EQ('g', goodbye.getBack());
+
+	goodbye.set(i, j, "gnihtemoS");
+	EXPECT_EQ('g', goodbye.getFront());
+	EXPECT_EQ('S', goodbye.getBack());
 }
 
 TEST(NAME, SUBSTRING)
 {
 	QString string("This is a long string.");
-	QString sub1 = string.substring(3);
-	EXPECT_EQ(sub1[0], string[3]);
-	EXPECT_EQ(sub1.getLength(), string.getLength() - 3);
-	EXPECT_EQ(true, !string.substring(1000));
+	QString sub1 = string.substring(1, 6);
+	EXPECT_EQ(4, sub1.getLength());
+	EXPECT_EQ(' ', sub1.getBack());
+	EXPECT_EQ('h', sub1.getFront());
 
-	QString sub2 = string.substring(4, 9);
-	size_t len = sub2.getLength();
-	//std::cout << "Substring: " << sub2 << std::endl;
-	//std::cout << sub2[len -1 ] << std::endl;
-	//std::cout << string[8] << std::endl;
-	//EXPECT_EQ(sub2[0], string[4]);
-	//EXPECT_EQ(sub2[len - 1], string[8]);
+	QString sub2 = string.substring(0, 8);
+	EXPECT_EQ(7, sub2.getLength());
+	EXPECT_EQ('T', sub2.getFront());
+	EXPECT_EQ('s', sub2.getBack());
+
+	QString::Iterator i = string.getBegin();
+	i += 3;
+	QString sub3 = string.substring(i);
+	EXPECT_EQ('s', sub3.getFront());
 }
 
 TEST(NAME, FIND)
@@ -125,16 +149,8 @@ TEST(NAME, FIND)
 
 TEST(NAME, RFIND)
 {
-	/*QString string("Hello");
-	QString::ReverseIterator found = string.rfind('H');
-	EXPECT_EQ('H', found.get());
-
-	found = string.rfind('L', STR_INSENSITIVE);
-	EXPECT_EQ('l', found.get());
-
-	found = string.rfind("llo");
-	EXPECT_EQ('o', found.get());*/
-
+	QString string("asjdlfkajsdlfkjasdf");
+	QString::ReverseIterator found = string.rfind("lfkj");
 }
 
 TEST(NAME, FIND_LAST)
@@ -162,6 +178,44 @@ TEST(NAME, HAS)
 	EXPECT_EQ(false, string.has("ashdjfoiasodfkj"));
 	EXPECT_EQ(false, string.has("7519 1asdfa"));
 	EXPECT_EQ(true, string.has(QString("asdfmljk"), STR_INSENSITIVE));
+}
+
+TEST(NAME, OCCURANCES)
+{
+	QString string("Hello World. Lawl. Lol. Lmfao. lel.");
+	EXPECT_EQ(7, string.occurances('l'));
+	EXPECT_EQ(2, string.occurances("el"));
+	EXPECT_EQ(1, string.occurances(QString("Hello")));
+}
+
+TEST(NAME, IS)
+{
+	QString str1("asdf453as45");
+	EXPECT_EQ(true, str1.is(IS_ALPHA));
+	EXPECT_EQ(true, str1.is(IS_ALPHA, IS_DIGIT));
+	EXPECT_EQ(false, str1.is(2, IS_DIGIT));
+	EXPECT_EQ(true, str1.is(0, 5, IS_ALPHA, IS_DIGIT));
+
+	QString::Iterator i = str1.getBegin();
+	EXPECT_EQ(true, str1.is(i, IS_ALPHA));
+	EXPECT_EQ(true, str1.is(i, i + 5, IS_ALPHA, IS_DIGIT));
+}
+
+TEST(NAME, TO)
+{
+	QString string("He432llo W3242orld");
+	QString::Iterator i = string.getBegin();
+	string.to(TO_UPPER);
+	EXPECT_EQ('E', (i + 1).get());
+	
+	size_t len = string.getLength() - 1;
+	string.to(len, TO_LOWER);
+	EXPECT_EQ('d', string[len]);
+
+	/*string.to(0, 5, TO_LOWER);
+	QString str("he432");
+	std::cout << string.substring(0, 5) << std::endl;
+	EXPECT_EQ(true, str == string.substring(0, 5));*/
 }
 
 //TEST(NAME, GET_FRONT)
@@ -343,3 +397,9 @@ TEST(NAME, CRBEGIN_CREND)
 	EXPECT_EQ('g', begin.get());
 	EXPECT_EQ('h', (end - 1).get());
 }
+
+//TEST(NAME, COMPARE)
+//{
+//	QString string("Hello World");
+//	EXPECT_EQ(true, string)
+//}
