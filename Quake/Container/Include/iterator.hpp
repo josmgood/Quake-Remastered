@@ -6,6 +6,8 @@
 
 #include "..\..\common.h"
 
+typedef size_t Distance;
+
 template<typename Type,
 	template<typename T> typename TIterator>
 class IteratorBase
