@@ -16,6 +16,11 @@ TYPEDEFS
 typedef float							float32;
 typedef double							float64;
 
+typedef char							Char8;
+typedef char16_t						Char16;
+typedef char32_t						Char32;
+typedef wchar_t							WChar;
+
 typedef int8_t							int8;
 typedef int								int32;
 typedef long long						int64;
