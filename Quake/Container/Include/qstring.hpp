@@ -10,7 +10,7 @@
 #include "..\..\Auxiliary\Include\string_aux.h"
 #include "..\..\Auxiliary\Include\algorithm.h"
 
-#include "..\..\Math\Include\math.h"
+//#include "..\..\Math\Include\math.h"
 
 #include "..\..\Memory\Include\Allocator\mallocator.h"
 
@@ -27,15 +27,40 @@ enum class STRING_SEARCH_CASE_SENSITIVITY
 
 typedef STRING_SEARCH_CASE_SENSITIVITY Sensitivity;
 
-//QBool isSensitive(Sensitivity sensitivity);
-//QBool isInsensitive(Sensitivity sensitivity);
+namespace
+{
+	QBool isSensitive(Sensitivity sensitivity)
+	{
+		return sensitivity == STR_SENSITIVE;
+	}
+	QBool isInsensitive(Sensitivity sensitivity)
+	{
+		return sensitivity == STR_INSENSITIVE;
+	}
+}
 
-template<typename Type = char,
+template<typename Type,
+	typename TAllocator>
+class Basic_QString;
+
+template<typename Type,
+	typename TAllocator>
+std::ostream& operator<<(std::ostream&, const Basic_QString<Type, TAllocator>&);
+
+
+template<typename Type = Char8,
 	typename TAllocator = MAllocator>
 class Basic_QString
 	: public QAuxiliary<Type, TAllocator>
 {
 public:
+	struct Comparison
+	{
+		Comparison(size_t trav, QBool equal);
+		size_t traversed;
+		QBool isEqual;
+	};
+
 	typedef Value Character;
 	typedef Pointer Index;
 	typedef Pointer String;
@@ -203,9 +228,7 @@ public:
 	QBool operator>(const Basic_QString& other) const;
 	QBool operator>=(const Basic_QString& other) const;
 
-	template<typename Type,
-		typename TAllocator>
-		friend std::ostream& operator<<(std::ostream& os, const Basic_QString& string);
+	friend std::ostream& operator<< <>(std::ostream& os, const Basic_QString& string);
 
 	const Iterator getBegin() const;
 	const Iterator getEnd() const;
@@ -223,13 +246,6 @@ public:
 
 	static const Basic_QString<Type, TAllocator> EMPTY_STRING;
 private:
-	struct Comparison
-	{
-		Comparison(size_t trav, QBool equal);
-		size_t traversed;
-		QBool isEqual;
-	};
-
 	void _setLength(size_t len);
 	void _setMaxLength(size_t max);
 	void _incrementLength();
@@ -252,10 +268,7 @@ private:
 	Comparison _compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const;
 
 	template<typename TIterator>
-	QBool _comesBefore(TIterator begin, TIterator end) const
-	{
-		return begin <= end;
-	}
+	QBool _comesBefore(TIterator begin, TIterator end) const;
 
 	CharChecker _getCharChecker(Sensitivity sensitivity) const;
 	StrChecker _getStrChecker(Sensitivity Sensitivity) const;
@@ -270,13 +283,57 @@ private:
 	Allocator _allocator;
 };
 
-//template<typename Type, 
-//	typename TAllocator>
-//static const Basic_QString<Type, TAllocator> EMPTY_STRING((size_t)0);
+template<typename Type,
+	typename TAllocator>
+using Str_Iterator = typename Basic_QString<Type, TAllocator>::Iterator;
 
-typedef Basic_QString<Char8> QString;
-typedef Basic_QString<Char16> QString_16;
-typedef Basic_QString<Char32> QString_32;
-typedef Basic_QString<WChar>  QWString;
+template<typename Type,
+	typename TAllocator>
+using Str_ConstIterator = typename Basic_QString<Type, TAllocator>::ConstIterator;
+
+template<typename Type,
+	typename TAllocator>
+using Str_ReverseIterator = typename Basic_QString<Type, TAllocator>::ReverseIterator;
+
+template<typename Type,
+	typename TAllocator>
+using Str_ConstReverseIterator = typename Basic_QString<Type, TAllocator>::ConstReverseIterator;
+
+template<typename Type,
+	typename TAllocator>
+using Str_Reference = typename Basic_QString<Type, TAllocator>::Reference;
+
+template<typename Type,
+	typename TAllocator>
+using Str_Value = typename Basic_QString<Type, TAllocator>::Value;
+
+template<typename Type,
+	typename TAllocator>
+using Str_Character = typename Basic_QString<Type, TAllocator>::Character;
+
+template<typename Type,
+	typename TAllocator>
+using Str_String = typename Basic_QString<Type, TAllocator>::String;
+
+template<typename Type,
+	typename TAllocator>
+using Str_Index = typename Basic_QString<Type, TAllocator>::Index;
+
+template<typename Type,
+	typename TAllocator>
+using Str_CharChecker = typename Basic_QString<Type, TAllocator>::CharChecker;
+
+template<typename Type,
+	typename TAllocator>
+using Str_StrChecker = typename Basic_QString<Type, TAllocator>::StrChecker;
+
+template<typename Type,
+	typename TAllocator>
+using Str_Comparison = typename Basic_QString<Type, TAllocator>::Comparison;
+
+typedef Basic_QString<Char8>	QString;
+typedef Basic_QString<Char16>	QString_16;
+typedef Basic_QString<Char32>	QString_32;
+typedef Basic_QString<WChar>	QWString;
 
 #include "../Source/qstring.inl"

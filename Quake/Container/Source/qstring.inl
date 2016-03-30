@@ -12,6 +12,10 @@
 
 template<typename Type,
 	typename TAllocator>
+const Basic_QString<Type, TAllocator> Basic_QString<Type, TAllocator>::EMPTY_STRING(nullptr);
+
+template<typename Type,
+	typename TAllocator>
 Basic_QString<Type, TAllocator>::Comparison::Comparison(size_t trav, QBool equal)
 	: traversed(trav), isEqual(equal)
 {
@@ -261,7 +265,8 @@ void Basic_QString<Type, TAllocator>::setBack(Character ch)
 
 template<typename Type,
 	typename TAllocator>
-Type& Basic_QString<Type, TAllocator>::getBack() const
+Str_Reference<Type, TAllocator>
+Basic_QString<Type, TAllocator>::getBack() const
 {
 	return _string[_length - 2];
 }
@@ -516,6 +521,7 @@ Basic_QString<Type, TAllocator>::substring(const Iterator iterator) const
 
 template<typename Type,
 	typename TAllocator>
+//Basic_QString<Type, TAllocator>
 Basic_QString<Type, TAllocator>
 Basic_QString<Type, TAllocator>::substring(const Iterator begin, const Iterator end) const
 {
@@ -527,8 +533,7 @@ Basic_QString<Type, TAllocator>::substring(const Iterator begin, const Iterator 
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::Iterator
-BidirectionalArrayIterator<Type>
+Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::find(Character ch, size_t buffer, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -546,8 +551,7 @@ Basic_QString<Type, TAllocator>::find(Character ch, size_t buffer, Sensitivity s
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::Iterator 
-BidirectionalArrayIterator<Type>
+Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::find(const Character* string, size_t buffer, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
@@ -576,8 +580,7 @@ Basic_QString<Type, TAllocator>::find(const Character* string, size_t buffer, Se
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::Iterator
-BidirectionalArrayIterator<Type>
+Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::find(const Basic_QString& string, size_t buffer, Sensitivity sensitivity) const
 {
 	size_t len = string._length - 1;
@@ -606,8 +609,7 @@ Basic_QString<Type, TAllocator>::find(const Basic_QString& string, size_t buffer
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::ReverseIterator 
-ReverseArrayIterator<Type>
+Str_ReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::rfind(Character ch, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -625,7 +627,7 @@ Basic_QString<Type, TAllocator>::rfind(Character ch, Sensitivity sensitivity) co
 
 template<typename Type,
 	typename TAllocator>
-ReverseArrayIterator<Type>
+Str_ReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::rfind(const Character* string, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
@@ -651,8 +653,7 @@ Basic_QString<Type, TAllocator>::rfind(const Character* string, Sensitivity sens
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::ReverseIterator 
-ReverseArrayIterator<Type>
+Str_ReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::rfind(const Basic_QString& string, Sensitivity sensitivity) const
 {
 	/*size_t len = string.getLength();
@@ -681,8 +682,7 @@ Basic_QString<Type, TAllocator>::rfind(const Basic_QString& string, Sensitivity 
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::Iterator
-BidirectionalArrayIterator<Type>
+Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::findLast(Character ch, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -701,8 +701,7 @@ Basic_QString<Type, TAllocator>::findLast(Character ch, Sensitivity sensitivity)
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::Iterator
-BidirectionalArrayIterator<Type>
+Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::findLast(const Character* string, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
@@ -744,8 +743,7 @@ Basic_QString<Type, TAllocator>::findLast(const Character* string, Sensitivity s
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>::Iterator 
-BidirectionalArrayIterator<Type>
+Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::findLast(const Basic_QString& string, Sensitivity sensitivity) const
 {
 	size_t len = string._length - 1;
@@ -1414,23 +1412,26 @@ float64 Basic_QString<Type, TAllocator>::toFloat64() const
 	return atof(_string);
 }
 
-//template<typename Type,
-//	typename TAllocator>
-//const Type* Basic_QString<Type, TAllocator>::toCString() const
-//{
-//	return _string;
-//}
+template<typename Type,
+	typename TAllocator>
+const Str_String<Type, TAllocator>
+Basic_QString<Type, TAllocator>::toCString() const
+{
+	return _string;
+}
 
 template<typename Type,
 	typename TAllocator>
-Type& Basic_QString<Type, TAllocator>::at(size_t index) const
+Str_Reference<Type, TAllocator> 
+Basic_QString<Type, TAllocator>::at(size_t index) const
 {
 	return _checkIndex(index) ? _string[index] : EMPTY_CHAR;
 }
 
 template<typename Type,
 	typename TAllocator>
-Type& Basic_QString<Type, TAllocator>::operator[](size_t index) const
+Str_Reference<Type, TAllocator>
+Basic_QString<Type, TAllocator>::operator[](size_t index) const
 {
 	return at(index);
 }
@@ -1449,7 +1450,7 @@ QBool Basic_QString<Type, TAllocator>::operator==(const Character* other) const
 	size_t len = strlen(other) + 1;
 	if (_length == len)
 	{
-		return !strncmp(_string, other, len);
+		return QBool(!strncmp(_string, other, len));
 	}
 	return false;
 }
@@ -1461,7 +1462,7 @@ QBool Basic_QString<Type, TAllocator>::operator!=(const Character* other) const
 	size_t len = strlen(other) + 1;
 	if (_length == len)
 	{
-		return strncmp(_string, other, len);
+		return QBool(strncmp(_string, other, len));
 	}
 	return true;
 }
@@ -1511,7 +1512,7 @@ QBool Basic_QString<Type, TAllocator>::operator==(const Basic_QString& other) co
 	size_t len = other._length;
 	if (_length == len)
 	{
-		return !strncmp(_string, other._string, len);
+		return QBool(!strncmp(_string, other._string, len));
 	}
 	return false;
 }
@@ -1523,7 +1524,7 @@ QBool Basic_QString<Type, TAllocator>::operator!=(const Basic_QString& other) co
 	size_t len = other._length;
 	if (_length == len)
 	{
-		return strncmp(_string, other._string, len);
+		return QBool(strncmp(_string, other._string, len));
 	}
 	return true;
 }
@@ -1564,8 +1565,7 @@ QBool Basic_QString<Type, TAllocator>::operator>=(const Basic_QString& other) co
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::Iterator 
-const BidirectionalArrayIterator<Type>
+const Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getBegin() const
 {
 	return Iterator(&_string[0]);
@@ -1573,8 +1573,7 @@ Basic_QString<Type, TAllocator>::getBegin() const
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::Iterator
-const BidirectionalArrayIterator<Type>
+const Str_Iterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getEnd() const
 {
 	return Iterator(&_string[_length - 1]);
@@ -1582,8 +1581,7 @@ Basic_QString<Type, TAllocator>::getEnd() const
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::ConstIterator
-const BidirectionalArrayIterator<const Type>
+const Str_ConstIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getCBegin() const
 {
 	return ConstIterator(&_string[0]);
@@ -1591,8 +1589,7 @@ Basic_QString<Type, TAllocator>::getCBegin() const
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::ConstIterator
-const BidirectionalArrayIterator<const Type>
+const Str_ConstIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getCEnd() const
 {
 	return ConstIterator(&_string[_length - 1]);
@@ -1600,8 +1597,7 @@ Basic_QString<Type, TAllocator>::getCEnd() const
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::ReverseIterator 
-const ReverseArrayIterator<Type>
+const Str_ReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getRBegin() const
 {
 	return ReverseIterator(&_string[_length - 2]);
@@ -1609,8 +1605,7 @@ Basic_QString<Type, TAllocator>::getRBegin() const
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::ReverseIterator 
-const ReverseArrayIterator<Type>
+const Str_ReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getREnd() const
 {
 	return ReverseIterator(&_string[-1]);
@@ -1618,8 +1613,7 @@ Basic_QString<Type, TAllocator>::getREnd() const
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::ConstReverseIterator 
-const ReverseArrayIterator<const Type>
+const Str_ConstReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getCRBegin() const
 {
 	return ConstReverseIterator(&_string[_length - 2]);
@@ -1627,8 +1621,7 @@ Basic_QString<Type, TAllocator>::getCRBegin() const
 
 template<typename Type,
 	typename TAllocator>
-//const Basic_QString<Type, TAllocator>::ConstReverseIterator
-const ReverseArrayIterator<const Type>
+const Str_ConstReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::getCREnd() const
 {
 	return ConstReverseIterator(&_string[-1]);
@@ -1760,52 +1753,52 @@ QBool Basic_QString<Type, TAllocator>::_checkReverseIterators(const ReverseItera
 	return _checkReverseIterator(begin) && _checkReverseIterator(end) && _comesBefore(begin, end);
 }
 
-//template<typename Type,
-//	typename TAllocator>
-//Basic_QString<Type, TAllocator>::Comparison 
-//Basic_QString<Type, TAllocator>::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const
-//{
-//	const Character* c1 = A;
-//	const Character* c2 = B;
-//	size_t count = 0;
-//	while (length)
-//	{
-//		if (!checker(*c1, *c2))
-//		{
-//			break;
-//		}
-//
-//		c1++;
-//		c2++;
-//		count++;
-//		length--;
-//	}
-//	return Comparison(count, length == 0);
-//}
+template<typename Type,
+	typename TAllocator>
+Str_Comparison<Type, TAllocator>
+Basic_QString<Type, TAllocator>::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const
+{
+	const Character* c1 = A;
+	const Character* c2 = B;
+	size_t count = 0;
+	while (length)
+	{
+		if (!checker(*c1, *c2))
+		{
+			break;
+		}
 
-//template<typename Type,
-//	typename TAllocator>
-//Basic_QString<Type, TAllocator>::CharChecker 
-//Basic_QString<Type, TAllocator>::_getCharChecker(Sensitivity sensitivity) const
-//{
-//	return isSensitive(sensitivity) ? CharChecker(chrcmp) : CharChecker(chricmp);
-//}
-//
-//template<typename Type,
-//	typename TAllocator>
-//Basic_QString<Type, TAllocator>::StrChecker
-//Basic_QString<Type, TAllocator>::_getStrChecker(Sensitivity sensitivity) const
-//{
-//	return isSensitive(sensitivity) ? StrChecker(strncmp) : StrChecker(_strnicmp);
-//}
+		c1++;
+		c2++;
+		count++;
+		length--;
+	}
+	return Comparison(count, length == 0);
+}
 
-//template<typename Type,
-//	typename TAllocator>
-//template<typename TIterator>
-//QBool Basic_QString<Type, TAllocator>::_comesBefore(TIterator begin, TIterator end)
-//{
-//	return begin <= end;
-//}
+template<typename Type,
+	typename TAllocator>
+Str_CharChecker<Type, TAllocator>
+Basic_QString<Type, TAllocator>::_getCharChecker(Sensitivity sensitivity) const
+{
+	return isSensitive(sensitivity) ? CharChecker(chrcmp) : CharChecker(chricmp);
+}
+
+template<typename Type,
+	typename TAllocator>
+Str_StrChecker<Type, TAllocator>
+Basic_QString<Type, TAllocator>::_getStrChecker(Sensitivity sensitivity) const
+{
+	return isSensitive(sensitivity) ? StrChecker(strncmp) : StrChecker(_strnicmp);
+}
+
+template<typename Type,
+	typename TAllocator>
+template<typename TIterator>
+QBool Basic_QString<Type, TAllocator>::_comesBefore(TIterator begin, TIterator end) const
+{
+	return begin <= end;
+}
 
 template<typename Type,
 	typename TAllocator>
