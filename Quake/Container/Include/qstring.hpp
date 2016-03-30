@@ -12,6 +12,8 @@
 
 #include "..\..\Math\Include\math.h"
 
+#include "..\..\Memory\Include\Allocator\mallocator.h"
+
 #define DEFAULT_STRING_SIZE	32
 
 enum class STRING_SEARCH_CASE_SENSITIVITY
@@ -25,15 +27,13 @@ enum class STRING_SEARCH_CASE_SENSITIVITY
 
 typedef STRING_SEARCH_CASE_SENSITIVITY Sensitivity;
 
-QBool isSensitive(Sensitivity sensitivity);
-QBool isInsensitive(Sensitivity sensitivity);
+//QBool isSensitive(Sensitivity sensitivity);
+//QBool isInsensitive(Sensitivity sensitivity);
 
-/*
-class QWString
-	: public QAuxiliary<wchar_t, void>*/
-
-class QString
-	: public QAuxiliary<char, void>
+template<typename Type = char,
+	typename TAllocator = MAllocator>
+class Basic_QString
+	: public QAuxiliary<Type, TAllocator>
 {
 public:
 	typedef Value Character;
@@ -49,87 +49,87 @@ public:
 	typedef ReverseArrayIterator<Character> ReverseIterator;
 	typedef ReverseArrayIterator<const Character> ConstReverseIterator;
 
-	QString(size_t length = DEFAULT_STRING_SIZE);
-	QString(const Character* string);
-	QString(const Character* begin, const Character* end);
-	QString(const Iterator begin, const Iterator end);
-	QString(const QString& string);
+	Basic_QString(size_t length = DEFAULT_STRING_SIZE);
+	Basic_QString(const String string);
+	Basic_QString(const Index begin, const Index end);
+	Basic_QString(const Iterator begin, const Iterator end);
+	Basic_QString(const Basic_QString& string);
 
-	~QString();
+	~Basic_QString();
 
 	void pushFront(Character ch);
 	void pushFront(const Character* string);
-	void pushFront(const QString& string);
+	void pushFront(const Basic_QString& string);
 	void setFront(Character ch);
 	void setFront(const Character* string);
-	void setFront(const QString& string);
+	void setFront(const Basic_QString& string);
 	Reference getFront() const;
 
 	void pushBack(Character ch);
 	void pushBack(const Character* string);
-	void pushBack(const QString& string);
+	void pushBack(const Basic_QString& string);
 	void setBack(Character ch);
 	void setBack(const Character* string);
-	void setBack(const QString& string);
+	void setBack(const Basic_QString& string);
 	Reference getBack() const;
 
 	void concat(const Character* string);
-	void concat(const QString& string);
+	void concat(const Basic_QString& string);
 
 	void insert(size_t index, Character ch);
 	void insert(size_t egin, size_t end, const Character* string);
-	void insert(size_t begin, size_t end, const QString& string);
+	void insert(size_t begin, size_t end, const Basic_QString& string);
 
 	void insert(const Iterator iterator, Character ch);
 	void insert(const Iterator begin, const Iterator end, const Character* string);
-	void insert(const Iterator begin, const Iterator end, const QString& string);
+	void insert(const Iterator begin, const Iterator end, const Basic_QString& string);
 
 	void append(size_t index, Character ch);
-	void append(size_t begin, size_t end, const QString& string);
+	void append(size_t begin, size_t end, const Basic_QString& string);
 
 	void set(size_t index, Character ch);
 	void set(size_t begin, size_t end, const Character* string);
-	void set(size_t begin, size_t end, const QString& string);
+	void set(size_t begin, size_t end, const Basic_QString& string);
 	void set(Iterator iterator, Character ch);
 	void set(Iterator begin, Iterator end, const Character* string);
-	void set(Iterator begin, Iterator end, const QString& string);
+	void set(Iterator begin, Iterator end, const Basic_QString& string);
 
-	QString substring(size_t index) const;
-	QString substring(size_t begin, size_t end) const;
-	QString substring(const Iterator iterator) const;
-	QString substring(const Iterator begin, const Iterator end) const;
+	Basic_QString substring(size_t index) const;
+	Basic_QString substring(size_t begin, size_t end) const;
+	Basic_QString substring(const Iterator iterator) const;
+	Basic_QString substring(const Iterator begin, const Iterator end) const;
 
 	Iterator find(Character ch, size_t buffer = 1, Sensitivity sensitivty = STR_SENSITIVE) const;
 	Iterator find(const Character* string, size_t buffer = 1, Sensitivity sensitivty = STR_SENSITIVE) const;
-	Iterator find(const QString& string, size_t buffer = 1, Sensitivity sensitivty = STR_SENSITIVE) const;
+	Iterator find(const Basic_QString& string, size_t buffer = 1, Sensitivity sensitivty = STR_SENSITIVE) const;
 
 	ReverseIterator rfind(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
 	ReverseIterator rfind(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
-	ReverseIterator rfind(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	ReverseIterator rfind(const Basic_QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	/*Iterator findnth(Character ch, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
 	Iterator findnth(const Character* string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
-	Iterator findnth(const QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;*/
+	Iterator findnth(const Basic_QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;*/
 
 	/*ReverseIterator rfindnth(Character ch, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
 	ReverseIterator rfindnth(const Character* string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
-	ReverseIterator rfindnth(const QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;*/
+	ReverseIterator rfindnth(const Basic_QString& string, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;*/
 
 	Iterator findLast(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
 	Iterator findLast(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
-	Iterator findLast(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	Iterator findLast(const Basic_QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	QBool has(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
 	QBool has(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
-	QBool has(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	QBool has(const Basic_QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	QBool rhas(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
 	QBool rhas(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
-	QBool rhas(const QString& stirng, Sensitivity sensitivity = STR_SENSITIVE) const;
+	QBool rhas(const Basic_QString& stirng, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	size_t occurances(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
 	size_t occurances(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
-	size_t occurances(const QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	size_t occurances(const Basic_QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	QBool is(CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
 	QBool is(size_t index, CharacterFilter filter, CharacterFilter exception = BLANK_FILTER) const;
@@ -153,39 +153,40 @@ public:
 	void rto(const ReverseIterator iterator, CharacterConverter converter);
 	void rto(const ReverseIterator begin, const ReverseIterator end, CharacterConverter converter);
 
-	void copy(const Character* string);
-	void copy(const QString& string);
+	void copy(const String string);
+	void copy(const Basic_QString& string);
+	void swap(String string);
+	void swap(Basic_QString& other);
 	void reserve(size_t size);
 	void clear();
+	void pack();
 
-	QBool equals(const Character* other) const;
-	QBool equals(const QString& other) const;
+	QBool equals(const String other) const;
+	QBool equals(const Basic_QString& other) const;
 
 	QBool isEmpty() const;
 	QBool isFull() const;
-	void pack();
-	void swap(QString& other);
 
 	int32 toInt32() const;
 	//uint32 toUnsignedInt() const;
 	//size_t toSize_t() const;
 	//float32 toFloat32() const;
 	float64 toFloat64() const;
-	const Character* toCString() const;
+	const String toCString() const;
 
 	Reference at(size_t index) const;
 	Reference operator[](size_t index) const;
 
 	//void operator=(const char* string);
-	//void operator(const QString& string);
-	QString operator+(const Character* string);
-	QString operator+(const QString& string);
-	QString operator+=(const Character* string);
-	void operator+=(const QString& string);
-	QString operator*(size_t times);
+	//void operator(const Basic_QString& string);
+	Basic_QString operator+(const Character* string);
+	Basic_QString operator+(const Basic_QString& string);
+	Basic_QString operator+=(const Character* string);
+	void operator+=(const Basic_QString& string);
+	Basic_QString operator*(size_t times);
 	void operator*=(size_t times);
 	void operator=(const Character* string);
-	void operator=(const QString& string);
+	void operator=(const Basic_QString& string);
 
 	operator bool() const;
 	QBool operator==(const Character* other) const;
@@ -195,14 +196,16 @@ public:
 	QBool operator>(const Character* other) const;
 	QBool operator>=(const Character* other) const;
 
-	QBool operator==(const QString& other) const;
-	QBool operator!=(const QString& other) const;
-	QBool operator<(const QString& other) const;
-	QBool operator<=(const QString& other) const;
-	QBool operator>(const QString& other) const;
-	QBool operator>=(const QString& other) const;
+	QBool operator==(const Basic_QString& other) const;
+	QBool operator!=(const Basic_QString& other) const;
+	QBool operator<(const Basic_QString& other) const;
+	QBool operator<=(const Basic_QString& other) const;
+	QBool operator>(const Basic_QString& other) const;
+	QBool operator>=(const Basic_QString& other) const;
 
-	friend std::ostream& operator<<(std::ostream& os, const QString& string);
+	template<typename Type,
+		typename TAllocator>
+		friend std::ostream& operator<<(std::ostream& os, const Basic_QString& string);
 
 	const Iterator getBegin() const;
 	const Iterator getEnd() const;
@@ -217,6 +220,8 @@ public:
 	size_t getMaxLength() const;
 	size_t getSize() const;
 	size_t getMaxSize() const;
+
+	static const Basic_QString<Type, TAllocator> EMPTY_STRING;
 private:
 	struct Comparison
 	{
@@ -262,7 +267,16 @@ private:
 	/*Maximum length*/
 	size_t _maxLength;
 	/*Memory Allocator*/
-	//Allocator _allocator;
+	Allocator _allocator;
 };
 
-static const QString EMPTY_STRING((size_t)0);
+//template<typename Type, 
+//	typename TAllocator>
+//static const Basic_QString<Type, TAllocator> EMPTY_STRING((size_t)0);
+
+typedef Basic_QString<Char8> QString;
+typedef Basic_QString<Char16> QString_16;
+typedef Basic_QString<Char32> QString_32;
+typedef Basic_QString<WChar>  QWString;
+
+#include "../Source/qstring.inl"

@@ -1,22 +1,26 @@
-#include "..\Include\qstring.h"
+#include "..\Include\qstring.hpp"
 
-QBool isSensitive(Sensitivity sensitivity)
-{
-	return sensitivity == STR_SENSITIVE;
-}
+//QBool isSensitive(Sensitivity sensitivity)
+//{
+//	return sensitivity == STR_SENSITIVE;
+//}
+//
+//QBool isInsensitive(Sensitivity sensitivity)
+//{
+//	return sensitivity == STR_INSENSITIVE;
+//}
 
-QBool isInsensitive(Sensitivity sensitivity)
-{
-	return sensitivity == STR_INSENSITIVE;
-}
-
-QString::Comparison::Comparison(size_t trav, QBool equal)
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::Comparison::Comparison(size_t trav, QBool equal)
 	: traversed(trav), isEqual(equal)
 {
 }
 
-QString::QString(size_t length)
-	:  _string(nullptr), _maxLength(), _length()
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::Basic_QString(size_t length)
+	: _string(nullptr), _allocator(), _maxLength(), _length()
 {
 	//_string = _allocator.allocate(sizeof(Character) * length);
 	if (length != 0)
@@ -24,13 +28,16 @@ QString::QString(size_t length)
 		size_t zeroLen = length + 1;
 		_maxLength = zeroLen;
 		_length = 1;
-		_string = new Character[zeroLen];
+		Block block = _allocator.allocate(sizeof(Character) * zeroLen);
+		_string = static_cast<String>(block.memory);
 		_string[0] = '\0';
 	}
 }
 
-QString::QString(const Character* string)
-	:  _string(nullptr), _maxLength(), _length()
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::Basic_QString(const String string)
+	: _string(nullptr), _allocator(), _maxLength(), _length()
 {
 	if (string)
 	{
@@ -39,7 +46,8 @@ QString::QString(const Character* string)
 		size_t len = hasTZero ? otherLen : otherLen + 1;
 		_maxLength = len;
 		_length = len;
-		_string = new Character[len];
+		Block block = _allocator.allocate(sizeof(Character) * len);
+		_string = static_cast<String>(block.memory);
 		strncpy_s(_string, len, string, otherLen);
 		if (!hasTZero)
 		{
@@ -48,14 +56,17 @@ QString::QString(const Character* string)
 	}
 }
 
-QString::QString(const Character* begin, const Character* end)
-	: _string(nullptr), _maxLength(), _length()
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::Basic_QString(const Index begin, const Index end)
+	: _string(nullptr), _allocator(), _maxLength(), _length()
 {
 	if (_comesBefore(begin, end))
 	{
 		QBool hasTZero = *end == '\0';
 		size_t len = hasTZero ? end - begin : end - begin + 1;
-		_string = new Character[len];
+		Block block = _allocator.allocate(sizeof(Character) * len);
+		_string = static_cast<String>(block.memory);
 		_length = len;
 		_maxLength = len;
 		strncpy_s(_string, len, begin, len - 1);
@@ -66,8 +77,10 @@ QString::QString(const Character* begin, const Character* end)
 	}
 }
 
-QString::QString(const Iterator begin, const Iterator end)
-	: _string(nullptr), _maxLength(), _length()
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::Basic_QString(const Iterator begin, const Iterator end)
+	: _string(nullptr), _allocator(), _maxLength(), _length()
 {
 	if (_comesBefore(begin, end))
 	{
@@ -77,7 +90,8 @@ QString::QString(const Iterator begin, const Iterator end)
 		size_t len = hasTZero ? otherLen : otherLen + 1;
 		_maxLength = len;
 		_length = len;
-		_string = new Character[len];
+		Block block = _allocator.allocate(sizeof(Character) * len);
+		_string = static_cast<String>(block.memory);
 		strncpy_s(_string, len, string, otherLen);
 		if (!hasTZero)
 		{
@@ -86,27 +100,35 @@ QString::QString(const Iterator begin, const Iterator end)
 	}
 }
 
-QString::QString(const QString& string)
-	: _string(nullptr), _maxLength(string._maxLength), _length(string._length)
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::Basic_QString(const Basic_QString& string)
+	: _string(nullptr), _allocator(), _maxLength(string._maxLength), _length(string._length)
 {
 	if (string)
 	{
-		_string = new char[_length];
 		size_t len = string._length;
-		const Character* str = string._string;
+		Block block = _allocator.allocate(sizeof(Character) * len);
+		_string = static_cast<String>(block.memory);
+		const String str = string._string;
 		strncpy_s(_string, _length, str, len);
 	}
 }
 
-QString::~QString()
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::~Basic_QString()
 {
 	if (_string)
 	{
-		delete[] _string;
+		Block block(_string, _maxLength);
+		_allocator.deallocate(block);
 	}
 }
 
-void QString::pushFront(Character ch)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::pushFront(Character ch)
 {
 	if (!_hasSpaceFor(1))
 	{
@@ -124,7 +146,9 @@ void QString::pushFront(Character ch)
 	_incrementLength();
 }
 
-void QString::pushFront(const Character* string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::pushFront(const Character* string)
 {
 	size_t len = strlen(string);
 	if (!_hasSpaceFor(len))
@@ -147,11 +171,15 @@ void QString::pushFront(const Character* string)
 	}
 }
 
-void QString::pushFront(const QString& string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::pushFront(const Basic_QString& string)
 {
 }
 
-void QString::setFront(Character ch)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::setFront(Character ch)
 {
 	if (_length > 1)
 	{
@@ -159,12 +187,16 @@ void QString::setFront(Character ch)
 	}
 }
 
-QString::Reference QString::getFront() const
+template<typename Type,
+	typename TAllocator>
+Type& Basic_QString<Type, TAllocator>::getFront() const
 {
 	return _string[0];
 }
 
-void QString::pushBack(Character ch)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::pushBack(Character ch)
 {
 	if (!_hasSpaceFor(1))
 	{
@@ -175,7 +207,9 @@ void QString::pushBack(Character ch)
 	_incrementLength();
 }
 
-void QString::pushBack(const Character* string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::pushBack(const Character* string)
 {
 	size_t len = strlen(string);
 	if (!_hasSpaceFor(len))
@@ -194,7 +228,9 @@ void QString::pushBack(const Character* string)
 	}
 }
 
-void QString::pushBack(const QString& string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::pushBack(const Basic_QString& string)
 {
 	size_t len = string._length - 1;
 	if (!_hasSpaceFor(len))
@@ -213,7 +249,9 @@ void QString::pushBack(const QString& string)
 	}
 }
 
-void QString::setBack(Character ch)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::setBack(Character ch)
 {
 	if (_length - 2 >= 0)
 	{
@@ -221,12 +259,16 @@ void QString::setBack(Character ch)
 	}
 }
 
-QString::Reference QString::getBack() const
+template<typename Type,
+	typename TAllocator>
+Type& Basic_QString<Type, TAllocator>::getBack() const
 {
 	return _string[_length - 2];
 }
 
-void QString::concat(const Character* string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::concat(const Character* string)
 {
 	size_t len = strlen(string);
 	if (!_hasSpaceFor(len))
@@ -237,7 +279,9 @@ void QString::concat(const Character* string)
 	_addLength(len);
 }
 
-void QString::concat(const QString& string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::concat(const Basic_QString& string)
 {
 	size_t len = string._length - 1;
 	if (!_hasSpaceFor(len))
@@ -248,7 +292,7 @@ void QString::concat(const QString& string)
 	_addLength(len);
 }
 
-//void QString::insert(size_t index, Character ch)
+//void Basic_QString::insert(size_t index, Character ch)
 //{
 //	if (_checkIndex(index))
 //	{
@@ -268,7 +312,7 @@ void QString::concat(const QString& string)
 //	}
 //}
 //
-//void QString::insert(size_t begin, size_t end, const Character* string)
+//void Basic_QString::insert(size_t begin, size_t end, const Character* string)
 //{
 //	if (_checkIndicies(begin, end) || _checkIndex(begin) && _comesBefore(begin, end))
 //	{
@@ -295,7 +339,7 @@ void QString::concat(const QString& string)
 //	}
 //}
 //
-//void QString::insert(size_t begin, size_t end, const QString& string)
+//void Basic_QString::insert(size_t begin, size_t end, const Basic_QString& string)
 //{
 //	//if (_checkNegativeIndicies(begin, end) || _checkIndex(begin) && _comesBefore(begin, end))
 //	//{
@@ -319,7 +363,7 @@ void QString::concat(const QString& string)
 //	//}
 //}
 //
-//void QString::insert(Iterator iterator, Character ch)
+//void Basic_QString::insert(Iterator iterator, Character ch)
 //{
 //	/*if (_checkIterator(iterator))
 //	{
@@ -339,7 +383,9 @@ void QString::concat(const QString& string)
 //	}*/
 //}
 
-void QString::set(size_t index, Character ch)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::set(size_t index, Character ch)
 {
 	if (_checkIndex(index))
 	{
@@ -347,7 +393,9 @@ void QString::set(size_t index, Character ch)
 	}
 }
 
-void QString::set(size_t begin, size_t end, const Character* string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::set(size_t begin, size_t end, const Character* string)
 {
 	if (_checkIndicies(begin, end))
 	{
@@ -362,7 +410,9 @@ void QString::set(size_t begin, size_t end, const Character* string)
 	}
 }
 
-void QString::set(size_t begin, size_t end, const QString& string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::set(size_t begin, size_t end, const Basic_QString& string)
 {
 	if (_checkIndicies(begin, end))
 	{
@@ -377,7 +427,9 @@ void QString::set(size_t begin, size_t end, const QString& string)
 	}
 }
 
-void QString::set(Iterator iterator, Character ch)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::set(Iterator iterator, Character ch)
 {
 	if (_checkIterator(iterator))
 	{
@@ -385,7 +437,9 @@ void QString::set(Iterator iterator, Character ch)
 	}
 }
 
-void QString::set(Iterator begin, Iterator end, const Character* string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::set(Iterator begin, Iterator end, const Character* string)
 {
 	if (_checkIterators(begin, end))
 	{
@@ -401,7 +455,9 @@ void QString::set(Iterator begin, Iterator end, const Character* string)
 	}
 }
 
-void QString::set(Iterator begin, Iterator end, const QString& string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::set(Iterator begin, Iterator end, const Basic_QString& string)
 {
 	if (_checkIterators(begin, end))
 	{
@@ -417,47 +473,63 @@ void QString::set(Iterator begin, Iterator end, const QString& string)
 	}
 }
 
-QString QString::substring(size_t index) const
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>
+Basic_QString<Type, TAllocator>::substring(size_t index) const
 {
 	if (_checkIndex(index))
 	{
 		size_t len = _length - index - 1;
 		Character* start = _string + index;
-		return QString(start);
+		return Basic_QString(start);
 	}
 	return EMPTY_STRING;
 }
 
-QString QString::substring(size_t begin, size_t end) const
+template<typename Type, 
+	typename TAllocator>
+Basic_QString<Type, TAllocator>
+Basic_QString<Type, TAllocator>::substring(size_t begin, size_t end) const
 {
 	if (_checkIndicies(begin, end))
 	{
 		size_t distance = end - begin;
 		Character* start = _string + begin;
 		Character* stop = _string + begin + distance - 1;
-		return QString(start, stop);
+		return Basic_QString(start, stop);
 	}
 	return EMPTY_STRING;
 }
 
-QString QString::substring(const Iterator iterator) const
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>
+Basic_QString<Type, TAllocator>::substring(const Iterator iterator) const
 {
 	if (_checkIterator(iterator))
 	{
-		return QString(iterator.ptr());
+		return Basic_QString(iterator.ptr());
 	}
 	return EMPTY_STRING;
 }
 
-QString QString::substring(const Iterator begin, const Iterator end) const
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>
+Basic_QString<Type, TAllocator>::substring(const Iterator begin, const Iterator end) const
 {
 	if (_checkIterators(begin, end))
 	{
-		return QString(begin, end);
+		return Basic_QString(begin, end);
 	}
 }
 
-QString::Iterator QString::find(Character ch, size_t buffer, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::Iterator
+BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::find(Character ch, size_t buffer, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	Iterator begin = getBegin();
@@ -472,7 +544,11 @@ QString::Iterator QString::find(Character ch, size_t buffer, Sensitivity sensiti
 	return end;
 }
 
-QString::Iterator QString::find(const Character* string, size_t buffer, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::Iterator 
+BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::find(const Character* string, size_t buffer, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -498,7 +574,11 @@ QString::Iterator QString::find(const Character* string, size_t buffer, Sensitiv
 	return end;
 }
 
-QString::Iterator QString::find(const QString& string, size_t buffer, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::Iterator
+BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::find(const Basic_QString& string, size_t buffer, Sensitivity sensitivity) const
 {
 	size_t len = string._length - 1;
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -524,7 +604,11 @@ QString::Iterator QString::find(const QString& string, size_t buffer, Sensitivit
 	return end;
 }
 
-QString::ReverseIterator QString::rfind(Character ch, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::ReverseIterator 
+ReverseArrayIterator<Type>
+Basic_QString<Type, TAllocator>::rfind(Character ch, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	ReverseIterator begin = getRBegin();
@@ -539,7 +623,10 @@ QString::ReverseIterator QString::rfind(Character ch, Sensitivity sensitivity) c
 	return end;
 }
 
-QString::ReverseIterator QString::rfind(const Character* string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+ReverseArrayIterator<Type>
+Basic_QString<Type, TAllocator>::rfind(const Character* string, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -550,20 +637,23 @@ QString::ReverseIterator QString::rfind(const Character* string, Sensitivity sen
 	{
 		size_t distance = iterator_distance(i, begin);
 		String start = _string + (_length - distance - 1);
-
-		/*if (!strCheck(start, string, len))
+		if (!strCheck(start, string, len))
 		{
 			return i;
 		}
 		else
 		{
 			i += len;
-		}*/
+		}
 	}
 	return end;
 }
 
-QString::ReverseIterator QString::rfind(const QString& string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::ReverseIterator 
+ReverseArrayIterator<Type>
+Basic_QString<Type, TAllocator>::rfind(const Basic_QString& string, Sensitivity sensitivity) const
 {
 	/*size_t len = string.getLength();
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -572,24 +662,28 @@ QString::ReverseIterator QString::rfind(const QString& string, Sensitivity sensi
 	ReverseIterator found = end;
 	for (ReverseIterator i = begin; i < end; ++i)
 	{
-		if (charCheck(string[len - 1], i.get()))
-		{
-			found = i;
-			++i;
-			for (size_t j = len - 2; charCheck(string[j], i.get()); --j, ++i)
-			{
-				if (j == -1)
-				{
-					return found;
-				}
-			}
-		}
+	if (charCheck(string[len - 1], i.get()))
+	{
+	found = i;
+	++i;
+	for (size_t j = len - 2; charCheck(string[j], i.get()); --j, ++i)
+	{
+	if (j == -1)
+	{
+	return found;
+	}
+	}
+	}
 	}
 	return end;*/
 	return ReverseIterator();
 }
 
-QString::Iterator QString::findLast(Character ch, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::Iterator
+BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::findLast(Character ch, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	Iterator begin = getBegin();
@@ -605,7 +699,11 @@ QString::Iterator QString::findLast(Character ch, Sensitivity sensitivity) const
 	return found;
 }
 
-QString::Iterator QString::findLast(const Character* string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::Iterator
+BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::findLast(const Character* string, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -644,7 +742,11 @@ QString::Iterator QString::findLast(const Character* string, Sensitivity sensiti
 	return found;
 }
 
-QString::Iterator QString::findLast(const QString& string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+//Basic_QString<Type, TAllocator>::Iterator 
+BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::findLast(const Basic_QString& string, Sensitivity sensitivity) const
 {
 	size_t len = string._length - 1;
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -684,7 +786,9 @@ QString::Iterator QString::findLast(const QString& string, Sensitivity sensitivi
 	return found;
 }
 
-QBool QString::has(Character ch, Sensitivity sensitivity) const
+template<typename Type, 
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::has(Character ch, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	Iterator begin = getBegin();
@@ -699,7 +803,9 @@ QBool QString::has(Character ch, Sensitivity sensitivity) const
 	return false;
 }
 
-QBool QString::has(const Character* string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::has(const Character* string, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -730,7 +836,9 @@ QBool QString::has(const Character* string, Sensitivity sensitivity) const
 	return false;
 }
 
-QBool QString::has(const QString& string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::has(const Basic_QString& string, Sensitivity sensitivity) const
 {
 	size_t len = string._length - 1;
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -762,7 +870,7 @@ QBool QString::has(const QString& string, Sensitivity sensitivity) const
 	return false;
 }
 
-////QBool QString::rhas(Character ch, Sensitivity sensitivity) const
+////QBool Basic_QString::rhas(Character ch, Sensitivity sensitivity) const
 ////{
 ////	CharChecker charCheck = _getCharChecker(sensitivity);
 ////	ReverseIterator begin = _rbegin;
@@ -777,7 +885,7 @@ QBool QString::has(const QString& string, Sensitivity sensitivity) const
 ////	return false;
 ////}
 ////
-////QBool QString::rhas(const Character* string, Sensitivity sensitivity) const
+////QBool Basic_QString::rhas(const Character* string, Sensitivity sensitivity) const
 ////{
 ////	size_t len = Q_strLen(string);
 ////	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -801,7 +909,7 @@ QBool QString::has(const QString& string, Sensitivity sensitivity) const
 ////	return false;
 ////}
 ////
-////QBool QString::rhas(const QString& string, Sensitivity sensitivity) const
+////QBool Basic_QString::rhas(const Basic_QString& string, Sensitivity sensitivity) const
 ////{
 ////	size_t len = string.getLength();
 ////	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -824,7 +932,9 @@ QBool QString::has(const QString& string, Sensitivity sensitivity) const
 ////	return false;
 ////}
 
-size_t QString::occurances(Character ch, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+size_t Basic_QString<Type, TAllocator>::occurances(Character ch, Sensitivity sensitivity) const
 {
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	Iterator begin = getBegin();
@@ -840,7 +950,9 @@ size_t QString::occurances(Character ch, Sensitivity sensitivity) const
 	return occurances;
 }
 
-size_t QString::occurances(const Character* string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+size_t Basic_QString<Type, TAllocator>::occurances(const Character* string, Sensitivity sensitivity) const
 {
 	size_t len = strlen(string);
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -850,7 +962,7 @@ size_t QString::occurances(const Character* string, Sensitivity sensitivity) con
 	size_t occurances = 0;
 	while (i < end)
 	{
-		if(charCheck(string[0], i.get()))
+		if (charCheck(string[0], i.get()))
 		{
 			size_t distance = iterator_distance(i, begin);
 			Character* start = _string + distance;
@@ -869,7 +981,9 @@ size_t QString::occurances(const Character* string, Sensitivity sensitivity) con
 	return occurances;
 }
 
-size_t QString::occurances(const QString& string, Sensitivity sensitivity) const
+template<typename Type,
+	typename TAllocator>
+size_t Basic_QString<Type, TAllocator>::occurances(const Basic_QString& string, Sensitivity sensitivity) const
 {
 	size_t len = string.getLength();
 	CharChecker charCheck = _getCharChecker(sensitivity);
@@ -899,7 +1013,9 @@ size_t QString::occurances(const QString& string, Sensitivity sensitivity) const
 	return occurances;
 }
 
-QBool QString::is(CharacterFilter filter, CharacterFilter exception) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::is(CharacterFilter filter, CharacterFilter exception) const
 {
 	Iterator begin = getBegin();
 	Iterator end = getEnd();
@@ -916,12 +1032,16 @@ QBool QString::is(CharacterFilter filter, CharacterFilter exception) const
 	return true;
 }
 
-QBool QString::is(size_t index, CharacterFilter filter, CharacterFilter exception) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::is(size_t index, CharacterFilter filter, CharacterFilter exception) const
 {
 	return _checkIndex(index) ? filter(_string[index]) || (exception && exception(_string[index])) : false;
 }
 
-QBool QString::is(size_t begin, size_t end, CharacterFilter filter, CharacterFilter exception) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::is(size_t begin, size_t end, CharacterFilter filter, CharacterFilter exception) const
 {
 	if (_checkIndicies(begin, end))
 	{
@@ -941,12 +1061,16 @@ QBool QString::is(size_t begin, size_t end, CharacterFilter filter, CharacterFil
 	return false;
 }
 
-QBool QString::is(const Iterator iterator, CharacterFilter filter, CharacterFilter exception) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::is(const Iterator iterator, CharacterFilter filter, CharacterFilter exception) const
 {
 	return _checkIterator(iterator) ? filter(iterator.get()) || (exception && exception(iterator.get())) : false;
 }
 
-QBool QString::is(Iterator begin, Iterator end, CharacterFilter filter, CharacterFilter exception) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::is(Iterator begin, Iterator end, CharacterFilter filter, CharacterFilter exception) const
 {
 	if (_checkIterators(begin, end))
 	{
@@ -966,7 +1090,7 @@ QBool QString::is(Iterator begin, Iterator end, CharacterFilter filter, Characte
 	return false;
 }
 
-////QBool QString::ris(size_t index, CharacterFilter filter, CharacterFilter exception) const
+////QBool Basic_QString::ris(size_t index, CharacterFilter filter, CharacterFilter exception) const
 ////{
 ////	if (_checkNegativeIndex(index))
 ////	{
@@ -976,7 +1100,7 @@ QBool QString::is(Iterator begin, Iterator end, CharacterFilter filter, Characte
 ////	return false;
 ////}
 ////
-////QBool QString::ris(size_t begin, size_t end, CharacterFilter filter, CharacterFilter exception) const
+////QBool Basic_QString::ris(size_t begin, size_t end, CharacterFilter filter, CharacterFilter exception) const
 ////{
 ////	if (_checkNegativeIndicies(begin, end))
 ////	{
@@ -994,12 +1118,12 @@ QBool QString::is(Iterator begin, Iterator end, CharacterFilter filter, Characte
 ////	return false;
 ////}
 //
-//QBool QString::ris(ReverseIterator iterator, CharacterFilter filter, CharacterFilter exception) const
+//QBool Basic_QString::ris(ReverseIterator iterator, CharacterFilter filter, CharacterFilter exception) const
 //{
 //	return _checkReverseIterator(iterator) ? filter(iterator.get()) || exception(iterator.get()) : false;
 //}
 //
-//QBool QString::ris(ReverseIterator begin, ReverseIterator end, CharacterFilter filter, CharacterFilter exception) const
+//QBool Basic_QString::ris(ReverseIterator begin, ReverseIterator end, CharacterFilter filter, CharacterFilter exception) const
 //{
 //	if (_checkReverseIterators(begin, end))
 //	{
@@ -1016,7 +1140,9 @@ QBool QString::is(Iterator begin, Iterator end, CharacterFilter filter, Characte
 //	return false;
 //}
 
-void QString::to(CharacterConverter converter)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::to(CharacterConverter converter)
 {
 	Iterator begin = getBegin();
 	Iterator end = getEnd();
@@ -1028,7 +1154,9 @@ void QString::to(CharacterConverter converter)
 	}
 }
 
-void QString::to(size_t index, CharacterConverter converter)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::to(size_t index, CharacterConverter converter)
 {
 	if (_checkIndex(index))
 	{
@@ -1038,7 +1166,9 @@ void QString::to(size_t index, CharacterConverter converter)
 	}
 }
 
-void QString::to(size_t begin, size_t end, CharacterConverter converter)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::to(size_t begin, size_t end, CharacterConverter converter)
 {
 	if (_checkIndicies(begin, end))
 	{
@@ -1052,7 +1182,7 @@ void QString::to(size_t begin, size_t end, CharacterConverter converter)
 	}
 }
 
-//void QString::to(Iterator iterator, CharacterConverter converter, CharacterFilter filter)
+//void Basic_QString::to(Iterator iterator, CharacterConverter converter, CharacterFilter filter)
 //{
 //	if (_checkIterator(iterator))
 //	{
@@ -1065,7 +1195,7 @@ void QString::to(size_t begin, size_t end, CharacterConverter converter)
 //	}
 //}
 //
-//void QString::to(Iterator begin, Iterator end, CharacterConverter converter, CharacterFilter filter)
+//void Basic_QString::to(Iterator begin, Iterator end, CharacterConverter converter, CharacterFilter filter)
 //{
 //	if (_checkIterators(begin, end))
 //	{
@@ -1082,20 +1212,20 @@ void QString::to(size_t begin, size_t end, CharacterConverter converter)
 //	}
 //}
 
-void QString::rto(size_t index, CharacterConverter converter, CharacterFilter filter)
-{
-	/*if (_checkNegativeIndex(index))
-	{
-		size_t i = _negToPos(index);
-		Character ch = _string[i];
-		if (!filter(ch))
-		{
-			_string[i] = converter(ch);
-		}
-	}*/
-}
+//void Basic_QString::rto(size_t index, CharacterConverter converter, CharacterFilter filter)
+//{
+//	/*if (_checkNegativeIndex(index))
+//	{
+//		size_t i = _negToPos(index);
+//		Character ch = _string[i];
+//		if (!filter(ch))
+//		{
+//			_string[i] = converter(ch);
+//		}
+//	}*/
+//}
 
-////void QString::rto(size_t begin, size_t end, CharacterConverter converter, CharacterFilter filter)
+////void Basic_QString::rto(size_t begin, size_t end, CharacterConverter converter, CharacterFilter filter)
 ////{
 ////	if (_checkNegativeIndicies(begin, end))
 ////	{
@@ -1112,7 +1242,7 @@ void QString::rto(size_t index, CharacterConverter converter, CharacterFilter fi
 ////	}
 ////}
 //
-//void QString::rto(ReverseIterator iterator, CharacterConverter converter, CharacterFilter filter)
+//void Basic_QString::rto(ReverseIterator iterator, CharacterConverter converter, CharacterFilter filter)
 //{
 //	if (_checkReverseIterator(iterator))
 //	{
@@ -1125,7 +1255,7 @@ void QString::rto(size_t index, CharacterConverter converter, CharacterFilter fi
 //	}
 //}
 //
-//void QString::rto(ReverseIterator begin, ReverseIterator end, CharacterConverter converter, CharacterFilter filter)
+//void Basic_QString::rto(ReverseIterator begin, ReverseIterator end, CharacterConverter converter, CharacterFilter filter)
 //{
 //	if (_checkReverseIterators(begin, end))
 //	{
@@ -1142,7 +1272,9 @@ void QString::rto(size_t index, CharacterConverter converter, CharacterFilter fi
 //	}
 //}
 
-void QString::copy(const Character* string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::copy(const String string)
 {
 	size_t max = strlen(string) + 1;
 	if (_maxLength < max)
@@ -1153,7 +1285,9 @@ void QString::copy(const Character* string)
 	_setLength(max);
 }
 
-void QString::copy(const QString& string)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::copy(const Basic_QString& string)
 {
 	size_t max = string._maxLength;
 	if (_maxLength < max)
@@ -1164,11 +1298,54 @@ void QString::copy(const QString& string)
 	_setLength(string._length);
 }
 
-void QString::reserve(size_t size)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::swap(String string)
+{
+	/*size_t otherLen = strlen(string);
+	QBool hasTZero = string[otherLen] == '\0';
+	size_t len = _length - 1;
+	size_t buffer = len > otherLen ? otherLen : len;
+
+	Index c1 = _string;
+	Index c2 = string;
+	while (buffer--)
+	{
+	Character ch = *c1;
+	*c1 = *c2;
+	*c2 = ch;
+
+	++c1;
+	++c2;
+	}*/
+	/*if (len > buffer)
+	{
+	if (!hasTZero)
+	{
+	_setTerminatingZero(buffer);
+	}
+	for (size_t i = buffer + 1; i < len; ++i)
+	{
+	_string[i] = ' ';
+	}
+	}
+	else if (otherLen > buffer)
+	{
+	string[buffer] = '\0';
+	for (size_t i = buffer + 1; i < otherLen; ++i)
+	{
+	string[i] = ' ';
+	}
+	}*/
+}
+
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::reserve(size_t size)
 {
 	if (size > _maxLength)
 	{
-		Character* string = new Character[size];
+		String string = new Character[size];
 		strncpy_s(string, size, _string, _maxLength);
 		delete[] _string;
 		_string = string;
@@ -1176,14 +1353,18 @@ void QString::reserve(size_t size)
 	}
 }
 
-void QString::clear()
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::clear()
 {
 	delete[] _string;
 	_length = 0;
 	_maxLength = 0;
 }
 
-QBool QString::equals(const Character* other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::equals(const String other) const
 {
 	size_t len = strlen(other) + 1;
 	if (_length == len)
@@ -1193,7 +1374,9 @@ QBool QString::equals(const Character* other) const
 	return false;
 }
 
-QBool QString::equals(const QString& other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::equals(const Basic_QString& other) const
 {
 	size_t len = other._length;
 	if (_length == len)
@@ -1203,47 +1386,65 @@ QBool QString::equals(const QString& other) const
 	return false;
 }
 
-QBool QString::isEmpty() const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::isEmpty() const
 {
 	return _length == 0;
 }
 
-QBool QString::isFull() const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::isFull() const
 {
 	return _length == _maxLength;
 }
 
-int32 QString::toInt32() const
+template<typename Type,
+	typename TAllocator>
+int32 Basic_QString<Type, TAllocator>::toInt32() const
 {
 	return atoi(_string);
 }
 
-float64 QString::toFloat64() const
+template<typename Type,
+	typename TAllocator>
+float64 Basic_QString<Type, TAllocator>::toFloat64() const
 {
 	return atof(_string);
 }
 
-const QString::Character* QString::toCString() const
-{
-	return _string;
-}
+//template<typename Type,
+//	typename TAllocator>
+//const Type* Basic_QString<Type, TAllocator>::toCString() const
+//{
+//	return _string;
+//}
 
-QString::Reference QString::at(size_t index) const
+template<typename Type,
+	typename TAllocator>
+Type& Basic_QString<Type, TAllocator>::at(size_t index) const
 {
 	return _checkIndex(index) ? _string[index] : EMPTY_CHAR;
 }
 
-QString::Reference QString::operator[](size_t index) const
+template<typename Type,
+	typename TAllocator>
+Type& Basic_QString<Type, TAllocator>::operator[](size_t index) const
 {
 	return at(index);
 }
 
-QString::operator bool() const
+template<typename Type,
+	typename TAllocator>
+Basic_QString<Type, TAllocator>::operator bool() const
 {
 	return _string && _length && _maxLength;
 }
 
-QBool QString::operator==(const Character* other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator==(const Character* other) const
 {
 	size_t len = strlen(other) + 1;
 	if (_length == len)
@@ -1253,7 +1454,9 @@ QBool QString::operator==(const Character* other) const
 	return false;
 }
 
-QBool QString::operator!=(const Character* other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator!=(const Character* other) const
 {
 	size_t len = strlen(other) + 1;
 	if (_length == len)
@@ -1263,14 +1466,18 @@ QBool QString::operator!=(const Character* other) const
 	return true;
 }
 
-QBool QString::operator<(const Character* other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator<(const Character* other) const
 {
 	size_t otherLen = strlen(other) + 1;
 	size_t len = _length > otherLen ? _length : otherLen;
 	return strncmp(_string, other, len) == -1;
 }
 
-QBool QString::operator<=(const Character* other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator<=(const Character* other) const
 {
 	size_t otherLen = strlen(other) + 1;
 	size_t len = _length > otherLen ? _length : otherLen;
@@ -1278,14 +1485,18 @@ QBool QString::operator<=(const Character* other) const
 	return result == -1 || result == 0;
 }
 
-QBool QString::operator>(const Character* other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator>(const Character* other) const
 {
 	size_t otherLen = strlen(other) + 1;
 	size_t len = _length > otherLen ? _length : otherLen;
 	return strncmp(_string, other, len) == 1;
 }
 
-QBool QString::operator>=(const Character* other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator>=(const Character* other) const
 {
 	size_t otherLen = strlen(other) + 1;
 	size_t len = _length > otherLen ? _length : otherLen;
@@ -1293,7 +1504,9 @@ QBool QString::operator>=(const Character* other) const
 	return result == 1 || result == 0;
 }
 
-QBool QString::operator==(const QString& other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator==(const Basic_QString& other) const
 {
 	size_t len = other._length;
 	if (_length == len)
@@ -1303,7 +1516,9 @@ QBool QString::operator==(const QString& other) const
 	return false;
 }
 
-QBool QString::operator!=(const QString& other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator!=(const Basic_QString& other) const
 {
 	size_t len = other._length;
 	if (_length == len)
@@ -1313,193 +1528,288 @@ QBool QString::operator!=(const QString& other) const
 	return true;
 }
 
-QBool QString::operator<(const QString& other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator<(const Basic_QString& other) const
 {
 	size_t len = _length > other._length ? _length : other._length;
 	return strncmp(_string, other._string, len) == -1;
 }
 
-QBool QString::operator<=(const QString& other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator<=(const Basic_QString& other) const
 {
 	size_t len = _length > other._length ? _length : other._length;
 	int32 result = strncmp(_string, other._string, len);
 	return result == -1 || result == 0;
 }
 
-QBool QString::operator>(const QString& other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator>(const Basic_QString& other) const
 {
 	size_t len = _length > other._length ? _length : other._length;
 	return strncmp(_string, other._string, len) == 1;
 }
 
-QBool QString::operator>=(const QString& other) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::operator>=(const Basic_QString& other) const
 {
 	size_t len = _length > other._length ? _length : other._length;
 	int32 result = strncmp(_string, other._string, len);
 	return result == 1 || result == 0;
 }
 
-const QString::Iterator QString::getBegin() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::Iterator 
+const BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::getBegin() const
 {
 	return Iterator(&_string[0]);
 }
 
-const QString::Iterator QString::getEnd() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::Iterator
+const BidirectionalArrayIterator<Type>
+Basic_QString<Type, TAllocator>::getEnd() const
 {
 	return Iterator(&_string[_length - 1]);
 }
 
-const QString::ConstIterator QString::getCBegin() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::ConstIterator
+const BidirectionalArrayIterator<const Type>
+Basic_QString<Type, TAllocator>::getCBegin() const
 {
 	return ConstIterator(&_string[0]);
 }
 
-const QString::ConstIterator QString::getCEnd() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::ConstIterator
+const BidirectionalArrayIterator<const Type>
+Basic_QString<Type, TAllocator>::getCEnd() const
 {
 	return ConstIterator(&_string[_length - 1]);
 }
 
-const QString::ReverseIterator QString::getRBegin() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::ReverseIterator 
+const ReverseArrayIterator<Type>
+Basic_QString<Type, TAllocator>::getRBegin() const
 {
 	return ReverseIterator(&_string[_length - 2]);
 }
 
-const QString::ReverseIterator QString::getREnd() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::ReverseIterator 
+const ReverseArrayIterator<Type>
+Basic_QString<Type, TAllocator>::getREnd() const
 {
 	return ReverseIterator(&_string[-1]);
 }
 
-const QString::ConstReverseIterator QString::getCRBegin() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::ConstReverseIterator 
+const ReverseArrayIterator<const Type>
+Basic_QString<Type, TAllocator>::getCRBegin() const
 {
 	return ConstReverseIterator(&_string[_length - 2]);
 }
 
-const QString::ConstReverseIterator QString::getCREnd() const
+template<typename Type,
+	typename TAllocator>
+//const Basic_QString<Type, TAllocator>::ConstReverseIterator
+const ReverseArrayIterator<const Type>
+Basic_QString<Type, TAllocator>::getCREnd() const
 {
 	return ConstReverseIterator(&_string[-1]);
 }
 
-size_t QString::getLength() const
+template<typename Type,
+	typename TAllocator>
+size_t Basic_QString<Type, TAllocator>::getLength() const
 {
 	return _length - 1;
 }
 
-size_t QString::getMaxLength() const
+template<typename Type,
+	typename TAllocator>
+size_t Basic_QString<Type, TAllocator>::getMaxLength() const
 {
 	return _maxLength - 1;
 }
 
-size_t QString::getSize() const
+template<typename Type,
+	typename TAllocator>
+size_t Basic_QString<Type, TAllocator>::getSize() const
 {
 	return _length - 1;
 }
 
-size_t QString::getMaxSize() const
+template<typename Type,
+	typename TAllocator>
+size_t Basic_QString<Type, TAllocator>::getMaxSize() const
 {
 	return _maxLength - 1;
 }
 
-void QString::_setLength(size_t len)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::_setLength(size_t len)
 {
 	_length = len;
 }
 
-void QString::_setMaxLength(size_t max)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::_setMaxLength(size_t max)
 {
 	_maxLength = max;
 }
 
-void QString::_incrementLength()
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::_incrementLength()
 {
 	_length++;
 }
 
-void QString::_decrementLength()
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::_decrementLength()
 {
 	_length--;
 }
 
-void QString::_addLength(size_t amount)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::_addLength(size_t amount)
 {
 	_length += amount;
 }
 
-void QString::_subtractLength(size_t amount)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::_subtractLength(size_t amount)
 {
 	_length -= amount;
 }
 
-QBool QString::_hasSpaceFor(size_t num) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::_hasSpaceFor(size_t num) const
 {
 	return _length + num <= _maxLength;
 }
 
-void QString::_setTerminatingZero(size_t index)
+template<typename Type,
+	typename TAllocator>
+void Basic_QString<Type, TAllocator>::_setTerminatingZero(size_t index)
 {
 	_string[index] = '\0';
 }
 
-QBool QString::_checkIndex(size_t index) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::_checkIndex(size_t index) const
 {
 	return index < _length - 1 && index > 0 || (index == 0 && _length - 1 > 0);
 }
 
-QBool QString::_checkIndicies(size_t begin, size_t end) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::_checkIndicies(size_t begin, size_t end) const
 {
 	return _checkIndex(begin) && end <= _length - 1 && _comesBefore(begin, end);
 }
 
-QBool QString::_checkIterator(const Iterator iterator) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::_checkIterator(const Iterator iterator) const
 {
 	return iterator >= getBegin() && iterator < getEnd();
 }
 
-QBool QString::_checkIterators(const Iterator begin, const Iterator end) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::_checkIterators(const Iterator begin, const Iterator end) const
 {
 	return _checkIterator(begin) && end <= getEnd() && _comesBefore(begin, end);
 }
 
-QBool QString::_checkReverseIterator(const ReverseIterator iterator) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::_checkReverseIterator(const ReverseIterator iterator) const
 {
 	return iterator >= getRBegin() && iterator < getREnd();
 }
 
-QBool QString::_checkReverseIterators(const ReverseIterator begin, const ReverseIterator end) const
+template<typename Type,
+	typename TAllocator>
+QBool Basic_QString<Type, TAllocator>::_checkReverseIterators(const ReverseIterator begin, const ReverseIterator end) const
 {
 	return _checkReverseIterator(begin) && _checkReverseIterator(end) && _comesBefore(begin, end);
 }
 
-QString::Comparison QString::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const
-{
-	const Character* c1 = A;
-	const Character* c2 = B;
-	size_t count = 0;
-	while (length)
-	{
-		if (!checker(*c1, *c2))
-		{
-			break;
-		}
+//template<typename Type,
+//	typename TAllocator>
+//Basic_QString<Type, TAllocator>::Comparison 
+//Basic_QString<Type, TAllocator>::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const
+//{
+//	const Character* c1 = A;
+//	const Character* c2 = B;
+//	size_t count = 0;
+//	while (length)
+//	{
+//		if (!checker(*c1, *c2))
+//		{
+//			break;
+//		}
+//
+//		c1++;
+//		c2++;
+//		count++;
+//		length--;
+//	}
+//	return Comparison(count, length == 0);
+//}
 
-		c1++;
-		c2++;
-		count++;
-		length--;
-	}
-	return Comparison(count, length == 0);
-}
+//template<typename Type,
+//	typename TAllocator>
+//Basic_QString<Type, TAllocator>::CharChecker 
+//Basic_QString<Type, TAllocator>::_getCharChecker(Sensitivity sensitivity) const
+//{
+//	return isSensitive(sensitivity) ? CharChecker(chrcmp) : CharChecker(chricmp);
+//}
+//
+//template<typename Type,
+//	typename TAllocator>
+//Basic_QString<Type, TAllocator>::StrChecker
+//Basic_QString<Type, TAllocator>::_getStrChecker(Sensitivity sensitivity) const
+//{
+//	return isSensitive(sensitivity) ? StrChecker(strncmp) : StrChecker(_strnicmp);
+//}
 
-QString::CharChecker QString::_getCharChecker(Sensitivity sensitivity) const
-{
-	return isSensitive(sensitivity) ? CharChecker(chrcmp) : CharChecker(chricmp);
-}
+//template<typename Type,
+//	typename TAllocator>
+//template<typename TIterator>
+//QBool Basic_QString<Type, TAllocator>::_comesBefore(TIterator begin, TIterator end)
+//{
+//	return begin <= end;
+//}
 
-QString::StrChecker QString::_getStrChecker(Sensitivity sensitivity) const
-{
-	return isSensitive(sensitivity) ? StrChecker(strncmp) : StrChecker(_strnicmp);
-}
-
-std::ostream& operator<<(std::ostream& os, const QString& string)
+template<typename Type,
+	typename TAllocator>
+std::ostream& operator<<(std::ostream& os, const Basic_QString<Type, TAllocator>& string)
 {
 	return os << string._string;
 }
