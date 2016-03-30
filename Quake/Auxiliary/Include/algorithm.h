@@ -8,10 +8,33 @@ Distance iterator_distance(TIterator A, TIterator B)
 	return A.ptr() - B.ptr();
 }
 
-template<typename TIterator, typename Distance = size_t>
-TIterator iterator_traverse(TIterator iterator, Distance distance)
+template<typename TIterator, typename TDistance = size_t>
+TIterator iterator_traverse(TIterator iterator, TDistance distance)
 {
-	return iterator + distance - 1;
+	return iterator + distance;
+}
+
+//Distance index_distance(Distance A, Distance B)
+//{
+//	return A - B;
+//}
+
+template<typename Index = size_t>
+Index index_traverse(Index index, Distance distance)
+{
+	return index + distance;
+}
+
+template<typename TPointer>
+Distance array_distance(TPointer A, TPointer B)
+{
+	return A - B;
+}
+
+template<typename TPointer>
+TPointer array_traverse(TPointer array_ptr, Distance distance)
+{
+	return array_ptr + distance;
 }
 
 template<typename TIterator, typename TValue>
