@@ -57,9 +57,9 @@ template<typename Type,
 QStack<Type, TAllocator>::QStack(const Pointer array_ptr, size_t size)
 	: _bottom(nullptr), _top(nullptr), _size(), _maxSize(size), _allocator()
 {
-	while (size--)
+	for (size_t i = 0; i < size; ++i)
 	{
-		Value value = array_ptr[size];
+		Value value = array_ptr[i];
 		push(value);
 	}
 }
@@ -107,12 +107,12 @@ template<typename Type,
 	typename TAllocator>
 void QStack<Type, TAllocator>::push(const Pointer array_ptr, size_t size)
 {
-	if (_hasSpaaceFor(size))
+	if (_hasSpaceFor(size))
 	{
-		while (--size)
+		for (size_t i = 0; i < size; ++i)
 		{
-			Value val = array_ptr[size];
-			push(val);
+			Value value = array_ptr[i];
+			push(value);
 		}
 	}
 }
@@ -124,12 +124,12 @@ void QStack<Type, TAllocator>::push(const QStack& other)
 	size_t size = other._size;
 	if (_hasSpaceFor(size))
 	{
-		/*Node* i = other._bottom;
-		while (--size)
+		Node* i = other._bottom;
+		while (size--)
 		{
 			push(i->data);
 			i = i->getNext();
-		}*/
+		}
 	}
 }
 
