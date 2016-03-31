@@ -9,10 +9,10 @@
 class MAllocator
 {
 public:
-	inline MAllocator();
-	inline Block allocate(size_t size);
-	inline void deallocate(Block& block);
-	inline ALLOCATOR_ID getID() const;
+	MAllocator();
+	Block allocate(size_t size);
+	void deallocate(Block& block);
+	ALLOCATOR_ID getID() const;
 private:
 	size_t _numAllocations;
 };
