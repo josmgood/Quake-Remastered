@@ -193,7 +193,8 @@ void Basic_QString<Type, TAllocator>::setFront(Character ch)
 
 template<typename Type,
 	typename TAllocator>
-Type& Basic_QString<Type, TAllocator>::getFront() const
+Str_Reference<Type, TAllocator>
+Basic_QString<Type, TAllocator>::getFront() const
 {
 	return _string[0];
 }
@@ -207,7 +208,7 @@ void Basic_QString<Type, TAllocator>::pushBack(Character ch)
 		reserve(_maxLength + 2);
 	}
 	_string[_length - 1] = ch;
-	_string[_length] = '\0';
+	_setTerminatingZero(_length);
 	_incrementLength();
 }
 
@@ -521,7 +522,6 @@ Basic_QString<Type, TAllocator>::substring(const Iterator iterator) const
 
 template<typename Type,
 	typename TAllocator>
-//Basic_QString<Type, TAllocator>
 Basic_QString<Type, TAllocator>
 Basic_QString<Type, TAllocator>::substring(const Iterator begin, const Iterator end) const
 {
@@ -628,27 +628,40 @@ Basic_QString<Type, TAllocator>::rfind(Character ch, Sensitivity sensitivity) co
 template<typename Type,
 	typename TAllocator>
 Str_ReverseIterator<Type, TAllocator>
-Basic_QString<Type, TAllocator>::rfind(const Character* string, Sensitivity sensitivity) const
+Basic_QString<Type, TAllocator>::rfind(const String string, Sensitivity sensitivity) const
 {
-	size_t len = strlen(string);
+	/*size_t len = strlen(string);
+	std::cout << "LENGTH: " << len << std::endl;
 	CharChecker charCheck = _getCharChecker(sensitivity);
 	StrChecker strCheck = _getStrChecker(sensitivity);
 	ReverseIterator begin = getRBegin();
 	ReverseIterator end = getREnd();
-	for (ReverseIterator i = begin; i < end; ++i)
+	ReverseIterator i = begin;
+	while (i < end)
 	{
-		size_t distance = iterator_distance(i, begin);
-		String start = _string + (_length - distance - 1);
-		if (!strCheck(start, string, len))
+		if (charCheck(string[len - 1], i.get()))
 		{
-			return i;
+			size_t distance = iterator_distance(i, end - 2);
+			const String start = _string + distance;
+			const String other = string;
+			std::cout << start << std::endl;
+			Comparison comparison = _compare(start, other, len + 1, charCheck);
+			if (comparison.isEqual)
+			{
+				return i;
+			}
+			else
+			{
+				i += comparison.traversed;
+			}
 		}
 		else
 		{
-			i += len;
+			++i;
 		}
-	}
-	return end;
+	}*/
+	//return end;
+	return getREnd();
 }
 
 template<typename Type,
@@ -656,28 +669,50 @@ template<typename Type,
 Str_ReverseIterator<Type, TAllocator>
 Basic_QString<Type, TAllocator>::rfind(const Basic_QString& string, Sensitivity sensitivity) const
 {
-	/*size_t len = string.getLength();
+	/*size_t len = string._length - 1;
 	CharChecker charCheck = _getCharChecker(sensitivity);
-	ReverseIterator begin = _rbegin;
-	ReverseIterator end = _rend;
-	ReverseIterator found = end;
-	for (ReverseIterator i = begin; i < end; ++i)
+	StrChecker strCheck = _getStrChecker(sensitivity);
+	ReverseIterator begin = getRBegin();
+	ReverseIterator end = getREnd();
+	ReverseIterator i = begin;
+	while (i < end)
 	{
-	if (charCheck(string[len - 1], i.get()))
+		if (charCheck(string[len - 1], i.get()))
+		{
+			size_t distance = iterator_distance(i, end);
+			String start = _string + distance;
+			Comparison comparison = _compare(start, string._string, len, charCheck);
+			if (comparison.isEqual)
+			{
+				return i;
+			}
+			else
+			{
+				i += comparison.traversed;
+			}
+		}
+		else
+		{
+			++i;
+		}
+	}*/
+	/*for (ReverseIterator i = 0; i < end; ++i)
 	{
-	found = i;
-	++i;
-	for (size_t j = len - 2; charCheck(string[j], i.get()); --j, ++i)
-	{
-	if (j == -1)
-	{
-	return found;
-	}
-	}
-	}
+		if (charCheck(string[len - 1], i.get()))
+		{
+			size_t distance = iterator_distance(i, end) - len;
+			String start = _string + distance;
+			if (!strCheck(start, string, len))
+			{
+				return i;
+			}
+			else
+			{
+				i += len;
+			}
+		}
 	}
 	return end;*/
-	return ReverseIterator();
 }
 
 template<typename Type,
@@ -1343,9 +1378,12 @@ void Basic_QString<Type, TAllocator>::reserve(size_t size)
 {
 	if (size > _maxLength)
 	{
-		String string = new Character[size];
+		Block alloc = _allocator.allocate(size);
+		String string = static_cast<String>(alloc.memory);
 		strncpy_s(string, size, _string, _maxLength);
-		delete[] _string;
+		
+		Block dealloc(_string, _maxLength);
+		_allocator.deallocate(dealloc);
 		_string = string;
 		_setMaxLength(size);
 	}
@@ -1355,7 +1393,8 @@ template<typename Type,
 	typename TAllocator>
 void Basic_QString<Type, TAllocator>::clear()
 {
-	delete[] _string;
+	Block block(_string, _maxLength);
+	_allocator.deallocate(block);
 	_length = 0;
 	_maxLength = 0;
 }
@@ -1760,19 +1799,23 @@ Basic_QString<Type, TAllocator>::_compare(const Character* A, const Character* B
 {
 	const Character* c1 = A;
 	const Character* c2 = B;
+	std::cout << "A: " << A - 1 << std::endl;
+	std::cout << "B: " << B << std::endl;
 	size_t count = 0;
 	while (length)
 	{
+		count++;
 		if (!checker(*c1, *c2))
 		{
+			std::cout << "TERMINATED AT: " << count << std::endl;
 			break;
 		}
 
 		c1++;
 		c2++;
-		count++;
 		length--;
 	}
+	std::cout << "LENGTH: " << length << std::endl;
 	return Comparison(count, length == 0);
 }
 

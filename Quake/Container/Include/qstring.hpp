@@ -129,7 +129,7 @@ public:
 	Iterator find(const Basic_QString& string, size_t buffer = 1, Sensitivity sensitivty = STR_SENSITIVE) const;
 
 	ReverseIterator rfind(Character ch, Sensitivity sensitivity = STR_SENSITIVE) const;
-	ReverseIterator rfind(const Character* string, Sensitivity sensitivity = STR_SENSITIVE) const;
+	ReverseIterator rfind(const String string, Sensitivity sensitivity = STR_SENSITIVE) const;
 	ReverseIterator rfind(const Basic_QString& string, Sensitivity sensitivity = STR_SENSITIVE) const;
 
 	/*Iterator findnth(Character ch, size_t buffer, Sensitivity sensitivity = STR_SENSITIVE) const;
@@ -178,6 +178,8 @@ public:
 	void rto(const ReverseIterator iterator, CharacterConverter converter);
 	void rto(const ReverseIterator begin, const ReverseIterator end, CharacterConverter converter);
 
+	//QString reverse() const;
+	//void revert();
 	void copy(const String string);
 	void copy(const Basic_QString& string);
 	void swap(String string);
@@ -302,6 +304,10 @@ using Str_ConstReverseIterator = typename Basic_QString<Type, TAllocator>::Const
 template<typename Type,
 	typename TAllocator>
 using Str_Reference = typename Basic_QString<Type, TAllocator>::Reference;
+
+template<typename Type,
+	typename TAllocator>
+using Str_Pointer = typename Basic_QString<Type, TAllocator>::Pointer;
 
 template<typename Type,
 	typename TAllocator>
