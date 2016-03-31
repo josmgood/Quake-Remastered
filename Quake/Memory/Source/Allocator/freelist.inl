@@ -115,6 +115,11 @@ QBool FreeList::isInitialized() const
 	return _isInitialized;
 }
 
+ALLOCATOR_ID FreeList::getID() const
+{
+	return ALLOCATOR_ID::FREELIST;
+}
+
 FreeList::Node* FreeList::_getNext(Node* current)
 {
 	return current->next;

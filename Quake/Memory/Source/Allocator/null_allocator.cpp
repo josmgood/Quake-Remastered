@@ -13,3 +13,8 @@ QBool NullAllocator::owns(Block block)
 {
 	return false;
 }
+
+ALLOCATOR_ID NullAllocator::getID() const
+{
+	return ALLOCATOR_ID::NULL_ALLOCATOR;
+}

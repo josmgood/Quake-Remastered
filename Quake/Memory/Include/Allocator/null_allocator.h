@@ -7,7 +7,8 @@
 class NullAllocator
 {
 public:
-	Block allocate(size_t size);
-	void deallocate(Block& block);
-	QBool owns(Block block);
+	inline Block allocate(size_t size);
+	inline void deallocate(Block& block);
+	inline QBool owns(Block block);
+	inline ALLOCATOR_ID getID() const;
 };

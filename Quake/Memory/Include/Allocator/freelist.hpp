@@ -40,6 +40,7 @@ public:
 	inline size_t getMemoryUsed() const;
 	inline size_t getBlockSize() const;
 	inline QBool isInitialized() const;
+	inline ALLOCATOR_ID getID() const;
 private:
 	inline Node* _getNext(Node* current);
 	inline void _setNext(Node* current, Node* next);

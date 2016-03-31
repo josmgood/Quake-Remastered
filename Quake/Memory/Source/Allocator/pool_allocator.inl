@@ -217,6 +217,12 @@ QBool PoolAllocator<TBlock>::hasFreeMemory() const
 }
 
 template<typename TBlock>
+ALLOCATOR_ID PoolAllocator<TBlock>::getID() const
+{
+	return ALLOCATOR_ID::POOL;
+}
+
+template<typename TBlock>
 void PoolAllocator<TBlock>::_addMemoryUsed(size_t amount)
 {
 	_memoryUsed += amount;

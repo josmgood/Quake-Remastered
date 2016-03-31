@@ -42,6 +42,7 @@ public:
 	inline QBool isInitialized() const;
 	inline QBool isFull() const;
 	inline QBool hasFreeMemory() const;
+	inline ALLOCATOR_ID getID() const;
 private:
 	inline void _addMemoryUsed(size_t amount);
 	inline void _subtractMemoryUsed(size_t amount);

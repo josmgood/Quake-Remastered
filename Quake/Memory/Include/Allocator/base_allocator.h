@@ -100,6 +100,20 @@ enum ALLOCATOR_INIT_STATUS
 	INTERNAL_ERROR = 4
 };
 
+enum class ALLOCATOR_ID
+	: int8
+{
+	NULL_ALLOCATOR = 0,
+	MALLOCATOR = 1,
+	FREELIST = 2,
+	POOL = 3,
+	SLAB = 4,
+	LINEAR = 5,
+	FALLBACK = 6,
+	SEGREGATOR = 7,
+	AFFIX = 8
+};
+
 //std::string aisToString(ALLOCATOR_INIT_STATUS status)
 //{
 //	switch (status)
