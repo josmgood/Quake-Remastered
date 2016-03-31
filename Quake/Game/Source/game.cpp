@@ -8,7 +8,7 @@ namespace sys
 		GetCurrentDirectory(sizeof(dir), dir);
 		return std::string(dir);
 	}*/
-	StringVec parseCmdLine(char** argv, UINT32 argc)
+	/*StringVec parseCmdLine(char** argv, UINT32 argc)
 	{
 		StringVec vec = StringVec();
 		for (UINT32 i = 1; i < argc; i++)
@@ -16,7 +16,7 @@ namespace sys
 			vec.push_back(argv[i]);
 		}
 		return vec;
-	}
+	}*/
 }
 
 /*
@@ -27,16 +27,16 @@ Game
 ==================================
 */
 
-Game::Game(const StringVec& argv)
-	: _argv(argv), _window()
-{
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLFW_VERSION_MAJOR);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLFW_VERSION_MAJOR);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	_window.create(WINDOW_WIDTH, WINDOW_HEIGHT, "Quake 1.0");
-}
+//Game::Game(const StringVec& argv)
+//	: _argv(argv), _window()
+//{
+//	glfwInit();
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLFW_VERSION_MAJOR);
+//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLFW_VERSION_MAJOR);
+//	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+//
+//	_window.create(WINDOW_WIDTH, WINDOW_HEIGHT, "Quake 1.0");
+//}
 
 void Game::init(void)
 {

@@ -1,9 +1,6 @@
 #pragma once
 
-/*Standard Library*/
-#include <vector>
-#include <string>
-#include <memory>
+#include <stdint.h>
 
 /*
 ==================================
@@ -28,10 +25,6 @@ typedef unsigned int					uint32;
 typedef unsigned long long				uint64;
 
 typedef unsigned long					size64;
-
-typedef std::string						String;
-typedef std::vector<std::string>		StringVec;
-
 
 #define WINDOW_WIDTH		800
 #define WINDOW_HEIGHT		600
