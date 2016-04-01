@@ -65,8 +65,10 @@ public:
 	QBool isEmpty() const;
 	QBool isFull() const;
 
+	QStack operator+(ConstReference reference);
 	QStack operator+(const QStack& other);
 	QStack operator+=(const QStack& other);
+	QStack operator+=(ConstReference reference);
 	void operator=(const QStack& other);
 
 	operator bool() const;
@@ -83,6 +85,7 @@ public:
 	size_t getMaxSize() const;
 
 	static const QStack<Type, TAllocator> EMPTY_STACK;
+	static const Node* NULL_NODE;
 private:
 	void _setSize(size_t size);
 	void _setMaxSize(size_t max);

@@ -63,6 +63,8 @@ TEST(NAME, PUSH)
 	}
 	stack.push(nums, 10);
 	EXPECT_EQ(1000, stack.peek());
+
+
 }
 
 TEST(NAME, POP)
@@ -79,4 +81,67 @@ TEST(NAME, POP)
 		stack.pop();
 	}
 	EXPECT_EQ(3, stack.peek());
+}
+
+TEST(NAME, COPY)
+{
+	QStack<int> stk1(10);
+	QStack<int> stk2(2);
+	QStack<int> stk3(1);
+	for (size_t i = 0; i < 10; ++i)
+	{
+		stk1.push(i);
+	}
+	stk2 = stk1;
+	stk3.copy(stk2);
+	EXPECT_EQ(true, stk2.peek() == stk1.peek());
+	EXPECT_EQ(true, stk3.peek() == stk1.peek());
+}
+
+TEST(NAME, OPERATOR_EQUAL_TO)
+{
+	QStack<int> stk1(10);
+	QStack<int> stk2(10);
+	EXPECT_EQ(true, stk1 == stk2);
+	for (size_t i = 0; i < 5; ++i)
+	{
+		stk1.push(i);
+		stk2.push(i);
+	}
+	EXPECT_EQ(true, stk1 == stk2);
+	stk2.pop();
+	EXPECT_EQ(false, stk1 == stk2);
+	EXPECT_EQ(false, stk1.equals(stk2));
+	stk2.pop();
+	stk1.pop(2);
+	EXPECT_EQ(true, stk1 == stk2);
+	EXPECT_EQ(true, stk1.equals(stk2));
+}
+
+TEST(NAME, OPERATOR_NOT_EQUAL_TO)
+{
+	QStack<int> stk1(10);
+	QStack<int> stk2(10);
+	EXPECT_EQ(false, stk1 != stk2);
+
+	for (size_t i = 0; i < 10; ++i)
+	{
+		stk1.push(i);
+		stk2.push(i * i);
+	}
+	EXPECT_EQ(true, stk1 != stk2);
+}
+
+TEST(NAME, OPERATOR_LESS_THAN)
+{
+	/*QStack<int> stk1(10);
+	QStack<int> stk2(10);
+	EXPECT_EQ(false, stk1 < stk2);
+
+	for (size_t i = 0; i < 10; ++i)
+	{
+		stk1.push(i);
+		stk2.push(i * i);
+	}
+	EXPECT_EQ(true, stk1 < stk2);*/
 }
