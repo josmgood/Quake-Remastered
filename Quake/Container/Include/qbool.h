@@ -1,9 +1,6 @@
 #pragma once
 
 #include <iostream>
-#include <string>
-
-class QString;
 
 class QBool
 {
@@ -26,7 +23,7 @@ public:
 	bool operator>(const QBool& qbool) const;
 	friend std::ostream& operator<<(std::ostream& os, const QBool& qbool);
 
-	QString toString();
+	//QString toString() const;
 private:
 	bool _bool;
 };
