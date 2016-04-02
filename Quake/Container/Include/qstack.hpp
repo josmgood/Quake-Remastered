@@ -38,7 +38,6 @@ public:
 		Node* next;
 		Node* prev;
 	};
-
 	QStack(size_t maxSize = DEFAULT_CONTAINER_SIZE);
 	QStack(const Pointer array_ptr, size_t size);
 	QStack(const QStack& other);
@@ -67,8 +66,8 @@ public:
 
 	QStack operator+(ConstReference reference);
 	QStack operator+(const QStack& other);
-	QStack operator+=(const QStack& other);
 	QStack operator+=(ConstReference reference);
+	QStack operator+=(const QStack& other);
 	void operator=(const QStack& other);
 
 	operator bool() const;
@@ -84,7 +83,7 @@ public:
 	size_t getSize() const;
 	size_t getMaxSize() const;
 
-	static const QStack<Type, TAllocator> EMPTY_STACK;
+	static const QStack EMPTY_STACK;
 	static const Node* NULL_NODE;
 private:
 	void _setSize(size_t size);

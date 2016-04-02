@@ -213,14 +213,12 @@ template<typename Type,
 QStack<Type, TAllocator>
 QStack<Type, TAllocator>::reversed() const
 {
-	QStack stack(_maxSize);
-	/*size_t size = _size;
-	Node* i = _top;
-	while (size--)
+	size_t size = _size;
+	QStack stack(size);
+	for (Node* i = _top; size--; i = i->getPrev())
 	{
 		stack.push(i->data);
-		i = get_next(i);
-	}*/
+	}
 	return stack;
 }
 
@@ -228,18 +226,19 @@ template<typename Type,
 	typename TAllocator>
 void QStack<Type, TAllocator>::reverse()
 {
-	/*size_t size = _size;
-	for (Node* front = _bottom, *back = _top;
-		size--;
-		front = get_next(front), back = get_next(back))
+	size_t size = _size / 2;
+	for (Node* i = _bottom, *j = _top;
+		 size--;
+		 i = i->getNext(),
+		 j = j->getPrev())
 	{
-		if (front != back)
+		if (i != j)
 		{
-			Value value = front->data;
-			front->data = back->data;
-			back->data = value;
+			Value value = i->data;
+			i->data = j->data;
+			j->data = value;
 		}
-	}*/
+	}
 }
 
 template<typename Type,
@@ -287,6 +286,40 @@ void QStack<Type, TAllocator>::swap(QStack& other)
 	size_t tSize = _size;
 	size_t oSize = other._size;
 
+	size_t size = tSize > oSize ? oSize : tSize;
+	_size = size;
+	other._size = size;
+
+	Node* i = _bottom;
+	Node* j = other._bottom;
+	while (size--)
+	{
+		Value value = j->data;
+		j->data = i->data;
+		i->data = value;
+
+		i = i->getNext();
+		j = j->getNext();
+	}
+
+	if (tSize > oSize)
+	{
+		size_t remain = tSize - oSize;
+		while (remain--)
+		{
+			other.push(i->data);
+			i = i->getNext();
+		}
+	}
+	else if (oSize > tSize)
+	{
+		size_t remain = oSize - tSize;
+		while (remain--)
+		{
+			push(j->data);
+			j = j->getNext();
+		}
+	}
 }
 
 template<typename Type,
@@ -305,9 +338,9 @@ QBool QStack<Type, TAllocator>::equals(const QStack& other) const
 	if (tSize == oSize)
 	{
 		for (Node* i = _bottom, *j = other._bottom;
-		tSize--;
-			i = i->getNext(),
-			j = j->getNext())
+			 tSize--;
+			 i = i->getNext(),
+			 j = j->getNext())
 		{
 			if (i->data != j->data)
 			{
@@ -367,6 +400,15 @@ QStack<Type, TAllocator>::operator+(const QStack& other)
 		i = get_next(i);
 	}*/
 	return stack;
+}
+
+template<typename Type,
+	typename TAllocator>
+QStack<Type, TAllocator>
+QStack<Type, TAllocator>::operator+=(ConstReference reference)
+{
+	push(reference);
+	return *this;
 }
 
 template<typename Type, 
@@ -430,9 +472,9 @@ QBool QStack<Type, TAllocator>::operator==(const QStack& other) const
 	if (tSize == oSize)
 	{
 		for (Node* i = _bottom, *j = other._bottom;
-			tSize--;
-			i = i->getNext(),
-			j = j->getNext())
+			 tSize--;
+			 i = i->getNext(),
+			 j = j->getNext())
 		{
 			if (i->data != j->data)
 			{
@@ -453,9 +495,9 @@ QBool QStack<Type, TAllocator>::operator!=(const QStack& other) const
 	if (tSize == oSize)
 	{
 		for (Node* i = _bottom, *j = other._bottom;
-			tSize--;
-			i = i->getNext(),
-			j = j->getNext())
+			 tSize--;
+			 i = i->getNext(),
+			 j = j->getNext())
 		{
 			if (i->data != j->data)
 			{
@@ -577,8 +619,8 @@ std::ostream& operator<<(std::ostream& os, const QStack<Type, TAllocator>& stack
 {
 	size_t size = stack._size;
 	for (Stk_Node<Type, TAllocator> i = stack._top;
-		size--;
-		i = i->getPrev())
+		 size--;
+		 i = i->getPrev())
 	{
 		os << "Node " << size << ": " << i->data << std::endl;
 	}
