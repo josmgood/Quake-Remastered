@@ -2,7 +2,7 @@
 
 #include <GTest\gtest.h>
 
-#define NAME QSTACK
+#define NAME DISABLED_QSTACK
 
 TEST(NAME, CONSTRUCTOR)
 {
@@ -83,6 +83,20 @@ TEST(NAME, POP)
 	EXPECT_EQ(3, stack.peek());
 }
 
+TEST(NAME, REVERSED)
+{
+	QStack<int> stack(10);
+	for (size_t i = 1; i < 11; ++i)
+	{
+		stack.push(i);
+	}
+	QStack<int> reversed = stack.reversed();
+	EXPECT_EQ(1, reversed.peek());
+
+	stack.reverse();
+	EXPECT_EQ(1, stack.peek());
+}
+
 TEST(NAME, COPY)
 {
 	QStack<int> stk1(10);
@@ -96,6 +110,30 @@ TEST(NAME, COPY)
 	stk3.copy(stk2);
 	EXPECT_EQ(true, stk2.peek() == stk1.peek());
 	EXPECT_EQ(true, stk3.peek() == stk1.peek());
+}
+
+TEST(NAME, SWAP)
+{
+	QStack<int> stk1(10);
+	QStack<int> stk2(10);
+	for (size_t i = 1; i < 11; ++i)
+	{
+		if (i % 2 == 0)
+		{
+			stk1.push(i);
+		}
+		if (i % 3 == 0)
+		{
+			stk2.push(i);
+		}
+	}
+
+	std::cout << stk1 << std::endl;
+	std::cout << stk2 << std::endl;
+
+	stk1.swap(stk2);
+	EXPECT_EQ(10, stk2.peek());
+	EXPECT_EQ(9, stk1.peek());
 }
 
 TEST(NAME, OPERATOR_EQUAL_TO)
