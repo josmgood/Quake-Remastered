@@ -16,13 +16,6 @@ const Basic_QString<Type, TAllocator> Basic_QString<Type, TAllocator>::EMPTY_STR
 
 template<typename Type,
 	typename TAllocator>
-Basic_QString<Type, TAllocator>::Comparison::Comparison(size_t trav, QBool equal)
-	: traversed(trav), isEqual(equal)
-{
-}
-
-template<typename Type,
-	typename TAllocator>
 Basic_QString<Type, TAllocator>::Basic_QString(size_t length)
 	: _string(nullptr), _allocator(), _maxLength(), _length()
 {
@@ -391,11 +384,11 @@ void Basic_QString<Type, TAllocator>::concat(const Basic_QString& string)
 
 template<typename Type,
 	typename TAllocator>
-void Basic_QString<Type, TAllocator>::set(size_t index, Character ch)
+void Basic_QString<Type, TAllocator>::set(size_t start, Character ch)
 {
-	if (_checkIndex(index))
+	if (_checkIndex(start))
 	{
-		_string[index] = ch;
+		_string[start] = ch;
 	}
 }
 
@@ -482,12 +475,12 @@ void Basic_QString<Type, TAllocator>::set(Iterator begin, Iterator end, const Ba
 template<typename Type,
 	typename TAllocator>
 Basic_QString<Type, TAllocator>
-Basic_QString<Type, TAllocator>::substring(size_t index) const
+Basic_QString<Type, TAllocator>::substring(size_t start) const
 {
-	if (_checkIndex(index))
+	if (_checkIndex(start))
 	{
-		size_t len = _length - index - 1;
-		Character* start = _string + index;
+		size_t len = _length - start - 1;
+		Character* start = _string + start;
 		return Basic_QString(start);
 	}
 	return EMPTY_STRING;
@@ -1374,18 +1367,18 @@ void Basic_QString<Type, TAllocator>::swap(String string)
 
 template<typename Type,
 	typename TAllocator>
-void Basic_QString<Type, TAllocator>::reserve(size_t size)
+void Basic_QString<Type, TAllocator>::reserve(size_t maxSize)
 {
-	if (size > _maxLength)
+	if (maxSize > _maxLength)
 	{
-		Block alloc = _allocator.allocate(size);
+		Block alloc = _allocator.allocate(maxSize);
 		String string = static_cast<String>(alloc.memory);
-		strncpy_s(string, size, _string, _maxLength);
+		strncpy_s(string, maxSize, _string, _maxLength);
 		
 		Block dealloc(_string, _maxLength);
 		_allocator.deallocate(dealloc);
 		_string = string;
-		_setMaxLength(size);
+		_setMaxLength(maxSize);
 	}
 }
 
@@ -1696,6 +1689,13 @@ size_t Basic_QString<Type, TAllocator>::getMaxSize() const
 
 template<typename Type,
 	typename TAllocator>
+ALLOCATOR_ID Basic_QString<Type, TAllocator>::getAllocator() const
+{
+	return _allocator.getID();
+}
+
+template<typename Type,
+	typename TAllocator>
 void Basic_QString<Type, TAllocator>::_setLength(size_t len)
 {
 	_length = len;
@@ -1789,13 +1789,12 @@ template<typename Type,
 	typename TAllocator>
 QBool Basic_QString<Type, TAllocator>::_checkReverseIterators(const ReverseIterator begin, const ReverseIterator end) const
 {
-	return _checkReverseIterator(begin) && _checkReverseIterator(end) && _comesBefore(begin, end);
+	return _checkReverseIterator(begin) && end <= getREnd() && _comesBefore(begin, end);
 }
 
 template<typename Type,
 	typename TAllocator>
-Str_Comparison<Type, TAllocator>
-Basic_QString<Type, TAllocator>::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const
+Comparison Basic_QString<Type, TAllocator>::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const
 {
 	const Character* c1 = A;
 	const Character* c2 = B;
