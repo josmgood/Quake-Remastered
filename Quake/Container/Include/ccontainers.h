@@ -9,7 +9,6 @@ struct CString
 template<typename Type>
 struct CArray
 {
-	Type* arra;
+	Type* array;
 	size_t size;
-	size_t max;
 };
