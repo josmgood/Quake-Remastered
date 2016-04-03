@@ -27,6 +27,10 @@ void MAllocator::deallocate(Block& block)
 	}
 }
 
+void MAllocator::destroy()
+{
+}
+
 ALLOCATOR_ID MAllocator::getID() const
 {
 	return ALLOCATOR_ID::MALLOCATOR;
