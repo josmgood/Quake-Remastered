@@ -11,15 +11,15 @@
 
 template<typename Type,
 	typename TAllocator>
-class QStack;
+class Stack;
 
 template<typename Type,
 	typename TAllocator>
-std::ostream& operator<<(std::ostream&, const QStack<Type, TAllocator>&);
+std::ostream& operator<<(std::ostream&, const Stack<Type, TAllocator>&);
 
 template<typename Type,
 	typename TAllocator = MAllocator>
-class QStack
+class Stack
 	: public QAuxiliary<Type, TAllocator>
 {
 public:
@@ -38,53 +38,53 @@ public:
 		Node* next;
 		Node* prev;
 	};
-	QStack(size_t maxSize = DEFAULT_CONTAINER_SIZE);
-	QStack(const Pointer array_ptr, size_t size);
-	QStack(const QStack& other);
-	~QStack();
+
+	static const Stack EMPTY_STACK;
+	static const Node* NULL_NODE;
+	static const Value EMPTY_VALUE;
+
+	Stack(size_t maxSize = DEFAULT_CONTAINER_SIZE);
+	Stack(const Pointer array_ptr, size_t size);
+	Stack(const Stack& other);
+	~Stack();
 
 	void set(ConstReference reference);
 	void push(ConstReference reference);
-	void push(const Pointer array_ptr, size_t size);
-	void push(const QStack& other);
+	void push(const Stack& other);
 	void pop(size_t amount);
 	void pop();
 	Value take();
 	ConstReference peek() const;
 
-	QStack reversed() const;
+	Stack getReversed() const;
 	void reverse();
 	void clear();
-	void copy(const QStack& other);
-	void swap(QStack& other);
+	void copy(const Stack& other);
+	void swap(Stack& other);
+	void shrink(size_t maxSize);
 	void resize(size_t maxSize);
 
-	QBool equals(const QStack& other) const;
+	QBool equals(const Stack& other) const;
 
 	QBool isEmpty() const;
 	QBool isFull() const;
 
-	QStack operator+(ConstReference reference);
-	QStack operator+(const QStack& other);
-	QStack operator+=(ConstReference reference);
-	QStack operator+=(const QStack& other);
-	void operator=(const QStack& other);
+	Stack operator+(const Stack& other);
+	Stack operator+=(const Stack& other);
+	void operator=(const Stack& other);
 
 	operator bool() const;
-	QBool operator==(const QStack& other) const;
-	QBool operator!=(const QStack& other) const;
-	QBool operator<(const QStack& other) const;
-	QBool operator<=(const QStack& other) const;
-	QBool operator>(const QStack& other) const;
-	QBool operator>=(const QStack& other) const;
+	QBool operator==(const Stack& other) const;
+	QBool operator!=(const Stack& other) const;
+	QBool operator<(const Stack& other) const;
+	QBool operator<=(const Stack& other) const;
+	QBool operator>(const Stack& other) const;
+	QBool operator>=(const Stack& other) const;
 
-	friend std::ostream& operator<< <>(std::ostream&, const QStack& stack);
+	friend std::ostream& operator<< <>(std::ostream&, const Stack& stack);
 
 	size_t getSize() const;
 	size_t getMaxSize() const;
-
-	static const QStack EMPTY_STACK;
-	static const Node* NULL_NODE;
 private:
 	void _setSize(size_t size);
 	void _setMaxSize(size_t max);
@@ -105,22 +105,22 @@ private:
 
 template<typename Type,
 	typename TAllocator>
-using Stk_Reference = typename QStack<Type, TAllocator>::Reference;
+using Stk_Reference = typename Stack<Type, TAllocator>::Reference;
 
 template<typename Type,
 	typename TAllocator>
-using Stk_ConstReference = typename QStack<Type, TAllocator>::ConstReference;
+using Stk_ConstReference = typename Stack<Type, TAllocator>::ConstReference;
 
 template<typename Type,
 	typename TAllocator>
-using Stk_Pointer = typename QStack<Type, TAllocator>::Pointer;
+using Stk_Pointer = typename Stack<Type, TAllocator>::Pointer;
 
 template<typename Type,
 	typename TAllocator>
-using Stk_Value = typename QStack<Type, TAllocator>::Value;
+using Stk_Value = typename Stack<Type, TAllocator>::Value;
 
 template<typename Type,
 	typename TAllocator>
-using Stk_Node = typename QStack<Type, TAllocator>::Node*;
+using Stk_Node = typename Stack<Type, TAllocator>::Node*;
 
-#include "..\Source\qstack.inl"
+#include "..\Source\stack.inl"

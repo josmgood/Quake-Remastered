@@ -1,23 +1,27 @@
-#include "..\Include\qstack.hpp"
+#include "..\Include\stack.hpp"
 
 template<typename Type,
 	typename TAllocator>
-const QStack<Type, TAllocator> QStack<Type, TAllocator>::EMPTY_STACK(0);
+const Stack<Type, TAllocator> Stack<Type, TAllocator>::EMPTY_STACK(0);
 
 //template<typename Type,
 //	typename TAllocator>
-//const QStack<Type, TAllocator>::Node* QStack<Type, TAllocator>::NULL_NODE = nullptr;
+//const Stack<Type, TAllocator>::Node* Stack<Type, TAllocator>::NULL_NODE = nullptr;
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>::Node::Node(ConstReference dat)
+const Stk_Value<Type, TAllocator> Stack<Type, TAllocator>::EMPTY_VALUE = Value();
+
+template<typename Type,
+	typename TAllocator>
+Stack<Type, TAllocator>::Node::Node(ConstReference dat)
 	: data(dat), next(nullptr), prev(nullptr)
 {
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::Node::set(ConstReference dat)
+void Stack<Type, TAllocator>::Node::set(ConstReference dat)
 {
 	data = dat;
 }
@@ -25,7 +29,7 @@ void QStack<Type, TAllocator>::Node::set(ConstReference dat)
 template<typename Type,
 	typename TAllocator>
 Stk_Node<Type, TAllocator>
-QStack<Type, TAllocator>::Node::getNext() const
+Stack<Type, TAllocator>::Node::getNext() const
 {
 	return next;
 }
@@ -33,21 +37,21 @@ QStack<Type, TAllocator>::Node::getNext() const
 template<typename Type,
 	typename TAllocator>
 Stk_Node<Type, TAllocator>
-QStack<Type, TAllocator>::Node::getPrev() const
+Stack<Type, TAllocator>::Node::getPrev() const
 {
 	return prev;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::Node::setNext(Node* nxt)
+void Stack<Type, TAllocator>::Node::setNext(Node* nxt)
 {
 	next = nxt;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::Node::setPrev(Node* prv)
+void Stack<Type, TAllocator>::Node::setPrev(Node* prv)
 {
 	prev = prv;
 }
@@ -55,14 +59,14 @@ void QStack<Type, TAllocator>::Node::setPrev(Node* prv)
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>::QStack(size_t maxSize)
+Stack<Type, TAllocator>::Stack(size_t maxSize)
 	: _bottom(nullptr), _top(nullptr), _size(), _maxSize(maxSize), _allocator()
 {
 }
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>::QStack(const Pointer array_ptr, size_t size)
+Stack<Type, TAllocator>::Stack(const Pointer array_ptr, size_t size)
 	: _bottom(nullptr), _top(nullptr), _size(), _maxSize(size), _allocator()
 {
 	for (size_t i = 0; i < size; ++i)
@@ -74,7 +78,7 @@ QStack<Type, TAllocator>::QStack(const Pointer array_ptr, size_t size)
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>::QStack(const QStack& other)
+Stack<Type, TAllocator>::Stack(const Stack& other)
 	: _bottom(nullptr), _top(nullptr), _size(), _maxSize(), _allocator()
 {
 	if (other)
@@ -92,14 +96,14 @@ QStack<Type, TAllocator>::QStack(const QStack& other)
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>::~QStack()
+Stack<Type, TAllocator>::~Stack()
 {
 	clear();
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::set(ConstReference reference)
+void Stack<Type, TAllocator>::set(ConstReference reference)
 {
 	if (!isEmpty())
 	{
@@ -113,21 +117,7 @@ void QStack<Type, TAllocator>::set(ConstReference reference)
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::push(const Pointer array_ptr, size_t size)
-{
-	if (_hasSpaceFor(size))
-	{
-		for (size_t i = 0; i < size; ++i)
-		{
-			Value value = array_ptr[i];
-			push(value);
-		}
-	}
-}
-
-template<typename Type,
-	typename TAllocator>
-void QStack<Type, TAllocator>::push(const QStack& other)
+void Stack<Type, TAllocator>::push(const Stack& other)
 {
 	size_t size = other._size;
 	if (_hasSpaceFor(size))
@@ -143,7 +133,7 @@ void QStack<Type, TAllocator>::push(const QStack& other)
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::push(ConstReference reference)
+void Stack<Type, TAllocator>::push(ConstReference reference)
 {
 	if (isEmpty())
 	{
@@ -161,10 +151,9 @@ void QStack<Type, TAllocator>::push(ConstReference reference)
 	}
 }
 
-
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::pop(size_t amount)
+void Stack<Type, TAllocator>::pop(size_t amount)
 {
 	while (!isEmpty() && amount--)
 	{
@@ -174,7 +163,7 @@ void QStack<Type, TAllocator>::pop(size_t amount)
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::pop()
+void Stack<Type, TAllocator>::pop()
 {
 	if (!isEmpty())
 	{
@@ -190,7 +179,7 @@ void QStack<Type, TAllocator>::pop()
 template<typename Type,
 	typename TAllocator>
 Stk_Value<Type, TAllocator>
-QStack<Type, TAllocator>::take()
+Stack<Type, TAllocator>::take()
 {
 	if (!isEmpty())
 	{
@@ -198,23 +187,24 @@ QStack<Type, TAllocator>::take()
 		pop();
 		return value;
 	}
+	return EMPTY_VALUE;
 }
 
 template<typename Type,
 	typename TAllocator>
 Stk_ConstReference<Type, TAllocator>
-QStack<Type, TAllocator>::peek() const
+Stack<Type, TAllocator>::peek() const
 {
 	return _top->data;
 }
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>
-QStack<Type, TAllocator>::reversed() const
+Stack<Type, TAllocator>
+Stack<Type, TAllocator>::getReversed() const
 {
 	size_t size = _size;
-	QStack stack(size);
+	Stack stack(size);
 	for (Node* i = _top; size--; i = i->getPrev())
 	{
 		stack.push(i->data);
@@ -224,7 +214,7 @@ QStack<Type, TAllocator>::reversed() const
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::reverse()
+void Stack<Type, TAllocator>::reverse()
 {
 	size_t size = _size / 2;
 	for (Node* i = _bottom, *j = _top;
@@ -234,16 +224,16 @@ void QStack<Type, TAllocator>::reverse()
 	{
 		if (i != j)
 		{
-			Value value = i->data;
-			i->data = j->data;
-			j->data = value;
+			Value value = j->data;
+			j->set(i->data);
+			i->set(value);
 		}
 	}
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::clear()
+void Stack<Type, TAllocator>::clear()
 {
 	while (!isEmpty())
 	{
@@ -253,7 +243,7 @@ void QStack<Type, TAllocator>::clear()
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::copy(const QStack& other)
+void Stack<Type, TAllocator>::copy(const Stack& other)
 {
 	size_t size = other._size;
 	_maxSize = _maxSize > other._maxSize ? _maxSize : other._maxSize;
@@ -268,7 +258,8 @@ void QStack<Type, TAllocator>::copy(const QStack& other)
 		if (i)
 		{
 			Value value = j->data;
-			i->data = value;
+			j->set(i->data);
+			i->set(value);
 			i = i->getNext();
 		}
 		else
@@ -281,22 +272,22 @@ void QStack<Type, TAllocator>::copy(const QStack& other)
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::swap(QStack& other)
+void Stack<Type, TAllocator>::swap(Stack& other)
 {
 	size_t tSize = _size;
 	size_t oSize = other._size;
 
-	size_t size = tSize > oSize ? oSize : tSize;
-	_size = size;
-	other._size = size;
+	size_t lesser = tSize > oSize ? oSize : tSize;
+	_size = lesser;
+	other._size = lesser;
 
 	Node* i = _bottom;
 	Node* j = other._bottom;
-	while (size--)
+	while (lesser--)
 	{
 		Value value = j->data;
-		j->data = i->data;
-		i->data = value;
+		j->set(i->data);
+		i->set(value);
 
 		i = i->getNext();
 		j = j->getNext();
@@ -324,14 +315,32 @@ void QStack<Type, TAllocator>::swap(QStack& other)
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::resize(size_t maxSize)
+void Stack<Type, TAllocator>::shrink(size_t maxSize)
 {
-	_maxSize = maxSize;
+	while (_size > maxSize)
+	{
+		pop();
+	}
+	_setMaxSize(maxSize);
 }
 
 template<typename Type,
 	typename TAllocator>
-QBool QStack<Type, TAllocator>::equals(const QStack& other) const
+void Stack<Type, TAllocator>::resize(size_t maxSize)
+{
+	if (_size > maxSize)
+	{
+		shrink(maxSize);
+	}
+	else
+	{
+		_setMaxSize(maxSize);
+	}
+}
+
+template<typename Type,
+	typename TAllocator>
+QBool Stack<Type, TAllocator>::equals(const Stack& other) const
 {
 	size_t tSize = _size;
 	size_t oSize = other._size;
@@ -354,67 +363,42 @@ QBool QStack<Type, TAllocator>::equals(const QStack& other) const
 
 template<typename Type,
 	typename TAllocator>
-QBool QStack<Type, TAllocator>::isEmpty() const
+QBool Stack<Type, TAllocator>::isEmpty() const
 {
 	return _size == 0;
 }
 
 template<typename Type,
 	typename TAllocator>
-QBool QStack<Type, TAllocator>::isFull() const
+QBool Stack<Type, TAllocator>::isFull() const
 {
 	return _size == _maxSize;
 }
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>
-QStack<Type, TAllocator>::operator+(ConstReference reference)
+Stack<Type, TAllocator>
+Stack<Type, TAllocator>::operator+(const Stack& other)
 {
-	QStack stack = *this;
-	stack.push(reference);
-	return stack;
-}
-
-template<typename Type,
-	typename TAllocator>
-QStack<Type, TAllocator>
-QStack<Type, TAllocator>::operator+(const QStack& other)
-{
-	size_t size = _size + other._size;
-	QStack stack(size);
-
-	/*Node* i = _bottom;
 	size_t tSize = _size;
-	while (tSize--)
-	{
-		stack.push(i->data);
-		i = get_next(i);
-	}
-
-	i = other._bottom;
 	size_t oSize = other._size;
-	while (oSize--)
+	size_t size = tSize + oSize;
+	Stack stack(size);
+	for (Node* i = _bottom; tSize--; i = i->getNext())
 	{
 		stack.push(i->data);
-		i = get_next(i);
-	}*/
+	}
+	for (Node* i = other._bottom; oSize--; i = i->getNext())
+	{
+		stack.push(i->data);
+	}
 	return stack;
-}
-
-template<typename Type,
-	typename TAllocator>
-QStack<Type, TAllocator>
-QStack<Type, TAllocator>::operator+=(ConstReference reference)
-{
-	push(reference);
-	return *this;
 }
 
 template<typename Type, 
 	typename TAllocator>
-QStack<Type, TAllocator>
-QStack<Type, TAllocator>::operator+=(const QStack& other)
+Stack<Type, TAllocator>
+Stack<Type, TAllocator>::operator+=(const Stack& other)
 {
 	size_t size = other._size;
 	if (_hasSpaceFor(size))
@@ -426,11 +410,12 @@ QStack<Type, TAllocator>::operator+=(const QStack& other)
 			i = i->getNext();
 		}
 	}
+	return *this;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::operator=(const QStack& other)
+void Stack<Type, TAllocator>::operator=(const Stack& other)
 {
 	size_t size = other._size;
 	_maxSize = _maxSize > other._maxSize ? _maxSize : other._maxSize;
@@ -445,7 +430,7 @@ void QStack<Type, TAllocator>::operator=(const QStack& other)
 		if (i)
 		{
 			Value value = j->data;
-			i->data = value;
+			i->set(value);
 			i = i->getNext();
 		}
 		else
@@ -458,14 +443,14 @@ void QStack<Type, TAllocator>::operator=(const QStack& other)
 
 template<typename Type,
 	typename TAllocator>
-QStack<Type, TAllocator>::operator bool() const
+Stack<Type, TAllocator>::operator bool() const
 {
 	return _bottom && _size && _maxSize;
 }
 
 template<typename Type,
 	typename TAllocator>
-QBool QStack<Type, TAllocator>::operator==(const QStack& other) const
+QBool Stack<Type, TAllocator>::operator==(const Stack& other) const
 {
 	size_t tSize = _size;
 	size_t oSize = other._size;
@@ -488,7 +473,7 @@ QBool QStack<Type, TAllocator>::operator==(const QStack& other) const
 
 template<typename Type,
 	typename TAllocator>
-QBool QStack<Type, TAllocator>::operator!=(const QStack& other) const
+QBool Stack<Type, TAllocator>::operator!=(const Stack& other) const
 {
 	size_t tSize = _size;
 	size_t oSize = other._size;
@@ -511,97 +496,166 @@ QBool QStack<Type, TAllocator>::operator!=(const QStack& other) const
 
 template<typename Type,
 	typename TAllocator>
-QBool QStack<Type, TAllocator>::operator<(const QStack& other) const
+QBool Stack<Type, TAllocator>::operator<(const Stack& other) const
 {
-	/*size_t tSize = _size;
+	size_t tSize = _size;
 	size_t oSize = other._size;
 	if (tSize == oSize && tSize)
 	{
-		std::cout << "IN HERE" << std::endl;
-		for (Node* i = _bottom, *j = other._bottom;
-			tSize--;
-			i = i->getNext(),
-			j = j->getNext())
+		Node* i = _bottom;
+		Node* j = other._bottom;
+		while (tSize--)
 		{
 			if (i->data >= j->data)
 			{
-				std::cout << "i: " << i->data << std::endl;
-				std::cout << "j: " << j->data << std::endl;
 				return false;
 			}
+			i = i->getNext();
+			j = j->getNext();
 		}
-		return true && oSize != 0;
+		return true;
 	}
-	return tSize < oSize;*/
-	return false;
+	return tSize < oSize;
 }
 
 template<typename Type,
 	typename TAllocator>
-size_t QStack<Type, TAllocator>::getSize() const
+QBool Stack<Type, TAllocator>::operator<=(const Stack& other) const
+{
+	size_t tSize = _size;
+	size_t oSize = other._size;
+	if (tSize == oSize && tSize)
+	{
+		Node* i = _bottom;
+		Node* j = other._bottom;
+		while (tSize--)
+		{
+			if (i->data > j->data)
+			{
+				return false;
+			}
+			i = i->getNext();
+			j = j->getNext();
+		}
+		return true;
+	}
+	return tSize <= oSize;
+}
+
+template<typename Type,
+	typename TAllocator>
+QBool Stack<Type, TAllocator>::operator>(const Stack& other) const
+{
+	size_t tSize = _size;
+	size_t oSize = other._size;
+	if (tSize == oSize && tSize)
+	{
+		Node* i = _bottom;
+		Node* j = other._bottom;
+		while (tSize--)
+		{
+			if (i->data <= j->data)
+			{
+				return false;
+			}
+			i = i->getNext();
+			j = j->getNext();
+		}
+		return true;
+	}
+	return tSize > oSize;
+}
+
+template<typename Type,
+	typename TAllocator>
+QBool Stack<Type, TAllocator>::operator>=(const Stack& other) const
+{
+	size_t tSize = _size;
+	size_t oSize = other._size;
+	if (tSize == oSize && tSize)
+	{
+		Node* i = _bottom;
+		Node* j = other._bottom;
+		while (tSize--)
+		{
+			if (i->data < j->data)
+			{
+				return false;
+			}
+			i = i->getNext();
+			j = j->getNext();
+		}
+		return true;
+	}
+	return tSize >= oSize;
+}
+
+template<typename Type,
+	typename TAllocator>
+size_t Stack<Type, TAllocator>::getSize() const
 {
 	return _size;
 }
 
 template<typename Type,
 	typename TAllocator>
-size_t QStack<Type, TAllocator>::getMaxSize() const
+size_t Stack<Type, TAllocator>::getMaxSize() const
 {
 	return _maxSize;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::_setSize(size_t size)
+void Stack<Type, TAllocator>::_setSize(size_t size)
 {
 	_size = size;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::_setMaxSize(size_t max)
+void Stack<Type, TAllocator>::_setMaxSize(size_t max)
 {
 	_maxSize = max;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::_incrementSize()
+void Stack<Type, TAllocator>::_incrementSize()
 {
 	_size++;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::_decrementSize()
+void Stack<Type, TAllocator>::_decrementSize()
 {
 	_size--;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::_addSize(size_t amount)
+void Stack<Type, TAllocator>::_addSize(size_t amount)
 {
 	_size += amount;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::_subtractSize(size_t amount)
+void Stack<Type, TAllocator>::_subtractSize(size_t amount)
 {
 	_size -= amount;
 }
 
 template<typename Type,
 	typename TAllocator>
-QBool QStack<Type, TAllocator>::_hasSpaceFor(size_t num) const
+QBool Stack<Type, TAllocator>::_hasSpaceFor(size_t num) const
 {
 	return _size + num <= _maxSize;
 }
 
 template<typename Type,
 	typename TAllocator>
-void QStack<Type, TAllocator>::_initBounds(ConstReference reference)
+void Stack<Type, TAllocator>::_initBounds(ConstReference reference)
 {
 	if (!_bottom && !_top && _maxSize)
 	{
@@ -615,7 +669,7 @@ void QStack<Type, TAllocator>::_initBounds(ConstReference reference)
 
 template<typename Type,
 	typename TAllocator>
-std::ostream& operator<<(std::ostream& os, const QStack<Type, TAllocator>& stack)
+std::ostream& operator<<(std::ostream& os, const Stack<Type, TAllocator>& stack)
 {
 	size_t size = stack._size;
 	for (Stk_Node<Type, TAllocator> i = stack._top;
