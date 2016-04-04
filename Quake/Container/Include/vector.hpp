@@ -81,8 +81,11 @@ public:
 	ALLOCATOR_ID allocatorID() const;
 private:
 	QBool _hasSpaceFor(size_t size) const;
+	void _setMaxSize(size_t max);
 	void _incrementSize();
 	void _decrementSize();
+	Array _allocateArray(size_t size);
+	void _deallocateArray(Array array, size_t size);
 
 	QBool _checkIndex(size_t index) const;
 
@@ -127,3 +130,5 @@ using Vec_CArray = typename Vector<T, A>::cArray;
 
 template<typename T, typename A>
 using Vec_Array = typename Vector<T, A>::Array;
+
+#include "..\Source\vector.inl"
