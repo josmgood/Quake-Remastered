@@ -1,5 +1,5 @@
 #include "..\Include\qbool.h"
-#include "..\Include\qstring.hpp"
+#include "..\Include\string.hpp"
 
 QBool::QBool(bool b)
 	: _bool(b)
