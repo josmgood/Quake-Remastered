@@ -3,8 +3,6 @@
 #include <string>
 #include <type_traits>
 
-#include "..\Internal\boolset.h"
-
 #include "..\..\..\common.h"
 #include "..\..\..\Container\Include\qbool.h"
 
@@ -16,7 +14,7 @@
 
 /*
 *======================================================================
-* 
+*
 * MEMORY BLOCK
 *
 * Fundamental data structure in an allocator.
