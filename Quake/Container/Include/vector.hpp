@@ -25,7 +25,7 @@ public:
 	typedef CArray<T> cArray;
 	typedef Pointer Array;
 
-	static const Value EMPTY_VALUE;
+	static Value EMPTY_VALUE;
 
 	Vector(size_t maxSize = DEFAULT_CONTAINER_SIZE);
 	Vector(const Container& container);
@@ -75,6 +75,7 @@ public:
 	const ConstReverseIterator crbegin() const;
 	const ConstReverseIterator crend() const;
 
+	const Array array() const;
 	size_t size() const;
 	size_t maxSize() const;
 	const Allocator& allocator() const;

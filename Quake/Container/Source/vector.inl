@@ -1,7 +1,7 @@
 #include "..\Include\vector.hpp"
 
 template<typename T, typename A>
-const Vec_Value<T, A> Vector<T, A>::EMPTY_VALUE = Value();
+Vec_Value<T, A> Vector<T, A>::EMPTY_VALUE = Value();
 
 template<typename T, typename A>
 Vector<T, A>::Vector(size_t maxSize)
@@ -37,7 +37,7 @@ void Vector<T, A>::pushBack(ConstReference reference)
 {
 	if (!_hasSpaceFor(1))
 	{
-		reserve(_maxSize + VECTOR_RESERVE_SIZE);
+		reserve(_maxSize + 3);
 	}
 	_array[_size] = reference;
 	_incrementSize();
@@ -95,6 +95,19 @@ QBool Vector<T, A>::has(ConstReference reference) const
 }
 
 template<typename T, typename A>
+void Vector<T, A>::copy(const Container& container)
+{
+	_size = container._size;
+	_maxSize = container._maxSize;
+	_array = _allocateArray(_maxSize);
+	for (size_t i = 0; i < _size; i++)
+	{
+		Value value = container[i];
+		_array[i] = value;
+	}
+}
+
+template<typename T, typename A>
 void Vector<T, A>::reserve(size_t maxSize)
 {
 	if (maxSize > _maxSize)
@@ -107,14 +120,33 @@ void Vector<T, A>::reserve(size_t maxSize)
 		}
 		_deallocateArray(_array, _maxSize);
 		_array = array;
-
+		_setMaxSize(maxSize);
 	}
+}
+
+template<typename T, typename A>
+void Vector<T, A>::shrink(size_t maxSize)
+{
+	if (_size > maxSize)
+	{
+		Array array = _allocateArray(maxSize);
+		for (size_t i = 0; i < maxSize; i++)
+		{
+			Value value = _array[i];
+			array[i] = value;
+		}
+		_deallocateArray(_array, _maxSize);
+		_array = array;
+		_size = maxSize;
+	}
+	_maxSize = maxSize;
 }
 
 template<typename T, typename A>
 void Vector<T, A>::clear()
 {
 	_deallocateArray(_array, _maxSize);
+	_array = nullptr;
 	_maxSize = 0;
 	_size = 0;
 }
@@ -122,7 +154,7 @@ void Vector<T, A>::clear()
 template<typename T, typename A>
 QBool Vector<T, A>::isEmpty() const
 {
-	return _size == 0;
+	return _size == 0 && _array;
 }
 
 template<typename T, typename A>
@@ -148,6 +180,10 @@ Vector<T, A>::operator[](size_t index) const
 template<typename T, typename A>
 void Vector<T, A>::operator=(const Container& other)
 {
+	if (!isEmpty())
+	{
+		_deallocateArray(_array, _maxSize);
+	}
 	_size = other._size;
 	_maxSize = other._maxSize;
 	_array = _allocateArray(_maxSize);
@@ -194,7 +230,7 @@ QBool Vector<T, A>::operator==(const Container& other) const
 		{
 			if (_array[i] != other[i])
 			{
-				return false
+				return false;
 			}
 		}
 		return true;
@@ -354,6 +390,13 @@ Vector<T, A>::crend() const
 }
 
 template<typename T, typename A>
+const Vec_Array<T, A>
+Vector<T, A>::array() const
+{
+	return _array;
+}
+
+template<typename T, typename A>
 size_t Vector<T, A>::size() const
 {
 	return _size;
@@ -415,8 +458,10 @@ template<typename T, typename A>
 void Vector<T, A>::_deallocateArray(Array array, size_t size)
 {
 	void* mem = static_cast<void*>(array);
-	Block block(mem, size);
+	size_t si = sizeof(Value) * size;
+	Block block(mem, si);
 	_allocator.deallocate(block);
+	array = nullptr;
 }
 
 template<typename T, typename A>
