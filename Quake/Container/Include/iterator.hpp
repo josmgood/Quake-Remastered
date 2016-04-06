@@ -8,15 +8,15 @@
 
 typedef size_t Distance;
 
-template<typename Type,
-	template<typename T> typename TIterator>
+template<typename T,
+	template<typename> typename I>
 class IteratorBase
 {
 public:
-	typedef Type Value;
-	typedef Type& Reference;
-	typedef Type* Pointer;
-	typedef TIterator<Type> Iterator;
+	typedef T Value;
+	typedef T& Reference;
+	typedef T* Pointer;
+	typedef I<T> Iterator;
 
 	IteratorBase();
 	IteratorBase(const Pointer ptr);
@@ -41,17 +41,17 @@ protected:
 
 //=======================================================================================
 
-template<typename Type, 
-	template<typename T> typename TIterator>
+template<typename T, 
+	template<typename> typename I>
 class ForwardIterator
-	: public IteratorBase<Type, TIterator>
+	: public IteratorBase<T, I>
 {
 public:
 	ForwardIterator();
 	ForwardIterator(const Pointer ptr);
 	ForwardIterator(const Reference ref);
 
-	virtual Iterator next() = 0;
+	virtual Iterator next() const = 0;
 	virtual Reference operator*() const = 0;
 	virtual Pointer ptr() const = 0;
 	virtual Reference get() const = 0;
@@ -61,9 +61,9 @@ public:
 	virtual Iterator operator++() = 0;
 };
 
-template<typename Type>
+template<typename T>
 class ForwardNodeIterator
-	: public ForwardIterator<Type, ForwardNodeIterator>
+	: public ForwardIterator<T, ForwardNodeIterator>
 {
 public:
 	ForwardNodeIterator();
@@ -80,16 +80,16 @@ public:
 	Iterator operator++() override;
 };
 
-template<typename Type>
+template<typename T>
 class ForwardArrayIterator
-	: public ForwardIterator<Type, ForwardArrayIterator>
+	: public ForwardIterator<T, ForwardArrayIterator>
 {
 public:
 	ForwardArrayIterator();
 	ForwardArrayIterator(const Pointer ptr);
 	ForwardArrayIterator(const Reference ref);
 
-	Iterator next() override;
+	Iterator next() const override;
 	Reference operator*() const override;
 	Pointer ptr() const override;
 	Reference get() const override;
@@ -99,24 +99,24 @@ public:
 	Iterator operator++() override;
 };
 
-//template<typename Type, template<typename T> typename TIterator>
-//using FValue = typename ForwardIterator<Type, TIterator>::Value;
+//template<typename T, template<typename T> typename I>
+//using FValue = typename ForwardIterator<T, I>::Value;
 //
-//template<typename Type, template<typename T> typename TIterator>
-//using FReference = typename ForwardIterator<Type, TIterator>::Reference;
+//template<typename T, template<typename T> typename I>
+//using FReference = typename ForwardIterator<T, I>::Reference;
 //
-//template<typename Type, template<typename T> typename TIterator>
-//using FPointer = typename ForwardIterator<Type, TIterator>::Pointer;
+//template<typename T, template<typename T> typename I>
+//using FPointer = typename ForwardIterator<T, I>::Pointer;
 //
-//template<typename Type, template<typename T> typename TIterator>
-//using FIterator = typename ForwardIterator<Type, TIterator>::Iterator;
+//template<typename T, template<typename T> typename I>
+//using FIterator = typename ForwardIterator<T, I>::Iterator;
 
 //=======================================================================================
 
-template<typename Type,
-	template<typename T> typename TIterator>
+template<typename T,
+	template<typename T> typename I>
 class BidirectionalIterator
-	: public IteratorBase<Type, TIterator>
+	: public IteratorBase<T, I>
 {
 public:
 	BidirectionalIterator();
@@ -138,9 +138,9 @@ public:
 	virtual Iterator operator--() = 0;
 };
 
-template<typename Type>
+template<typename T>
 class BidirectionalNodeIterator
-	: public BidirectionalIterator<Type, BidirectionalNodeIterator>
+	: public BidirectionalIterator<T, BidirectionalNodeIterator>
 {
 public:
 	BidirectionalNodeIterator();
@@ -162,9 +162,9 @@ public:
 	Iterator operator--() override;
 };
 
-template<typename Type>
+template<typename T>
 class BidirectionalArrayIterator
-	: public BidirectionalIterator<Type, BidirectionalArrayIterator>
+	: public BidirectionalIterator<T, BidirectionalArrayIterator>
 {
 public:
 	BidirectionalArrayIterator();
@@ -186,24 +186,24 @@ public:
 	Iterator operator--() override;
 };
 
-//template<typename TIterator, typename Type>
-//using BValue = typename BidirectionalIterator<TIterator, Type>::Value;
+//template<typename I, typename T>
+//using BValue = typename BidirectionalIterator<I, T>::Value;
 //
-//template<typename TIterator, typename Type>
-//using BReference = typename BidirectionalIterator<TIterator, Type>::Reference;
+//template<typename I, typename T>
+//using BReference = typename BidirectionalIterator<I, T>::Reference;
 //
-//template<typename TIterator, typename Type>
-//using BPointer = typename BidirectionalIterator<TIterator, Type>::Pointer;
+//template<typename I, typename T>
+//using BPointer = typename BidirectionalIterator<I, T>::Pointer;
 //
-//template<typename TIterator, typename Type>
-//using BIterator = typename BidirectionalIterator<TIterator, Type>::Iterator;
+//template<typename I, typename T>
+//using BIterator = typename BidirectionalIterator<I, T>::Iterator;
 
 //=======================================================================================
 
-template<typename Type, 
-	template<typename T> typename TIterator>
+template<typename T, 
+	template<typename T> typename I>
 class ReverseIterator
-	: public IteratorBase<Type, TIterator>
+	: public IteratorBase<T, I>
 {
 public:
 	ReverseIterator();
@@ -230,9 +230,9 @@ public:
 	QBool operator>=(Iterator other) const override;
 };
 
-template<typename Type>
+template<typename T>
 class ReverseNodeIterator
-	: public ReverseIterator<Type, ReverseNodeIterator>
+	: public ReverseIterator<T, ReverseNodeIterator>
 {
 public:
 	ReverseNodeIterator();
@@ -259,9 +259,9 @@ public:
 	QBool operator>=(Iterator other) const override;*/
 };
 
-template<typename Type>
+template<typename T>
 class ReverseArrayIterator
-	: public ReverseIterator<Type, ReverseArrayIterator>
+	: public ReverseIterator<T, ReverseArrayIterator>
 {
 public:
 	ReverseArrayIterator();
