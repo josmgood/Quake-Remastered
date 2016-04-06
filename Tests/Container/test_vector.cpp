@@ -14,11 +14,17 @@ TEST(NAME, CONSTRUCTOR)
 	vector.pushBack(1000);
 	EXPECT_EQ(1000, vector.back());
 	EXPECT_EQ(3, vector.size());
+	EXPECT_EQ(DEFAULT_CONTAINER_SIZE, vector.maxSize());
 
 	Vector<int> vector2(vector);
 	EXPECT_EQ(1000, vector2.back());
 	EXPECT_EQ(3, vector2.size());
 	EXPECT_EQ(DEFAULT_CONTAINER_SIZE, vector.maxSize());
+
+	Vector<int> vector3(vector.begin(), vector.end());
+	EXPECT_EQ(1000, vector3.back());
+	EXPECT_EQ(3, vector3.size());
+	EXPECT_EQ(3, vector3.maxSize());
 }
 
 TEST(NAME, BACK)
@@ -225,4 +231,32 @@ TEST(NAME, OPERATOR_GREATER_OR_EQUAL)
 	}
 	EXPECT_EQ(true, vector2 >= vector);
 	EXPECT_EQ(true, vector >= Vector<int>());
+}
+
+TEST(NAME, ITERATOR)
+{
+	Vector<int> vector(10);
+	for (size_t i = 0; i < 10; i++)
+	{
+		vector.pushBack(i);
+	}
+	size_t j = 0;
+	for (Vector<int>::Iterator i = vector.begin(); i != vector.end(); ++i, ++j)
+	{
+		EXPECT_EQ(j, i.get());
+	}
+}
+
+TEST(NAME, REVERSE_ITERATOR)
+{
+	Vector<int> vector(10);
+	for (size_t i = 0; i < 10; i++)
+	{
+		vector.pushBack(i);
+	}
+	size_t j = 9;
+	for (Vector<int>::ReverseIterator i = vector.rbegin(); i != vector.rbegin(); ++i, ++j)
+	{
+		EXPECT_EQ(j, i.get());
+	}
 }

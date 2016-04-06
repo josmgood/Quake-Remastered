@@ -2,8 +2,9 @@
 
 #include "base.hpp"
 #include "iterator.hpp"
-
 #include "ccontainers.h"
+
+#include "..\..\Auxiliary\Include\algorithm.h"
 
 #include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
 #include "..\..\Memory\Include\Allocator\mallocator.h"
@@ -25,9 +26,11 @@ public:
 	typedef CArray<T> cArray;
 	typedef Pointer Array;
 
+	static const Vector EMPTY_VECTOR;
 	static Value EMPTY_VALUE;
 
 	Vector(size_t maxSize = DEFAULT_CONTAINER_SIZE);
+	Vector(const Iterator begin, const Iterator end);
 	Vector(const Container& container);
 	~Vector();
 

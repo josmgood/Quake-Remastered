@@ -1,6 +1,9 @@
 #include "..\Include\vector.hpp"
 
 template<typename T, typename A>
+Vector<T, A> Vector<T, A>::EMPTY_VECTOR = Vector();
+
+template<typename T, typename A>
 Vec_Value<T, A> Vector<T, A>::EMPTY_VALUE = Value();
 
 template<typename T, typename A>
@@ -19,6 +22,22 @@ Vector<T, A>::Vector(const Container& container)
 	{
 		Value value = container[i];
 		_array[i] = value;
+	}
+}
+
+template<typename T, typename A>
+Vector<T, A>::Vector(const Iterator begin, const Iterator end)
+	: _array(), _size(), _maxSize(), _allocator()
+{
+	size_t size = iterator_distance(end, begin);
+	_maxSize = size;
+	_size = size;
+	_array = _allocateArray(size);
+	size_t j = 0;
+	for (Iterator i = begin; i < end; ++i, ++j)
+	{
+		Value value = i.get();
+		_array[j] = value;
 	}
 }
 
