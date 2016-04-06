@@ -5,6 +5,8 @@
 #include "base.hpp"
 #include "iterator.hpp"
 
+#include "..\..\Auxiliary\Include\algorithm.h"
+
 #include "..\..\Memory\Include\Allocator\pool_allocator.hpp"
 #include "..\..\Memory\Include\Allocator\mallocator.h"
 
@@ -20,6 +22,7 @@ template<typename T, typename A = MAllocator>
 class ForwardList
 	: public QAuxiliary<T, A>
 {
+public:
 	struct Node
 	{
 		Node(ConstReference dat);
@@ -32,14 +35,16 @@ class ForwardList
 		Node* next;
 	};
 
+	typedef A Allocator;
 	typedef ForwardList<T, A> Container;
-	typedef ForwardNodeIterator<T> Iterator;
-	typedef ForwardNodeIterator<const T> ConstIterator;
+	typedef ForwardNodeIterator<Node> Iterator;
+	typedef ForwardNodeIterator<const Node> ConstIterator;
 
 	static const ForwardList EMPTY_FLIST;
+	static Value EMPTY_VALUE;
 
-	ForwardList(size_t maxSize);
-	ForwardList(Iterator begin, Iterator end);
+	ForwardList(size_t maxSize = DEFAULT_CONTAINER_SIZE);
+	ForwardList(const Iterator begin, const Iterator end);
 	ForwardList(const Container& container);
 	~ForwardList();
 
@@ -100,7 +105,7 @@ class ForwardList
 private:
 	void _incrementSize();
 	void _decrementSize();
-	Node* _allocateNode();
+	Node* _allocateNode(ConstReference reference);
 	void _deallocateNode(Node* node);
 
 	QBool _hasSpaceFor(size_t amount) const;

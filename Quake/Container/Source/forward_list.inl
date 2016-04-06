@@ -4,6 +4,9 @@ template<typename T, typename A>
 const ForwardList<T, A> ForwardList<T, A>::EMPTY_FLIST(0);
 
 template<typename T, typename A>
+FL_Value<T, A> ForwardList<T, A>::EMPTY_VALUE = Value();
+
+template<typename T, typename A>
 ForwardList<T, A>::Node::Node(ConstReference dat)
 	: data(dat), next()
 {
@@ -36,6 +39,19 @@ ForwardList<T, A>::ForwardList(size_t maxSize)
 }
 
 template<typename T, typename A>
+ForwardList<T, A>::ForwardList(const Iterator begin, const Iterator end)
+	: _front(), _back(), _bbegin(), _end(),
+	_size(), _maxSize(), _allocator()
+{
+	size_t size = iterator_node_distance(begin, end);
+	_maxSize = size;
+	for (Iterator i = begin; i != end; ++i)
+	{
+		pushBack(i.get().data);
+	}
+}
+
+template<typename T, typename A>
 ForwardList<T, A>::ForwardList(const Container& container)
 	: _front(), _back(), _bbegin(), _end(),
 	_size(), _maxSize(container._maxSize), _allocator()
@@ -62,15 +78,15 @@ ForwardList<T, A>::~ForwardList()
 template<typename T, typename A>
 void ForwardList<T, A>::pushFront(ConstReference reference)
 {
-	if (!isEmpty())
+	if (!isEmpty() && !isFull())
 	{
-		Node* node = _allocateNode();
+		Node* node = _allocateNode(reference);
 		node->setNext(_front);
 		_front = node;
 		_bbegin->setNext(_front);
 		_incrementSize();
 	}
-	else
+	else if(isEmpty())
 	{
 		_initBounds(reference);
 	}
@@ -89,7 +105,7 @@ void ForwardList<T, A>::popFront()
 		Node* node = _front;
 		_front = _front->getNext();
 		_bbegin->setNext(_front);
-		_allocator.deallocate(node);
+		_deallocateNode(node);
 		_decrementSize();
 	}
 }
@@ -98,21 +114,21 @@ template<typename T, typename A>
 FL_ConstReference<T, A>
 ForwardList<T, A>::front() const
 {
-	return _front->data;
+	return !isEmpty() ? _front->data : EMPTY_VALUE;
 }
 
 template<typename T, typename A>
 void ForwardList<T, A>::pushBack(ConstReference reference)
 {
-	if (!isEmpty())
+	if (!isEmpty() && !isFull())
 	{
-		Node* node = _allocateNode();
+		Node* node = _allocateNode(reference);
 		_back->setNext(node);
 		_back = node;
 		_back->setNext(_end);
 		_incrementSize();
 	}
-	else
+	else if(isEmpty())
 	{
 		_initBounds(reference);
 	}
@@ -157,7 +173,7 @@ void ForwardList<T, A>::insert(Node* after, ConstReference reference)
 		{
 			if (i->getNext()->data == reference)
 			{
-				Node* node = _allocateNode();
+				Node* node = _allocateNode(reference);
 				node->setNext(i->getNext());
 				i->setNext(node);
 				_incrementSize();
@@ -181,7 +197,7 @@ void ForwardList<T, A>::append(Node* before, ConstReference reference)
 		{
 			if (i->data == reference)
 			{
-				Node* node = _allocateNode();
+				Node* node = _allocateNode(reference);
 				node->setNext(i->getNext());
 				i->setNext(node);
 				_incrementSize();
@@ -469,42 +485,42 @@ template<typename T, typename A>
 const FL_Iterator<T, A>
 ForwardList<T, A>::begin() const
 {
-	return Iterator(_front);
+	return Iterator(*_front);
 }
 
 template<typename T, typename A>
 const FL_Iterator<T, A>
 ForwardList<T, A>::bbegin() const
 {
-	return Iterator(_bbegin);
+	return Iterator(*_bbegin);
 }
 
 template<typename T, typename A>
 const FL_Iterator<T, A>
 ForwardList<T, A>::end() const
 {
-	return Iterator(_end);
+	return Iterator(*_end);
 }
 
 template<typename T, typename A>
 const FL_ConstIterator<T, A>
 ForwardList<T, A>::cbegin() const
 {
-	return ConstIterator(_front);
+	return ConstIterator(*_front);
 }
 
 template<typename T, typename A>
 const FL_ConstIterator<T, A>
 ForwardList<T, A>::cbbegin() const
 {
-	return ConstIterator(_bbegin);
+	return ConstIterator(*_bbegin);
 }
 
 template<typename T, typename A>
 const FL_ConstIterator<T, A>
 ForwardList<T, A>::cend() const
 {
-	return ConstIterator(_end);
+	return ConstIterator(*_end);
 }
 
 template<typename T, typename A>
@@ -533,10 +549,11 @@ void ForwardList<T, A>::_decrementSize()
 
 template<typename T, typename A>
 FL_Node<T, A>
-ForwardList<T, A>::_allocateNode()
+ForwardList<T, A>::_allocateNode(ConstReference reference)
 {
 	Block block = _allocator.allocate(sizeof(Node));
 	Node* node = static_cast<Node*>(block.memory);
+	node->set(reference);
 	return node;
 }
 
@@ -563,9 +580,9 @@ void ForwardList<T, A>::_initBounds(ConstReference reference)
 {
 	if (isEmpty() && _maxSize > 0)
 	{
-		Node* node = _allocateNode();
-		_bbegin = _allocateNode();
-		_end = _allocateNode();
+		Node* node = _allocateNode(reference);
+		_bbegin = _allocateNode(EMPTY_VALUE);
+		_end = _allocateNode(EMPTY_VALUE);
 		_front = _back = node;
 		_bbegin->setNext(_front);
 		_back->setNext(_end);
@@ -577,10 +594,9 @@ template<typename T, typename A>
 std::ostream& operator<<(std::ostream& os, const ForwardList<T, A>& list)
 {
 	size_t count = 0;
-	FL_Node<T, A>* i = _front;
-	while (i != NULL_NODE)
+	for (ForwardList<T, A>::Iterator i = list.begin(); i < list.end(); ++i, ++count)
 	{
-		os << "Node " << count << ": " << i->data << std::endl;
+		os << "Node " << count << ": " << i.get().data << std::endl;
 	}
 	return os;
 }
