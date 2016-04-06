@@ -171,7 +171,7 @@ void Basic_String<T, A>::concat(const Character* string)
 
 template<typename T,
 	typename A>
-void Basic_String<T, A>::concat(const Basic_String& string)
+	void Basic_String<T, A>::concat(const Basic_String& string)
 {
 	size_t len = string._length - 1;
 	if (!_hasSpaceFor(len))
@@ -473,7 +473,7 @@ QBool Basic_String<T, A>::has(Character ch, Sensitivity sensitivity) const
 
 template<typename T,
 	typename A>
-void Basic_String<T, A>::to(CharacterConverter converter)
+	void Basic_String<T, A>::to(CharacterConverter converter)
 {
 	Iterator begin = getBegin();
 	Iterator end = getEnd();
@@ -487,7 +487,7 @@ void Basic_String<T, A>::to(CharacterConverter converter)
 
 template<typename T,
 	typename A>
-void Basic_String<T, A>::to(size_t index, CharacterConverter converter)
+	void Basic_String<T, A>::to(size_t index, CharacterConverter converter)
 {
 	if (_checkIndex(index))
 	{
@@ -499,7 +499,7 @@ void Basic_String<T, A>::to(size_t index, CharacterConverter converter)
 
 template<typename T,
 	typename A>
-void Basic_String<T, A>::to(size_t begin, size_t end, CharacterConverter converter)
+	void Basic_String<T, A>::to(size_t begin, size_t end, CharacterConverter converter)
 {
 	if (_checkIndicies(begin, end))
 	{
@@ -675,7 +675,7 @@ void Basic_String<T, A>::reserve(size_t maxSize)
 		Block alloc = _allocator.allocate(maxSize);
 		String string = static_cast<String>(alloc.memory);
 		strncpy_s(string, maxSize, _string, _maxLength);
-		
+
 		Block dealloc(_string, _maxLength);
 		_allocator.deallocate(dealloc);
 		_string = string;
@@ -746,7 +746,7 @@ Basic_String<T, A>::toCString() const
 }
 
 template<typename T, typename A>
-Str_Reference<T, A> 
+Str_Reference<T, A>
 Basic_String<T, A>::at(size_t index) const
 {
 	return _checkIndex(index) ? _string[index] : EMPTY_CHAR;
@@ -785,7 +785,7 @@ void Basic_String<T, A>::operator=(const Container& container)
 	if (container)
 	{
 		_maxLength = container._maxLength;
-		_length = container.length;
+		_length = container._length;
 		size_t len = container._length;
 		Block block = _allocator.allocate(sizeof(Character) * len);
 		_string = static_cast<String>(block.memory);
@@ -929,156 +929,135 @@ void Basic_String<T, A>::operator<<(std::ifstream& input)
 	_setTerminatingZero(_maxLength - 1);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_Iterator<T, A>
 Basic_String<T, A>::begin() const
 {
 	return Iterator(&_string[0]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_Iterator<T, A>
 Basic_String<T, A>::end() const
 {
 	return Iterator(&_string[_length - 1]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_ConstIterator<T, A>
 Basic_String<T, A>::cbegin() const
 {
 	return ConstIterator(&_string[0]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_ConstIterator<T, A>
 Basic_String<T, A>::cend() const
 {
 	return ConstIterator(&_string[_length - 1]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_ReverseIterator<T, A>
 Basic_String<T, A>::rbegin() const
 {
 	return ReverseIterator(&_string[_length - 2]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_ReverseIterator<T, A>
 Basic_String<T, A>::rend() const
 {
 	return ReverseIterator(&_string[-1]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_ConstReverseIterator<T, A>
 Basic_String<T, A>::crbegin() const
 {
 	return ConstReverseIterator(&_string[_length - 2]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 const Str_ConstReverseIterator<T, A>
-Basic_String<T, A>::crend() const
+	Basic_String<T, A>::crend() const
 {
 	return ConstReverseIterator(&_string[-1]);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 size_t Basic_String<T, A>::length() const
 {
 	return _length - 1;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 size_t Basic_String<T, A>::maxLength() const
 {
 	return _maxLength - 1;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 size_t Basic_String<T, A>::size() const
 {
 	return _length - 1;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 size_t Basic_String<T, A>::maxSize() const
 {
 	return _maxLength - 1;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 ALLOCATOR_ID Basic_String<T, A>::allocatorID() const
 {
 	return _allocator.getID();
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 void Basic_String<T, A>::_setLength(size_t len)
 {
 	_length = len;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 void Basic_String<T, A>::_setMaxLength(size_t max)
 {
 	_maxLength = max;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 void Basic_String<T, A>::_incrementLength()
 {
 	_length++;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 void Basic_String<T, A>::_decrementLength()
 {
 	_length--;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 void Basic_String<T, A>::_addLength(size_t amount)
 {
 	_length += amount;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 void Basic_String<T, A>::_subtractLength(size_t amount)
 {
 	_length -= amount;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 QBool Basic_String<T, A>::_hasSpaceFor(size_t num) const
 {
 	return _length + num <= _maxLength;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 void Basic_String<T, A>::_setTerminatingZero(size_t index)
 {
 	_string[index] = '\0';
@@ -1086,48 +1065,42 @@ void Basic_String<T, A>::_setTerminatingZero(size_t index)
 
 template<typename T,
 	typename A>
-QBool Basic_String<T, A>::_checkIndex(size_t index) const
+	QBool Basic_String<T, A>::_checkIndex(size_t index) const
 {
 	return index < _length - 1 && index > 0 || (index == 0 && _length - 1 > 0);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 QBool Basic_String<T, A>::_checkIndicies(size_t begin, size_t end) const
 {
 	return _checkIndex(begin) && end <= _length - 1 && _comesBefore(begin, end);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 QBool Basic_String<T, A>::_checkIterator(const Iterator iterator) const
 {
 	return iterator >= getBegin() && iterator < getEnd();
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 QBool Basic_String<T, A>::_checkIterators(const Iterator begin, const Iterator end) const
 {
 	return _checkIterator(begin) && end <= getEnd() && _comesBefore(begin, end);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 QBool Basic_String<T, A>::_checkReverseIterator(const ReverseIterator iterator) const
 {
 	return iterator >= getRBegin() && iterator < getREnd();
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 QBool Basic_String<T, A>::_checkReverseIterators(const ReverseIterator begin, const ReverseIterator end) const
 {
 	return _checkReverseIterator(begin) && end <= getREnd() && _comesBefore(begin, end);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 Comparison Basic_String<T, A>::_compare(const Character* A, const Character* B, size_t length, const CharChecker& checker) const
 {
 	const Character* c1 = A;
@@ -1149,61 +1122,53 @@ Comparison Basic_String<T, A>::_compare(const Character* A, const Character* B, 
 	return Comparison(count, length == 0);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 Str_CharChecker<T, A>
 Basic_String<T, A>::_getCharChecker(Sensitivity sensitivity) const
 {
 	return isSensitive(sensitivity) ? CharChecker(chrcmp) : CharChecker(chricmp);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 Str_StrChecker<T, A>
 Basic_String<T, A>::_getStrChecker(Sensitivity sensitivity) const
 {
 	return isSensitive(sensitivity) ? StrChecker(strncmp) : StrChecker(_strnicmp);
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 size_t Basic_String<T, A>::_getSearchBegin(Direction direction) const
 {
 	return isForward(direction) ? 0 : _length - 2;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 size_t Basic_String<T, A>::_getSearchEnd(Direction direction) const
 {
 	return isForward(direction) ? _length - 1 : 0;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 QBool Basic_String<T, A>::_endNotReached(size_t index, size_t end, Direction direction) const
 {
 	return isForward(direction) ? index < end : index > end;
 }
 
-template<typename T,
-	typename A>
+template<typename T, typename A>
 size_t Basic_String<T, A>::_increment(size_t traversed, Direction direction) const
 {
 	return isForward(direction) ? traversed : -traversed;
 }
 
-template<typename T,
-	typename A>
-template<typename TIterator>
+template<typename T, typename A>
+	template<typename TIterator>
 QBool Basic_String<T, A>::_comesBefore(TIterator begin, TIterator end) const
 {
 	return begin <= end;
 }
 
-template<typename T,
-	typename A>
-std::ostream& operator<<(std::ostream& os, const Basic_String<T, A>& string)
+template<typename T, typename A>
+	std::ostream& operator<<(std::ostream& os, const Basic_String<T, A>& string)
 {
 	return os << string._string;
 }
