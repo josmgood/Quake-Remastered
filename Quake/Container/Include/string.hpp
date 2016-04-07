@@ -279,5 +279,6 @@ typedef Basic_String<Char8>		String;
 typedef Basic_String<Char16>	String_16;
 typedef Basic_String<Char32>	String_32;
 typedef Basic_String<WChar>		WString;
+typedef Basic_String<TChar>		TString;
 
 #include "../Source/string.inl"
